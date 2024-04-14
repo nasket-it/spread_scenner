@@ -88,6 +88,7 @@ async def dict_yahoo_valuta():
             # print(await parse_futures_investing())
             await asyncio.sleep(5)
         except:
+            print("ошибка")
             await asyncio.sleep(5)
             await dict_yahoo_valuta()
 
