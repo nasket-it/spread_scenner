@@ -72,23 +72,23 @@ async def dict_yahoo_valuta():
     while True:
         try:
             for i in symbols:
-                print('0000000')
+                # print('0000000')
                 if i == "EURRUB":
                     rezult = await parse_valuta_invtsting(i[:3], i[3:6], url=False)
                 elif i in fut:
                     rezult = await parse_futures_investing(i)
                 else:
                     rezult = await parse_valuta_invtsting(i[:3], i[3:6])
-                print(rezult)
+                # print(rezult)
                 prices_valuta[i] = [rezult[0], rezult[1]]
                 await asyncio.sleep(0.5)
             yahoo_valyata['valuta'] = prices_valuta
 
-            print(yahoo_valyata)
+            # print(yahoo_valyata)
             # print(await parse_futures_investing())
             await asyncio.sleep(5)
         except:
-            print("ошибка")
+            print("ошибка - dict_yahoo_valuta()")
             await asyncio.sleep(5)
             await dict_yahoo_valuta()
 

@@ -130,8 +130,8 @@ async def valuta_vtelegram():
             usdtry_for = await valuta_replace_float("USDTRY", yahoo_valyata, 4)
             eurtry_for = await valuta_replace_float("EURTRY", yahoo_valyata, 4)
 
-            print(f"forex {usdcnh_for}")
-            print('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
+            # print(f"forex {usdcnh_for}")
+            # print('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
             usd_rub_ru = await get_last_price(usdrub['USD000UTSTOM'])
             si_price = last_prices.get(si['si-6.24'], 1)
             # si_sprav_price = round(1000 * (usd_rub_ru * (1 + 0.16 * (await expiration_date_future(si['si-6.24'])/365))))
@@ -191,7 +191,6 @@ async def valuta_vtelegram():
 
             s = await bot.edit_message_text(text, chat_id=chenal_id['Сверчок'], message_id=last_messa2_id)
 
-        print('valuta_vtelegram() - jhjhjjgjhgjhgf')
     except Exception as e:
         error_message = traceback.format_exc()
         print(f'Произошла ошибка функции valuta_vtelegram:\n{error_message}')
@@ -207,9 +206,9 @@ async def start_cicl_5s():
             await valuta_vtelegram()
             await asyncio.sleep(5)
             await get_last_prices_dict()
-            print(f"Валюта - {last_prices['BBG0013HGFT4']}   -  {last_prices['BBG0013HRTL0']}  ")
+            # print(f"Валюта - {last_prices['BBG0013HGFT4']}   -  {last_prices['BBG0013HRTL0']}  ")
             # print(orderbooks_reltime[Info_figi.tiker_figi['SBER']])
-            print(f"gggggggggggggggggggggggggggggggggggggg")
+            # print(f"gggggggggggggggggggggggggggggggggggggg")
     except Exception as e:
         error_message = traceback.format_exc()
         print(f'Произошла ошибка функции valuta_vtelegram:\n{error_message}')
@@ -217,14 +216,14 @@ async def start_cicl_5s():
         await asyncio.sleep(5)
         await start_cicl_5s()
 
-async def test():
-    while True:
-        print(344)
-        await asyncio.sleep(1)
+# async def test():
+#     while True:
+#         print(344)
+#         await asyncio.sleep(1)
 
 
 
-list_task = [start_cicl_5s(), test(), dict_yahoo_valuta()]
+list_task = [start_cicl_5s(), dict_yahoo_valuta()]
 
 async def main():
     # Запуск периодических задач в фоновом режиме
