@@ -25,12 +25,7 @@ API_TOKEN = Token.bot_token
 # Создаем объекты бота и диспетчера
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
-# Создаем объекты бота и диспетчера @ask_signals_bot
-bot_ask = Bot(token=Token.bot_token2)
-dp_bot_ask = Dispatcher(bot_ask)
-# Создаем объекты бота и диспетчера @ask_signals_bot
-bot_gpt = Bot(token=Token.bot_token3)
-dp_bot_gpt = Dispatcher(bot_gpt)
+
 
 
 account = ['-1001892817733','-1001857334624']
@@ -115,8 +110,9 @@ async def valuta_vtelegram():
     global yahoo_valyata
     current_time = datetime.datetime.now(moscow_tz).time()
     time_10x23_50 = await time_range('09:50:00', '23:50:00', current_time)
-    chenal_id = {'Сверчок': -1001854614186}
-    last_message = await client2.get_messages(chenal_id['Сверчок'], limit=2)
+    # chenal_id = {'Сверчок': -1001854614186}
+    chenal_id = Token.chenal_id
+    last_message = await client2.get_messages(chenal_id, limit=2)
     last_messa_id = last_message[0].id
     last_messa2_id = last_message[1].id
     # print(bool(yahoo_valyata['valuta']))
@@ -195,7 +191,7 @@ async def valuta_vtelegram():
             #     text = text + await arbitrage_parniy_futures(fut_sb["SRM4"], fut_sbp["SPM4"], name=name)
             #     text = text + '\n' + await arbtrage_future_akcii()
 
-            s = await bot.edit_message_text(text, chat_id=chenal_id['Сверчок'], message_id=last_messa2_id)
+            s = await bot.edit_message_text(text, chat_id=chenal_id, message_id=last_messa2_id)
 
     except Exception as e:
         error_message = traceback.format_exc()
