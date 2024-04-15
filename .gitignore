@@ -40,8 +40,8 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *,cover
-+79065475988.session
-+79065475988.session-journal
+.session
+.session-journal
 
 # Sphinx documentation
 docs/_build/
@@ -58,7 +58,8 @@ ENV/
 experiment.py
 secrete.py
 test.py
-
++79065475988.session
++79065475988.session-journal
 
 # Doc's
 docs/html
