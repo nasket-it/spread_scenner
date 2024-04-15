@@ -1,4 +1,5 @@
 import traceback
+import math
 from yahoo_finance import  yahoo_valyata, dict_yahoo_valuta
 from telethon.sync import TelegramClient, events
 from info_figi_ti import *
@@ -52,11 +53,14 @@ async def valyta_smail(percent):
         return "📘"
 
 async def smail_vnimanie(percent):
-    percent_namber = int(percent // 0.1) if percent > 0 else int(percent * -1  // 0.1)
+    # Используем абсолютное значение процента для упрощения
+    abs_percent = abs(percent)
+    # Округляем вверх, чтобы получить правильное количество символов '❗️'
+    percent_namber = math.ceil(abs_percent // 0.1)
     if percent_namber <= 6:
-        return int(percent // 0.1) *'❗️'
+        return percent_namber * '❗️'
     else:
-        return 6 * '❗' + '+'
+        return 6 * '❗️' + '+'
 
 async def valuta_replace_float(valut_para, dict, kol_znakov):
     price = dict['valuta'][valut_para][0].replace('.', '') if valut_para in ['gold_fut', 'gold_spot'] else dict['valuta'][valut_para][0]
