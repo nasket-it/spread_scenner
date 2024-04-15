@@ -12,8 +12,10 @@ from Config import InfoTiker, Config, Chenal
 from aiogram import Bot, Dispatcher, types, executor
 from datetime import *
 import datetime
+import pytz
 
-
+# Создаем объект временной зоны для Москвы
+moscow_tz = pytz.timezone('Europe/Moscow')
 
 client2 = TelegramClient(Token.phone2, Token.api_id2, Token.api_hash2)
 
@@ -111,7 +113,7 @@ async def arbitrage_parniy_akcii(tiker1, tiker2, price_percent=True, perenos_str
 
 async def valuta_vtelegram():
     global yahoo_valyata
-    current_time = datetime.datetime.now().time()
+    current_time = datetime.datetime.now(moscow_tz).time()
     time_10x23_50 = await time_range('09:50:00', '23:50:00', current_time)
     chenal_id = {'Сверчок': -1001854614186}
     last_message = await client2.get_messages(chenal_id['Сверчок'], limit=2)
@@ -164,7 +166,7 @@ async def valuta_vtelegram():
             # percent_cny_rub = round(await valuta_replace_float('CNYRUB', yahoo_valyata, 2) / cny_rub_ru * 100 - 100, 2)
             # smail_cny_rub = await valyta_smail(percent_cny_rub)
             # sprav_price_cnyrub = round(usd_rub_ru * await valuta_replace_float('CNYUSD', yahoo_valyata, 4), 4)
-            time_apgrade = datetime.datetime.now()
+            time_apgrade = datetime.datetime.now(moscow_tz)
             time_new = time_apgrade.strftime("%H:%M:%S")
             text = f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new}\n\n" \
                    f"Фьючерсы на валюту\n" \
