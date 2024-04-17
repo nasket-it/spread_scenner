@@ -106,18 +106,18 @@ async def arbitrage_parniy_akcii(tiker1, tiker2, price_percent=True, perenos_str
 
 
 dict_interva = {}
-async def send_signals(percent, message):
-    abs_percent = abs(percent)
-    print(abs_percent)
-    if abs_percent >= 0.1 and abs_percent < 0.2:
-
-        await bot.send_message(Token.chenal_id_signals, message)
-    elif 0.2 <= abs_percent < 0.3:
-        await bot.send_message(Token.chenal_id_signals, message)
-    elif 0.3 <= abs_percent < 0.4:
-        await bot.send_message(Token.chenal_id_signals, message)
-    elif 0.4 <= abs_percent < 0.5:
-        await bot.send_message(Token.chenal_id_signals, message)
+# async def send_signals(percent, message):
+#     abs_percent = abs(percent)
+#     print(abs_percent)
+#     if abs_percent >= 0.1 and abs_percent < 0.2:
+#
+#         await bot.send_message(Token.chenal_id_signals, message)
+#     elif 0.2 <= abs_percent < 0.3:
+#         await bot.send_message(Token.chenal_id_signals, message)
+#     elif 0.3 <= abs_percent < 0.4:
+#         await bot.send_message(Token.chenal_id_signals, message)
+#     elif 0.4 <= abs_percent < 0.5:
+#         await bot.send_message(Token.chenal_id_signals, message)
 
 
 
@@ -163,13 +163,12 @@ async def valuta_vtelegram():
             # await send_signals(percent_eu_cr_eurcnh, message_eu_cr_eurcnh)
 
             percent_eu_si_eurusd = round(last_prices.get('FUTEU0624000', 1) / si_price / await valuta_replace_float('EURUSD', yahoo_valyata, 4) * 100 -100, 3)
-            print(percent_eu_si_eurusd)
             message_eu_si_eurusd = f"{await valyta_smail(percent_eu_si_eurusd)} •  ({percent_eu_si_eurusd}%){await smail_vnimanie(percent_eu_si_eurusd)}\nEu1 / Si1 / $EURUSD(for)\n\n"
             # await send_signals(percent_eu_si_eurusd, message_eu_si_eurusd)
 
             percent_eu_si_ed = round(last_prices.get('FUTEU0624000', 1) / si_price / last_prices.get('FUTED0624000', 1) * 100 -100, 3)
             message_eu_si_ed = f"{await valyta_smail(percent_eu_si_ed)} •  ({percent_eu_si_ed}%){await smail_vnimanie(percent_eu_si_ed)}\nEu1 / Si1 / $ED ️\n\n\n"
-            await send_signals(percent_eu_si_ed, message_eu_si_ed)
+            # await send_signals(percent_eu_si_ed, message_eu_si_ed)
 
             percent_us_tom_cn_tom_usdcnh = round(last_prices.get('BBG0013HGFT4', 1) / last_prices.get('BBG0013HRTL0', 1)/ usdcnh_for * 100 -100, 3)
             percent_eu_tom_cn_tom_eurcnh = round(eurrub_inv_tom / last_prices.get('BBG0013HRTL0', 1)/ await valuta_replace_float('EURCNH', yahoo_valyata, 4) * 100 -100, 3)
