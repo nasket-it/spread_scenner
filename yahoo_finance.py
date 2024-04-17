@@ -21,7 +21,9 @@ async def parse_futures_investing(future):
             "gas_fut" : "https://ru.investing.com/commodities/natural-gas-streaming-chart",
             "gold_fut" : "https://ru.investing.com/commodities/gold-streaming-chart",
             "silver_fut" : "https://ru.investing.com/commodities/silver-streaming-chart",
-            "gold_spot" : "https://ru.investing.com/currencies/xau-usd-chart"
+            "gold_spot" : "https://ru.investing.com/currencies/xau-usd-chart",
+            "nasdaq" : "https://ru.investing.com/indices/nq-100-futures-chart?cid=1175151",
+            "sp500" : "https://ru.investing.com/indices/us-spx-500-futures-chart?cid=1175153"
            }
     async with aiohttp.ClientSession() as session:
         async with session.get(url[future], headers=headers) as response:
@@ -66,9 +68,9 @@ async def dict_yahoo_valuta():
     prices_valuta = {}
     price_futures = {}
     global yahoo_valyata
-    fut = ["brent_fut", "gas_fut", "gold_fut", "silver_fut", "gold_spot"]
-    symbols = ["USDTRY", "EURTRY", "USDKZT", "EURKZT", "EURCNH", "EURRUB", "USDCNH", "EURUSD", "CNYRUB",
-               "CNYUSD", "brent_fut", "gas_fut", "gold_fut", "silver_fut", "gold_spot"]
+    fut = ["brent_fut", "gas_fut", "gold_fut", "silver_fut", "gold_spot", "nasdaq", "sp500"]
+    symbols = ["XAUUSD", "XAGUSD", "USDTRY", "EURTRY", "USDKZT", "EURKZT", "EURCNH", "EURRUB", "USDCNH", "EURUSD", "CNYRUB",
+               "CNYUSD", "brent_fut", "gas_fut", "gold_fut", "silver_fut", "gold_spot", "nasdaq", "sp500"]
     while True:
         try:
             for i in symbols:

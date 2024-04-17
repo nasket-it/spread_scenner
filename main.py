@@ -49,18 +49,18 @@ async def valyta_smail(percent):
     if percent == 0:
         return "📘"
 
-async def smail_vnimanie(percent):
+async def smail_vnimanie(percent, delitel=0.1):
     # Используем абсолютное значение процента для упрощения
     abs_percent = abs(percent)
     # Округляем вверх, чтобы получить правильное количество символов '❗️'
-    percent_namber = math.ceil(abs_percent // 0.1)
+    percent_namber = math.ceil(abs_percent // delitel)
     if percent_namber <= 6:
         return percent_namber * '❗️'
     else:
         return 6 * '❗️' + '+'
 
 async def valuta_replace_float(valut_para, dict, kol_znakov):
-    price = dict['valuta'][valut_para][0].replace('.', '') if valut_para in ['gold_fut', 'gold_spot'] else dict['valuta'][valut_para][0]
+    price = dict['valuta'][valut_para][0].replace('.', '') if valut_para in ['gold_fut', 'gold_spot', 'XAUUSD', "nasdaq", "sp500"] else dict['valuta'][valut_para][0]
     return round(float(price.replace(',', '.')), kol_znakov)
 
 async def percent(num_100, num_rezultat):
@@ -118,9 +118,9 @@ dict_interva = {}
 #         await bot.send_message(Token.chenal_id_signals, message)
 #     elif 0.4 <= abs_percent < 0.5:
 #         await bot.send_message(Token.chenal_id_signals, message)
-
-
-
+#
+#
+#
 
 
 async def valuta_vtelegram():
@@ -129,9 +129,10 @@ async def valuta_vtelegram():
     time_10x23_50 = await time_range('09:50:00', '23:50:00', current_time)
     # chenal_id = {'Сверчок': -1001854614186}
     chenal_id = Token.chenal_id
-    last_message = await client2.get_messages(chenal_id, limit=2)
+    last_message = await client2.get_messages(chenal_id, limit=3)
     last_messa_id = last_message[0].id
     last_messa2_id = last_message[1].id
+    last_messa3_id = last_message[2].id
     # print(bool(yahoo_valyata['valuta']))
     try:
         if yahoo_valyata.get('valuta', False):
@@ -148,6 +149,10 @@ async def valuta_vtelegram():
             eurkzt_for = await valuta_replace_float("EURKZT", yahoo_valyata, 4 )
             usdtry_for = await valuta_replace_float("USDTRY", yahoo_valyata, 4)
             eurtry_for = await valuta_replace_float("EURTRY", yahoo_valyata, 4)
+            silver_in = await valuta_replace_float("XAGUSD", yahoo_valyata, 3)
+            gold_in = await valuta_replace_float("XAUUSD", yahoo_valyata, 3)
+            nasdaq_in = await valuta_replace_float("nasdaq", yahoo_valyata, 3)
+            sp500_in = await valuta_replace_float("sp500", yahoo_valyata, 3)
 
             # print(f"forex {usdcnh_for}")
             # print('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
@@ -176,6 +181,11 @@ async def valuta_vtelegram():
             percent_eu_tom_kz_tom_eurkzt = round(eurrub_inv_tom / last_prices.get('BBG0013HG026', 4)/ eurkzt_for * 100 * 100 -100, 3)
             percent_us_tom_try_tom_usdtry = round(last_prices.get('BBG0013HGFT4', 1) / last_prices.get('BBG0013J12N1', 4)/ usdtry_for * 100 -100, 2)
             percent_eu_tom_try_tom_eurtry = round(eurrub_inv_tom / last_prices.get('BBG0013J12N1', 4)/ eurtry_for * 100  -100, 2)
+            percent_sv1_silver = round(last_prices.get('FUTSILV06240',None) / silver_in * 100  -100, 2)
+            percent_gd1_gold = round(last_prices.get('FUTGOLD06240',None) / gold_in * 100  -100, 2)
+            percent_na1_nasdaq = round(last_prices.get('FUTNASD06240',None) / nasdaq_in * 100  -100, 2)
+            percent_sf1_sp500 = round((last_prices.get('FUTSPYF06240',None) * 10) / sp500_in * 100  -100, 2)
+
 
             time_apgrade = datetime.datetime.now(moscow_tz)
             time_new = time_apgrade.strftime("%H:%M:%S")
@@ -206,6 +216,18 @@ async def valuta_vtelegram():
                    f"{await valyta_smail(percent_eu_tom_try_tom_eurtry)} •  ({percent_eu_tom_try_tom_eurtry}%){await smail_vnimanie(percent_eu_tom_try_tom_eurtry)}\nEU_TOM / TRY_TOM / $EURTRY(for)\n\n\n" \
                    f"Акции\n" \
 
+            time_apgrade1 = datetime.datetime.now(moscow_tz)
+            time_new1 = time_apgrade.strftime("%H:%M:%S")
+            delitel = 0.5
+            text2 = f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new}\n\n"
+            vnimanie = f"Один знак  '❗' =  {delitel}%\n\n"
+            name = f"Фьючерсы на индексы и товары\n"
+            silver_text = f"{await valyta_smail(percent_sv1_silver)} •  ({percent_sv1_silver}%){await smail_vnimanie(percent_sv1_silver, delitel=delitel)}\n$SV1! / $SILVER(for)\n5(SV1) = 0.01(for)\n\n"
+            gold_text = f"{await valyta_smail(percent_gd1_gold)} •  ({percent_gd1_gold}%){await smail_vnimanie(percent_gd1_gold, delitel=delitel)}\n$GD1! / $GOLD(for)\n1(GD) = 0.01(for)\n\n"
+            nasdaq_text = f"{await valyta_smail(percent_na1_nasdaq)} •  ({percent_na1_nasdaq}%){await smail_vnimanie(percent_na1_nasdaq, delitel=delitel)}\n$NA1! / $NASDAQ(for)\n100(NA1) = 0.1(for)\n\n"
+            sp500_text = f"{await valyta_smail(percent_sf1_sp500)} •  ({percent_sf1_sp500}%){await smail_vnimanie(percent_sf1_sp500, delitel=delitel)}\n$SF1! / $SPX(for)\n10(SF) = 0.1(for)\n\n"
+            list_text = [text2, vnimanie,  name, silver_text, gold_text, nasdaq_text, sp500_text]
+            finali_message = ''.join(list_text)
 
 
             fut_sb = {"SRM4" : "FUTSBRF06240"}
@@ -219,6 +241,7 @@ async def valuta_vtelegram():
             #     text = text + '\n' + await arbtrage_future_akcii()
 
             s = await bot.edit_message_text(text, chat_id=chenal_id, message_id=last_messa2_id)
+            s2 = await bot.edit_message_text(finali_message, chat_id=chenal_id, message_id=last_messa_id)
 
     except Exception as e:
         error_message = traceback.format_exc()

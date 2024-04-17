@@ -150,7 +150,7 @@ futures = {'SRM4': 'FUTSBRF06240', 'VKU4': 'FUTVKCO09240', 'NGQ4': 'FUTNG0824000
            'VKH4': 'FUTVKCO03240', 'W4V4': 'FUTWHEAT1024', 'RIZ5': 'FUTRTS122500', 'MMM4': 'FUTMXI062400',
            'GZH5': 'FUTGAZR03250', 'HSM4': 'FUTHANG06240', 'SFZ4': 'FUTSPYF12240', 'TTH4': 'FUTTATN03240',
            'KMM4': 'FUTKMAZ06240', 'CMZ4': 'FUTCBOM12240', 'KZU4': 'FUTKZT092400'}
-print(futures['EuM4'])
+print(futures['NAM4'])
 async def time_range(start_time: str, end_time: str, current_time: time) -> bool:
     """
     Проверяет, находится ли текущее время в указанном диапазоне.
