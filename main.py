@@ -10,6 +10,7 @@ from tinkoff_get_func import (
     arbtrage_future_akcii, last_prices, get_last_prices_dict)
 from Config import InfoTiker, Config, Chenal
 from aiogram import Bot, Dispatcher, types, executor
+from aiogram.utils.markdown import link
 from datetime import *
 import datetime
 import pytz
@@ -49,15 +50,16 @@ async def valyta_smail(percent):
     if percent == 0:
         return "📘"
 
-async def smail_vnimanie(percent, delitel=0.1):
+async def smail_vnimanie(percent, delitel=0.1, znak='❗️'):
     # Используем абсолютное значение процента для упрощения
     abs_percent = abs(percent)
+    smail = znak
     # Округляем вверх, чтобы получить правильное количество символов '❗️'
     percent_namber = math.ceil(abs_percent // delitel)
     if percent_namber <= 6:
-        return percent_namber * '❗️'
+        return percent_namber * smail
     else:
-        return 6 * '❗️' + '+'
+        return 6 * smail + '+'
 
 async def valuta_replace_float(valut_para, dict, kol_znakov):
     price = dict['valuta'][valut_para][0].replace('.', '') if valut_para in ['gold_fut', 'gold_spot', 'XAUUSD', "nasdaq", "sp500"] else dict['valuta'][valut_para][0]
@@ -66,7 +68,8 @@ async def valuta_replace_float(valut_para, dict, kol_znakov):
 async def percent(num_100, num_rezultat):
     return round(num_100 / num_rezultat * 100 - 100, 2)
 
-
+async def link_text(text, link="https://t.me/spread_sca"):
+    return f'<a href="{link}">{text}</a>'
 
 async def arbitrage_parniy_futures(tiker1, tiker2, price_percent=True, perenos_stroki=1, name=list):
     tiker1_last_price = await get_last_price(tiker1)
@@ -100,27 +103,69 @@ async def arbitrage_parniy_akcii(tiker1, tiker2, price_percent=True, perenos_str
             punkti = round(rubli / Config.info[tiker1]['minstep'])
             punkti = punkti if punkti > 0 else punkti * -1
             percents = await percent(tiker1_last_price, tiker2_last_price)
-
-            return f"{await valyta_smail(percents)} • {tiker1} / {tiker2}{await smail_vnimanie(percents)}\n{punkti}п | {rubli}р | {percents}%\n\n" \
+            text = f"{tiker1} / {tiker2}"
+            return f"{await valyta_smail(percents)} • {await link_text(text)}{await smail_vnimanie(percents)}\n{punkti}п | {rubli}р | {percents}%\n\n" \
 
 
 
 dict_interva = {}
-# async def send_signals(percent, message):
-#     abs_percent = abs(percent)
-#     print(abs_percent)
-#     if abs_percent >= 0.1 and abs_percent < 0.2:
-#
-#         await bot.send_message(Token.chenal_id_signals, message)
-#     elif 0.2 <= abs_percent < 0.3:
-#         await bot.send_message(Token.chenal_id_signals, message)
-#     elif 0.3 <= abs_percent < 0.4:
-#         await bot.send_message(Token.chenal_id_signals, message)
-#     elif 0.4 <= abs_percent < 0.5:
-#         await bot.send_message(Token.chenal_id_signals, message)
-#
-#
-#
+async def send_signals(percent, message, svyazka):
+    abs_percent = abs(percent)
+    print(abs_percent ,  svyazka)
+    if 0 <= abs_percent < 0.03:
+        if svyazka not in dict_interva:
+            await bot.send_message(Token.chenal_id_signals, message)
+            dict_interva[svyazka] = {0.0: 1}
+        elif svyazka in dict_interva and dict_interva[svyazka].get(0.0, False) == False:
+            await bot.send_message(Token.chenal_id_signals, message)
+            dict_interva[svyazka] = {0.0: 1}
+    elif 0.07 < abs_percent <= 0.1:
+        if svyazka not in dict_interva:
+            await bot.send_message(Token.chenal_id_signals, message)
+            dict_interva[svyazka] = {0.1: 1}
+        elif svyazka in dict_interva and dict_interva[svyazka].get(0.1, False) == False:
+            await bot.send_message(Token.chenal_id_signals, message)
+            dict_interva[svyazka] = {0.1: 1}
+    elif 0.17 < abs_percent <= 0.2:
+        if svyazka not in dict_interva:
+            await bot.send_message(Token.chenal_id_signals, message)
+            dict_interva[svyazka] = {0.2: 1}
+        elif svyazka in dict_interva and dict_interva[svyazka].get(0.2, False) == False:
+            await bot.send_message(Token.chenal_id_signals, message)
+            dict_interva[svyazka] = {0.2: 1}
+    elif 0.27 < abs_percent <= 0.3:
+        if svyazka not in dict_interva:
+            await bot.send_message(Token.chenal_id_signals, message)
+            dict_interva[svyazka] = {0.3: 1}
+        elif svyazka in dict_interva and 0.3 not in dict_interva[svyazka]:
+            await bot.send_message(Token.chenal_id_signals, message)
+            dict_interva[svyazka] = {0.3: 1}
+        elif svyazka in dict_interva and 0.3 in dict_interva[svyazka]:
+            if dict_interva[svyazka][0.3] < 180:
+                dict_interva[svyazka][0.3] += 1
+            else:
+                await bot.send_message(Token.chenal_id_signals, message)
+                dict_interva[svyazka] = {0.3: 1}
+    elif 0.37 < abs_percent <= 0.4:
+        if svyazka not in dict_interva:
+            await bot.send_message(Token.chenal_id_signals, message)
+            dict_interva[svyazka] = {0.4: 1}
+        elif svyazka in dict_interva and 0.4 not in dict_interva[svyazka]:
+            await bot.send_message(Token.chenal_id_signals, message)
+            dict_interva[svyazka] = {0.4: 1}
+        elif svyazka in dict_interva and 0.4 in dict_interva[svyazka]:
+            if dict_interva[svyazka][0.4] < 120:
+                dict_interva[svyazka][0.4] += 1
+            else:
+                await bot.send_message(Token.chenal_id_signals, message)
+                dict_interva[svyazka] = {0.4: 1}
+    # elif abs_percent < 0.1 and svyazka in dict_interva:
+    #     await bot.send_message(Token.chenal_id_signals, message)
+    #     del dict_interva[svyazka]
+
+
+
+#link_name = '<a href="https://t.me/spread_sca">Eu1 / Cr1 / EURCNH(for)</a>'
 
 
 async def valuta_vtelegram():
@@ -129,6 +174,8 @@ async def valuta_vtelegram():
     time_10x23_50 = await time_range('09:50:00', '23:50:00', current_time)
     # chenal_id = {'Сверчок': -1001854614186}
     chenal_id = Token.chenal_id
+    # last_message = await bot.request()
+
     last_message = await client2.get_messages(chenal_id, limit=3)
     last_messa_id = last_message[0].id
     last_messa2_id = last_message[1].id
@@ -160,20 +207,24 @@ async def valuta_vtelegram():
             si_price = last_prices.get(si['si-6.24'], 1)
             # si_sprav_price = round(1000 * (usd_rub_ru * (1 + 0.16 * (await expiration_date_future(si['si-6.24'])/365))))
             percent_si_cr_usdcnh = round(si_price / last_prices.get('FUTCNY062400', 1) / 1000 / usdcnh_for * 100 -100, 3)
+            si_cr_usdcnh = 'Si1_Cr1_USDCNH(for)'
             message_si_cr_usdcnh = f"{await valyta_smail(percent_si_cr_usdcnh)} •  ({percent_si_cr_usdcnh}%){await smail_vnimanie(percent_si_cr_usdcnh)}\nSi1 / CR1 / $USDCNH(for)\nSi - 1 лот | CNY - {si_price/100/last_prices.get('FUTCNY062400', 1)}лот\n\n"
-            # await send_signals(percent_si_cr_usdcnh, message_si_cr_usdcnh)
+            await send_signals(percent_si_cr_usdcnh, message_si_cr_usdcnh, si_cr_usdcnh)
 
             percent_eu_cr_eurcnh = round(last_prices.get('FUTEU0624000', 1) / last_prices.get('FUTCNY062400', 1) / 1000 / await valuta_replace_float('EURCNH', yahoo_valyata, 4) * 100 -100, 3)
+            eu_cr_eurcnh = 'Eu1_Cr1_EURCNH(for)'
             message_eu_cr_eurcnh = f"{await valyta_smail(percent_eu_cr_eurcnh)} •  ({percent_eu_cr_eurcnh}%){await smail_vnimanie(percent_eu_cr_eurcnh)}\nEu1 / CR1 / $EURCNH(for)\n\n"
-            # await send_signals(percent_eu_cr_eurcnh, message_eu_cr_eurcnh)
+            await send_signals(percent_eu_cr_eurcnh, message_eu_cr_eurcnh, eu_cr_eurcnh)
 
             percent_eu_si_eurusd = round(last_prices.get('FUTEU0624000', 1) / si_price / await valuta_replace_float('EURUSD', yahoo_valyata, 4) * 100 -100, 3)
+            eu_si_eurusd = 'Eu1_Si1_EURUSD(for)'
             message_eu_si_eurusd = f"{await valyta_smail(percent_eu_si_eurusd)} •  ({percent_eu_si_eurusd}%){await smail_vnimanie(percent_eu_si_eurusd)}\nEu1 / Si1 / $EURUSD(for)\n\n"
-            # await send_signals(percent_eu_si_eurusd, message_eu_si_eurusd)
+            await send_signals(percent_eu_si_eurusd, message_eu_si_eurusd, eu_si_eurusd)
 
             percent_eu_si_ed = round(last_prices.get('FUTEU0624000', 1) / si_price / last_prices.get('FUTED0624000', 1) * 100 -100, 3)
+            eu_si_ed = 'Eu1_Si1_Ed1'
             message_eu_si_ed = f"{await valyta_smail(percent_eu_si_ed)} •  ({percent_eu_si_ed}%){await smail_vnimanie(percent_eu_si_ed)}\nEu1 / Si1 / $ED ️\n\n\n"
-            # await send_signals(percent_eu_si_ed, message_eu_si_ed)
+            await send_signals(percent_eu_si_ed, message_eu_si_ed, eu_si_ed)
 
             percent_us_tom_cn_tom_usdcnh = round(last_prices.get('BBG0013HGFT4', 1) / last_prices.get('BBG0013HRTL0', 1)/ usdcnh_for * 100 -100, 3)
             percent_eu_tom_cn_tom_eurcnh = round(eurrub_inv_tom / last_prices.get('BBG0013HRTL0', 1)/ await valuta_replace_float('EURCNH', yahoo_valyata, 4) * 100 -100, 3)
@@ -186,34 +237,36 @@ async def valuta_vtelegram():
             percent_na1_nasdaq = round(last_prices.get('FUTNASD06240',None) / nasdaq_in * 100  -100, 2)
             percent_sf1_sp500 = round((last_prices.get('FUTSPYF06240',None) * 10) / sp500_in * 100  -100, 2)
 
-
+            link_name = '<a href="https://t.me/spread_sca">Eu1 / Cr1 / EURCNH(for)</a>'
+            delitel1 = 0.1
             time_apgrade = datetime.datetime.now(moscow_tz)
             time_new = time_apgrade.strftime("%H:%M:%S")
             text = f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new}\n\n" \
+                   f"Один знак  '❗' =  {delitel1}%\n\n"\
                    f"Фьючерсы на валюту\n" \
-                   f"{await valyta_smail(percent_si_cr_usdcnh)} •  ({percent_si_cr_usdcnh}%){await smail_vnimanie(percent_si_cr_usdcnh)}\nSi1 / CR1 / $USDCNH(for)\n" \
-                   f"1(si) = {round((si_price/1000)/last_prices.get('FUTCNY062400', 1), 1)}(cr) = 0.01(for)\n" \
-                   f"5(si) = {round((si_price/1000*5)/last_prices.get('FUTCNY062400', 1), 1)}(cr) = 0.05(for)\n" \
-                   f"15(si) = {round((si_price/1000*15)/last_prices.get('FUTCNY062400', 1), 1)}(cr) = 0.15(for)\n\n" \
-                   f"{await valyta_smail(percent_eu_cr_eurcnh)} •  ({percent_eu_cr_eurcnh}%){await smail_vnimanie(percent_eu_cr_eurcnh)}\nEu1 / CR1 / $EURCNH(for)\n" \
-                   f"1(eu) = {round(eurrub_inv_tom / last_prices.get('FUTCNY062400', 1), 1)}(cr) = 0.01(for)\n" \
-                   f"5(eu) = {round((eurrub_inv_tom * 5) / last_prices.get('FUTCNY062400', 1), 1)}(cr) = 0.05(for)\n" \
-                   f"15(eu) = {round((eurrub_inv_tom * 15) / last_prices.get('FUTCNY062400', 1), 1)}(cr) = 0.15(for)\n\n" \
-                   f"{await valyta_smail(percent_eu_si_eurusd)} •  ({percent_eu_si_eurusd}%){await smail_vnimanie(percent_eu_si_eurusd)}\nEu1 / Si1 / $EURUSD(for)\n" \
-                   f"1(eu) = {round(eurrub_inv_tom / (si_price / 1000), 1)}(si) = 0.01(for)\n" \
-                   f"5(eu) = {round((eurrub_inv_tom * 5) / (si_price / 1000), 1)}(cr) = 0.05(for)\n" \
-                   f"15(eu) = {round((eurrub_inv_tom * 15) / (si_price / 1000), 1)}(cr) = 0.15(for)\n\n" \
-                   f"{await valyta_smail(percent_eu_si_ed)} •  ({percent_eu_si_ed}%){await smail_vnimanie(percent_eu_si_ed)}\nEu1 / Si1 / $ED\n" \
-                   f"1(eu) = {round(eurrub_inv_tom / (si_price / 1000), 1)}(si) = 1(ed)\n" \
-                   f"5(eu) = {round((eurrub_inv_tom * 5) / (si_price / 1000), 1)}(cr) = 5(ed)\n" \
-                   f"15(eu) = {round((eurrub_inv_tom * 15) / (si_price / 1000), 1)}(cr) = 15(ed)\n\n" \
+                   f"{await valyta_smail(percent_si_cr_usdcnh)} •  ({percent_si_cr_usdcnh}%){await smail_vnimanie(percent_si_cr_usdcnh)}\n{await link_text('Si1 / CR1 / USDCNH(for)')}\n" \
+                   f"1  »  {round((si_price/1000)/last_prices.get('FUTCNY062400', 1), 1)}   »  0.01(for)\n" \
+                   f"5  »  {round((si_price/1000*5)/last_prices.get('FUTCNY062400', 1), 1)}   »   0.05(for)\n" \
+                   f"15  »  {round((si_price/1000*15)/last_prices.get('FUTCNY062400', 1), 1)}   »   0.15(for)\n\n" \
+                   f"{await valyta_smail(percent_eu_cr_eurcnh)} •  ({percent_eu_cr_eurcnh}%){await smail_vnimanie(percent_eu_cr_eurcnh)}\n{await link_text('Eu1 / Cr1 / EURCNH(for)')}\n" \
+                   f"1  »  {round(eurrub_inv_tom / last_prices.get('FUTCNY062400', 1), 1)}  »  0.01 (for)\n" \
+                   f"5  »  {round((eurrub_inv_tom * 5) / last_prices.get('FUTCNY062400', 1), 1)}  »  0.05 (for)\n" \
+                   f"15  »  {round((eurrub_inv_tom * 15) / last_prices.get('FUTCNY062400', 1), 1)}  »  0.15 (for)\n\n" \
+                   f"{await valyta_smail(percent_eu_si_eurusd)} •  ({percent_eu_si_eurusd}%){await smail_vnimanie(percent_eu_si_eurusd)}\n{await link_text('Eu1 / Si1 / EURUSD(for)')}\n" \
+                   f"1  »  {round(eurrub_inv_tom / (si_price / 1000), 1)}  »  0.01(for)\n" \
+                   f"5  »  {round((eurrub_inv_tom * 5) / (si_price / 1000), 1)}  »  0.05(for)\n" \
+                   f"15  »  {round((eurrub_inv_tom * 15) / (si_price / 1000), 1)}  »  0.15(for)\n\n" \
+                   f"{await valyta_smail(percent_eu_si_ed)} •  ({percent_eu_si_ed}%){await smail_vnimanie(percent_eu_si_ed)}\n{await link_text('Eu1 / Si1 / ED')}\n" \
+                   f"1  »  {round(eurrub_inv_tom / (si_price / 1000), 1)}  »  1(ed)\n" \
+                   f"5  »  {round((eurrub_inv_tom * 5) / (si_price / 1000), 1)}  »  5(ed)\n" \
+                   f"15  »  {round((eurrub_inv_tom * 15) / (si_price / 1000), 1)}  »  15(ed)\n\n" \
                    f"Валюта\n" \
-                   f"{await valyta_smail(percent_us_tom_cn_tom_usdcnh)} •  ({percent_us_tom_cn_tom_usdcnh}%){await smail_vnimanie(percent_us_tom_cn_tom_usdcnh)}\nUS_TOM / CN_TOM / $USDCNH(for)\n\n" \
-                   f"{await valyta_smail(percent_eu_tom_cn_tom_eurcnh)} •  ({percent_eu_tom_cn_tom_eurcnh}%){await smail_vnimanie(percent_eu_tom_cn_tom_eurcnh)}\nEU_TOM / CN_TOM / $EURCNH(for)\n\n" \
-                   f"{await valyta_smail(percent_us_tom_kz_tom_usdkzt)} •  ({percent_us_tom_kz_tom_usdkzt}%){await smail_vnimanie(percent_us_tom_kz_tom_usdkzt)}\nUS_TOM / KZ_TOM / $USDKZT(for)\n\n" \
-                   f"{await valyta_smail(percent_eu_tom_kz_tom_eurkzt)} •  ({percent_eu_tom_kz_tom_eurkzt}%){await smail_vnimanie(percent_eu_tom_kz_tom_eurkzt)}\nEU_TOM / KZ_TOM / $EURKZT(for)\n\n" \
-                   f"{await valyta_smail(percent_us_tom_try_tom_usdtry)} •  ({percent_us_tom_try_tom_usdtry}%){await smail_vnimanie(percent_us_tom_try_tom_usdtry)}\nUS_TOM / TRY_TOM / $USDTRY(for)\n\n" \
-                   f"{await valyta_smail(percent_eu_tom_try_tom_eurtry)} •  ({percent_eu_tom_try_tom_eurtry}%){await smail_vnimanie(percent_eu_tom_try_tom_eurtry)}\nEU_TOM / TRY_TOM / $EURTRY(for)\n\n\n" \
+                   f"{await valyta_smail(percent_us_tom_cn_tom_usdcnh)} •  ({percent_us_tom_cn_tom_usdcnh}%){await smail_vnimanie(percent_us_tom_cn_tom_usdcnh)}\n{await link_text('US_TOM / CN_TOM / SDCNH(for)')}\n\n" \
+                   f"{await valyta_smail(percent_eu_tom_cn_tom_eurcnh)} •  ({percent_eu_tom_cn_tom_eurcnh}%){await smail_vnimanie(percent_eu_tom_cn_tom_eurcnh)}\n{await link_text('EU_TOM / CN_TOM / EURCNH(for)')}\n\n" \
+                   f"{await valyta_smail(percent_us_tom_kz_tom_usdkzt)} •  ({percent_us_tom_kz_tom_usdkzt}%){await smail_vnimanie(percent_us_tom_kz_tom_usdkzt)}\n{await link_text('US_TOM / KZ_TOM / USDKZT(for)')}\n\n" \
+                   f"{await valyta_smail(percent_eu_tom_kz_tom_eurkzt)} •  ({percent_eu_tom_kz_tom_eurkzt}%){await smail_vnimanie(percent_eu_tom_kz_tom_eurkzt)}\n{await link_text('EU_TOM / KZ_TOM / EURKZT(for)')}\n\n" \
+                   f"{await valyta_smail(percent_us_tom_try_tom_usdtry)} •  ({percent_us_tom_try_tom_usdtry}%){await smail_vnimanie(percent_us_tom_try_tom_usdtry)}\n{await link_text('US_TOM / TRY_TOM / USDTRY(for)')}\n\n" \
+                   f"{await valyta_smail(percent_eu_tom_try_tom_eurtry)} •  ({percent_eu_tom_try_tom_eurtry}%){await smail_vnimanie(percent_eu_tom_try_tom_eurtry)}\n{await link_text('EU_TOM / TRY_TOM / EURTRY(for)')}\n\n\n" \
                    f"Акции\n" \
 
             time_apgrade1 = datetime.datetime.now(moscow_tz)
@@ -222,10 +275,10 @@ async def valuta_vtelegram():
             text2 = f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new}\n\n"
             vnimanie = f"Один знак  '❗' =  {delitel}%\n\n"
             name = f"Фьючерсы на индексы и товары\n"
-            silver_text = f"{await valyta_smail(percent_sv1_silver)} •  ({percent_sv1_silver}%){await smail_vnimanie(percent_sv1_silver, delitel=delitel)}\n$SV1! / $SILVER(for)\n5(SV1) = 0.01(for)\n\n"
-            gold_text = f"{await valyta_smail(percent_gd1_gold)} •  ({percent_gd1_gold}%){await smail_vnimanie(percent_gd1_gold, delitel=delitel)}\n$GD1! / $GOLD(for)\n1(GD) = 0.01(for)\n\n"
-            nasdaq_text = f"{await valyta_smail(percent_na1_nasdaq)} •  ({percent_na1_nasdaq}%){await smail_vnimanie(percent_na1_nasdaq, delitel=delitel)}\n$NA1! / $NASDAQ(for)\n100(NA1) = 0.1(for)\n\n"
-            sp500_text = f"{await valyta_smail(percent_sf1_sp500)} •  ({percent_sf1_sp500}%){await smail_vnimanie(percent_sf1_sp500, delitel=delitel)}\n$SF1! / $SPX(for)\n10(SF) = 0.1(for)\n\n"
+            silver_text = f"{await valyta_smail(percent_sv1_silver)} •  ({percent_sv1_silver}%){await smail_vnimanie(percent_sv1_silver, delitel=delitel, znak='❗')}\n{await link_text('SV1! / $SILVER(for)')}\n5(SV1) = 0.01(for)\n\n"
+            gold_text = f"{await valyta_smail(percent_gd1_gold)} •  ({percent_gd1_gold}%){await smail_vnimanie(percent_gd1_gold, delitel=delitel, znak='❗')}\n{await link_text('GD1! / $GOLD(for)')}\n1(GD) = 0.01(for)\n\n"
+            nasdaq_text = f"{await valyta_smail(percent_na1_nasdaq)} •  ({percent_na1_nasdaq}%){await smail_vnimanie(percent_na1_nasdaq, delitel=delitel, znak='❗')}\n{await link_text('NA1! / $NASDAQ(for)')}\n100(NA1) = 0.1(for)\n\n"
+            sp500_text = f"{await valyta_smail(percent_sf1_sp500)} •  ({percent_sf1_sp500}%){await smail_vnimanie(percent_sf1_sp500, delitel=delitel, znak='❗')}\n{await link_text('SF1! / $SPX(for)')}\n10(SF) = 0.1(for)\n\n"
             list_text = [text2, vnimanie,  name, silver_text, gold_text, nasdaq_text, sp500_text]
             finali_message = ''.join(list_text)
 
@@ -240,8 +293,8 @@ async def valuta_vtelegram():
             #     text = text + await arbitrage_parniy_futures(fut_sb["SRM4"], fut_sbp["SPM4"], name=name)
             #     text = text + '\n' + await arbtrage_future_akcii()
 
-            s = await bot.edit_message_text(text, chat_id=chenal_id, message_id=last_messa2_id)
-            s2 = await bot.edit_message_text(finali_message, chat_id=chenal_id, message_id=last_messa_id)
+            s = await bot.edit_message_text(text, chat_id=chenal_id, message_id=last_messa2_id, parse_mode='HTML')
+            s2 = await bot.edit_message_text(finali_message, chat_id=chenal_id, message_id=last_messa_id, parse_mode='HTML')
 
     except Exception as e:
         error_message = traceback.format_exc()
@@ -255,6 +308,7 @@ async def start_cicl_5s():
             await valuta_vtelegram()
             await asyncio.sleep(5)
             await get_last_prices_dict()
+            print(dict_interva)
     except Exception as e:
         error_message = traceback.format_exc()
         print(f'Произошла ошибка функции valuta_vtelegram:\n{error_message}')

@@ -167,7 +167,6 @@ async def time_range(start_time: str, end_time: str, current_time: time) -> bool
     return start_datetime <= current_time <= end_datetime
 
 
-
 async def aukcion(asks_pro: dict, bids_pok: dict):
     while True:
         # Проверяем, что есть как минимум одна заявка и предложение, и что минимальная цена заявки меньше или равна максимальной цене предложения
