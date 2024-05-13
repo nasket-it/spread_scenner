@@ -43,7 +43,13 @@ phone = Token.phone
 #<href='Сылка'>Курсив</a>
 
 
-
+lotnost_forex = {'USDCNH' : 0.01, 'EURUSD' : 0.01, 'EURCNH' : 0.01,
+                 'XAUUSD' : 0.01, 'XAGUSD' : 0.01, 'USDTRY' : 0.01,
+                 'EURTRY' : 0.01, 'NDXUSD' : 0.1, 'SPXUSD' : 0.1,
+                 'silver' : {'forex' : 0.01, 'moex' : 5},
+                 'gold' : {'forex' : 0.01, 'moex' : 1},
+                 'nasdaq' : {'forex' : 0.1, 'moex' : 100},
+                 'sp500' : {'forex' : 0.1, 'moex' : 10}}
 
 
 
@@ -62,9 +68,12 @@ async def smail_vnimanie(percent, delitel=0.1, znak='❗️'):
     # Используем абсолютное значение процента для упрощения
     abs_percent = abs(percent)
     smail = znak
+    smail_stop = '  🙅‍'
     # Округляем вверх, чтобы получить правильное количество символов '❗️'
     percent_namber = math.ceil(abs_percent // delitel)
-    if percent_namber <= 6:
+    if percent_namber == 0:
+        return smail_stop
+    elif percent_namber <= 6:
         return percent_namber * smail
     else:
         return 6 * smail + '+'
@@ -95,7 +104,23 @@ async def napravlenie_sdelok_3nogi(percent, svazka : str, price1 : float, price2
                f"{list_tiker[0].strip()}- 1 ({await link_text(price1)})\n" \
                f"{list_tiker[1].strip()}- {round(lot2 / 1000, 1) if list_tiker[1].strip() == 'CR1' or list_tiker[1].strip() == 'Cr1' else lot2} ({await link_text(price2)})\n" \
                f"{list_tiker[2].strip()}- 1 ({await link_text(price3)})\n\n"
-# <b>Жирный</b>
+
+
+
+async def napravlenie_sdelok_2nogi(percent, svazka : str, price1 : float, price2 : float, lot1, lot2, delitel=0.1):
+    list_tiker = svazka.split('/')
+    abs_percent = abs(percent)
+    percent_namber = math.ceil(abs_percent // delitel)
+    if percent < 0 and percent_namber >= 1 :
+        return f"Лонг {list_tiker[0].strip()}- {lot1} ({await link_text(price1)})\n" \
+               f"Шорт {list_tiker[1].strip()}- {lot2} ({await link_text(price2)})\n\n"
+    elif percent > 0 and percent_namber >= 1 :
+        return f"Шорт {list_tiker[0].strip()}- {lot1} ({await link_text(price1)})\n" \
+               f"Лонг {list_tiker[1].strip()}- {lot2} ({await link_text(price2)})\n\n"
+    else:
+        return f"Цена в пределах справедливой \n"\
+               f"{list_tiker[0].strip()}- {lot1} ({await link_text(price1)})\n" \
+               f"{list_tiker[1].strip()}- {lot2} ({await link_text(price2)})\n\n"
 # <i>Курсив</i>
 # <s>Зачеркнутый</s>
 # <u>Подчеркнутый</u>
@@ -151,7 +176,8 @@ async def arbitrage_parniy_akcii(tiker1, tiker2, price_percent=True, perenos_str
             punkti = punkti if punkti > 0 else punkti * -1
             percents = await percent(tiker1_last_price, tiker2_last_price)
             text = f"{tiker1} / {tiker2}"
-            return f"{await valyta_smail(percents)} • {await link_text(text)}{await smail_vnimanie(percents)}\n{punkti}п | {rubli}р | {percents}%\n\n" \
+            return f"{await valyta_smail(percents)} • {await link_text(text)}{await smail_vnimanie(percents)}\n{punkti}п | {rubli}р | {percents}%\n" \
+                   f"{await napravlenie_sdelok_2nogi(percents, text, price1=tiker1_last_price, price2=tiker2_last_price, lot1=1, lot2=1)}\n"
 
 
 
@@ -211,10 +237,16 @@ async def send_signals(percent, message, svyazka):
     #     del dict_interva[svyazka]
 
 
-async def create_tex_sprav_price_future(percent, sprav_price, svyazka):
-    text =  [f"{await valyta_smail(percent)} •  ({percent}%){await smail_vnimanie(percent)}\n",
-    f"{await link_text(svyazka)}\n\n"]
-    return ''.join(text)
+async def create_tex_sprav_price_future(percent, sprav_price, svyazka, svazkka_moex_forex=None):
+    if svazkka_moex_forex == None:
+        text =  [f"{await valyta_smail(percent)} •  ({percent}%){await smail_vnimanie(percent)}\n",
+        f"{await link_text(svyazka)}\n"]
+        return ''.join(text)
+    else:
+        text = [f"{await valyta_smail(percent)} •  ({percent}%){await smail_vnimanie(percent)}\n",
+                f"{await link_text(svyazka)}\n", ]
+        return ''.join(text)
+
 
 #link_name = '<a href="https://t.me/spread_sca">Eu1 / Cr1 / EURCNH(for)</a>'
 
@@ -296,7 +328,7 @@ async def valuta_vtelegram():
 
 
 
-            sprav_price_cr1 = await sprav_price_future(last_prices.get('BBG0013HRTL0', 1), figi='FUTCNY062400')
+            sprav_price_cr1 = await sprav_price_future(last_prices.get('BBG0013HRTL0', 1), figi='FUTCNY062400', max_percente_first_day=2.7)
             percent_sprav_price_cr1 = round(last_prices.get('FUTCNY062400', 1) / sprav_price_cr1 * 100 -100, 3)
 
             sprav_price_silver = await sprav_price_future(silver_in, figi='FUTSILV06240', max_percente_first_day=3.25)
@@ -337,7 +369,7 @@ async def valuta_vtelegram():
             delitel2 = 0.1
             text_valuta = [f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new}\n\n" ,
                    f"Один знак  '❗' =  {delitel2}%\n\n",
-                   f"⚠️ {await zirniy_text(await podcher_text('Валюта'))}👇👇👇\n\n" ,
+                   f"⚙️ {await zirniy_text(await podcher_text('Валюта'))}👇👇👇\n\n" ,
                    f"{await valyta_smail(percent_us_tom_cn_tom_usdcnh)} •  ({percent_us_tom_cn_tom_usdcnh}%){await smail_vnimanie(percent_us_tom_cn_tom_usdcnh)}\n{await link_text('US_TOM / CN_TOM / SDCNH(for)')}\n" ,
                    await napravlenie_sdelok_3nogi(percent_us_tom_cn_tom_usdcnh, 'US_TOM / CN_TOM / USDCNH(for)', price1=last_prices.get('BBG0013HGFT4', 1),  price2=last_prices.get('BBG0013HRTL0', 1), price3=usdcnh_for),
                    f"{await valyta_smail(percent_eu_tom_cn_tom_eurcnh)} •  ({percent_eu_tom_cn_tom_eurcnh}%){await smail_vnimanie(percent_eu_tom_cn_tom_eurcnh)}\n{await link_text('EU_TOM / CN_TOM / EURCNH(for)')}\n",
@@ -357,16 +389,19 @@ async def valuta_vtelegram():
 
             time_apgrade1 = datetime.datetime.now(moscow_tz)
             time_new1 = time_apgrade.strftime("%H:%M:%S")
-            delitel = 0.5
-            text2 = f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new}\n\n"
-            vnimanie = f"Один знак  '❗' =  {delitel}%\n\n"
-
-
+            delitel = 0.1
             silver_text = await create_tex_sprav_price_future(percent_sprav_price_silver, sprav_price_silver, 'SV1 (real) / SV1 (спр)')
+            silver_text += await napravlenie_sdelok_2nogi(percent_sprav_price_silver, 'SV1 / XAGUSD(for)', price1=last_prices.get('FUTSILV06240', None), price2=silver_in, lot1=lotnost_forex['silver']['moex'], lot2=lotnost_forex['silver']['forex'])
             gold_text = await create_tex_sprav_price_future(percent_sprav_price_gold, sprav_price_gold, 'GOLD1 (real) / GOLD1 (спр)')
+            gold_text += await napravlenie_sdelok_2nogi(percent_sprav_price_gold, 'GOLD1 / XAUUSD(for)', price1=last_prices.get('FUTGOLD06240',None), price2=gold_in, lot1=lotnost_forex['gold']['moex'], lot2=lotnost_forex['gold']['forex'])
             nasdaq_text = await create_tex_sprav_price_future(percent_sprav_price_nasdaq, sprav_price_nasdaq, 'NA1! (real) / NA1! (спр)')
+            nasdaq_text += await napravlenie_sdelok_2nogi(percent_sprav_price_nasdaq, 'NA1 / NDXUSD(for)', price1=last_prices.get('FUTNASD06240',None), price2=nasdaq_in, lot1=lotnost_forex['nasdaq']['moex'], lot2=lotnost_forex['nasdaq']['forex'])
             sp500_text = await create_tex_sprav_price_future(percent_sprav_price_sp500, sprav_price_sp500, 'SF!! (real) / SF1! (спр)')
-            list_text = [text2, vnimanie, silver_text,  gold_text, nasdaq_text, sp500_text]
+            sp500_text += await napravlenie_sdelok_2nogi(percent_sprav_price_sp500, 'SF1 / SPXUSD(for)', price1=last_prices.get('FUTSPYF06240',None) , price2=sp500_in, lot1=lotnost_forex['sp500']['moex'], lot2=lotnost_forex['sp500']['forex'])
+            list_text = [f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new1}\n\n",
+                         f"Один знак  '❗' =  {delitel}%\n\n",
+                         f"⚙️ {await zirniy_text(await podcher_text('Фьючерсы на металлы, индексы '))}\n\n",
+                         silver_text,  gold_text, nasdaq_text, sp500_text]
             finali_message = ''.join(list_text)
 
 
@@ -374,8 +409,15 @@ async def valuta_vtelegram():
             fut_sbp = {"SPM4" : "FUTSBPR06240"}
             name = ['SBRF', 'SBPR']
             if time_10x23_50:
-                finali_message = finali_message + await arbitrage_parniy_akcii('TATN', 'TATNP')
-                finali_message = finali_message + await arbitrage_parniy_akcii('SBER', 'SBERP')
+                time_new2 = time_apgrade.strftime("%H:%M:%S")
+                delitel = 0.1
+                tatn_tex = await arbitrage_parniy_akcii('TATN', 'TATNP')
+                sber_text = await arbitrage_parniy_akcii('SBER', 'SBERP')
+                list_akcii = [f"\n⚙️ {await zirniy_text(await podcher_text('Акции'))}\n\n",
+                              tatn_tex, sber_text]
+                finali_message_akcii = ''.join(list_akcii)
+                finali_message = finali_message + finali_message_akcii
+
             # if time_10x23_50:
             #     text = text + await arbitrage_parniy_futures(fut_sb["SRM4"], fut_sbp["SPM4"], name=name)
             #     text = text + '\n' + await arbtrage_future_akcii()
