@@ -94,16 +94,16 @@ async def napravlenie_sdelok_3nogi(percent, svazka : str, price1 : float, price2
     if percent < 0 and percent_namber >= 1 :
         return f"Лонг {list_tiker[0].strip()}- 1 ({await link_text(price1)})\n" \
                f"Шорт {list_tiker[1].strip()}- {round(lot2 / 1000, 1) if list_tiker[1].strip() == 'CR1' or list_tiker[1].strip() == 'Cr1' else lot2} ({await link_text(price2)})\n" \
-               f"Шорт {list_tiker[2].strip()}- 1 ({await link_text(price3)})\n\n"
+               f"Шорт {list_tiker[2].strip()}- {0.01 if list_tiker[2].strip() != 'ED' else 1 } ({await link_text(price3)})\n\n"
     elif percent > 0 and percent_namber >= 1 :
         return f"Шорт {list_tiker[0].strip()}- 1 ({await link_text(price1)})\n" \
                f"Лонг {list_tiker[1].strip()}- {round(lot2 / 1000, 1) if list_tiker[1].strip() == 'CR1' or list_tiker[1].strip() == 'Cr1' else lot2} ({await link_text(price2)})\n" \
-               f"Лонг {list_tiker[2].strip()}- 1 ({await link_text(price3)})\n\n"
+               f"Лонг {list_tiker[2].strip()}- {0.01 if list_tiker[2].strip() != 'ED' else 1 } ({await link_text(price3)})\n\n"
     else:
         return f"Цена в пределах справедливой \n"\
                f"{list_tiker[0].strip()}- 1 ({await link_text(price1)})\n" \
                f"{list_tiker[1].strip()}- {round(lot2 / 1000, 1) if list_tiker[1].strip() == 'CR1' or list_tiker[1].strip() == 'Cr1' else lot2} ({await link_text(price2)})\n" \
-               f"{list_tiker[2].strip()}- 1 ({await link_text(price3)})\n\n"
+               f"{list_tiker[2].strip()}- {0.01 if list_tiker[2].strip() != 'ED' else 1 } ({await link_text(price3)})\n\n"
 
 
 
