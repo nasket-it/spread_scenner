@@ -79,8 +79,19 @@ async def smail_vnimanie(percent, delitel=0.1, znak='❗️'):
         return 6 * smail + '+'
 
 async def valuta_replace_float(valut_para, dict, kol_znakov):
-    price = dict['valuta'][valut_para][0].replace('.', '') if valut_para in ['gold_fut', 'gold_spot', 'XAUUSD', "nasdaq", "sp500"] else dict['valuta'][valut_para][0]
-    return round(float(price.replace(',', '.')), kol_znakov)
+    price = dict['valuta'][valut_para][0]
+    proverka_na_tochku = '.' in price.split(',')[-1]
+    if proverka_na_tochku:
+        price = price.replace(',', '')
+    else:
+        price = price.replace('.', '').replace(',', '.')
+
+
+    #price = dict['valuta'][valut_para][0].replace('.', '') if valut_para in ['gold_fut', 'gold_spot', 'XAUUSD', "nasdaq", "sp500"] else dict['valuta'][valut_para][0]
+    # Удаляем запятые, используемые в качестве разделителей тысяч
+    # price = dict['valuta'][valut_para][0].replace(',', '')
+
+    return round(float(price), kol_znakov)
 
 async def percent(num_100, num_rezultat):
     return round(num_100 / num_rezultat * 100 - 100, 2)
@@ -361,41 +372,42 @@ async def valuta_vtelegram():
             delitel1 = 0.1
             time_apgrade = datetime.datetime.now(moscow_tz)
             time_new = time_apgrade.strftime("%H:%M:%S")
-            text_future = [
-                   f"⚙️ {await podcher_text(await zirniy_text('Фьючерсы на валюту'))} 👇👇👇\n\n",
-                   f"{await valyta_smail(percent_si_cr_usdcnh)} •  ({percent_si_cr_usdcnh}%){await smail_vnimanie(percent_si_cr_usdcnh)}\n{await link_text('Si1 / CR1 / USDCNH(for)')}\n" ,
-                   await napravlenie_sdelok_3nogi(percent_si_cr_usdcnh, 'Si1 / CR1 / USDCNH(for)', price1=si_price, price2=last_prices.get('FUTCNY062400', 1), price3=usdcnh_for) ,
-                   f"{await valyta_smail(percent_eu_cr_eurcnh)} •  ({percent_eu_cr_eurcnh}%){await smail_vnimanie(percent_eu_cr_eurcnh)}\n{await link_text('Eu1 / Cr1 / EURCNH(for)')}\n" ,
-                   await napravlenie_sdelok_3nogi(percent_eu_cr_eurcnh, 'Eu1 / Cr1 / EURCNH(for)', price1=last_prices.get('FUTEU0624000', 1), price2=last_prices.get('FUTCNY062400', 1), price3=eurcnh_for),
-                   f"{await valyta_smail(percent_eu_si_eurusd)} •  ({percent_eu_si_eurusd}%){await smail_vnimanie(percent_eu_si_eurusd)}\n{await link_text('Eu1 / Si1 / EURUSD(for)')}\n" ,
-                   await napravlenie_sdelok_3nogi(percent_eu_si_eurusd, 'Eu1 / Si1 / EURUSD(for)', price1=last_prices.get('FUTEU0624000', 1), price2=si_price, price3=eurusd_for),
-                   f"{await valyta_smail(percent_eu_si_ed)} •  ({percent_eu_si_ed}%){await smail_vnimanie(percent_eu_si_ed)}\n{await link_text('Eu1 / Si1 / ED')}\n" ,
-                   await napravlenie_sdelok_3nogi(percent_eu_si_eurusd, 'Eu1 / Si1 / ED',  price1=last_prices.get('FUTEU0624000', 1), price2=si_price, price3=last_prices.get('FUTED0624000', 1) ),
-                   f"{await valyta_smail(percent_usf_cnf_usdcnh)} •  ({percent_usf_cnf_usdcnh}%){await smail_vnimanie(percent_usf_cnf_usdcnh)}\n{await link_text('US.F / CN.F / USDCNH(for)')}\n",
-                   await napravlenie_sdelok_3nogi(percent_usf_cnf_usdcnh, 'US.F / CN.F / USDCNH(for)', price1=last_prices.get(futures['USDRUBF'], 1), price2=last_prices.get(futures['CNYRUBF'], 1), price3=usdcnh_for),
+            text_future_zagolovok = f"⚙️ {await podcher_text(await zirniy_text('Фьючерсы на валюту'))} 👇👇👇\n\n"
+
+            text_future_kotirovri = [[f"{await valyta_smail(percent_si_cr_usdcnh)} •  ({percent_si_cr_usdcnh}%){await smail_vnimanie(percent_si_cr_usdcnh)}\n{await link_text('Si1 / CR1 / USDCNH(for)')}\n" +
+                                    await napravlenie_sdelok_3nogi(percent_si_cr_usdcnh, 'Si1 / CR1 / USDCNH(for)', price1=si_price, price2=last_prices.get('FUTCNY062400', 1), price3=usdcnh_for) , abs(percent_si_cr_usdcnh)],
+                                    [f"{await valyta_smail(percent_eu_cr_eurcnh)} •  ({percent_eu_cr_eurcnh}%){await smail_vnimanie(percent_eu_cr_eurcnh)}\n{await link_text('Eu1 / Cr1 / EURCNH(for)')}\n" +
+                                    await napravlenie_sdelok_3nogi(percent_eu_cr_eurcnh, 'Eu1 / Cr1 / EURCNH(for)', price1=last_prices.get('FUTEU0624000', 1), price2=last_prices.get('FUTCNY062400', 1), price3=eurcnh_for), abs(percent_eu_cr_eurcnh)],
+                                    [f"{await valyta_smail(percent_eu_si_eurusd)} •  ({percent_eu_si_eurusd}%){await smail_vnimanie(percent_eu_si_eurusd)}\n{await link_text('Eu1 / Si1 / EURUSD(for)')}\n" +
+                                    await napravlenie_sdelok_3nogi(percent_eu_si_eurusd, 'Eu1 / Si1 / EURUSD(for)', price1=last_prices.get('FUTEU0624000', 1), price2=si_price, price3=eurusd_for), abs(percent_eu_si_eurusd)],
+                                    [f"{await valyta_smail(percent_eu_si_ed)} •  ({percent_eu_si_ed}%){await smail_vnimanie(percent_eu_si_ed)}\n{await link_text('Eu1 / Si1 / ED')}\n" +
+                                    await napravlenie_sdelok_3nogi(percent_eu_si_eurusd, 'Eu1 / Si1 / ED',  price1=last_prices.get('FUTEU0624000', 1), price2=si_price, price3=last_prices.get('FUTED0624000', 1) ), abs(percent_eu_si_ed)],
+                                    [f"{await valyta_smail(percent_usf_cnf_usdcnh)} •  ({percent_usf_cnf_usdcnh}%){await smail_vnimanie(percent_usf_cnf_usdcnh)}\n{await link_text('US.F / CN.F / USDCNH(for)')}\n" +
+                                    await napravlenie_sdelok_3nogi(percent_usf_cnf_usdcnh, 'US.F / CN.F / USDCNH(for)', price1=last_prices.get(futures['USDRUBF'], 1), price2=last_prices.get(futures['CNYRUBF'], 1), price3=usdcnh_for), abs(percent_usf_cnf_usdcnh)]]
 
 
-                   f"{await valyta_smail(percent_sprav_price_cr1)} •  ({percent_sprav_price_cr1}%){await smail_vnimanie(percent_sprav_price_cr1)}\n" ,
-                   f"{await link_text('CR1 (спр) / CR1 (real)')}\n\n" ,
-                   f"CR1 (спр) -> цена справ-вая = {sprav_price_cr1}\n\n\n"]
+            text_fur_spot = [f"{await valyta_smail(percent_sprav_price_cr1)} •  ({percent_sprav_price_cr1}%){await smail_vnimanie(percent_sprav_price_cr1)}\n" ,
+                             f"{await link_text('CR1 (спр) / CR1 (real)')}\n" ,
+                             f"CR1 (спр) -> цена справ-вая = {sprav_price_cr1}\n\n\n"]
             delitel2 = 0.1
-            text_valuta = [f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new}\n\n" ,
+            text_valuta_zagolovok = [f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new}\n\n" ,
                    f"Один знак  '❗' =  {delitel2}%\n\n",
-                   f"⚙️ {await zirniy_text(await podcher_text('Валюта'))}👇👇👇\n\n" ,
-                   f"{await valyta_smail(percent_us_tom_cn_tom_usdcnh)} •  ({percent_us_tom_cn_tom_usdcnh}%){await smail_vnimanie(percent_us_tom_cn_tom_usdcnh)}\n{await link_text('US_TOM / CN_TOM / SDCNH(for)')}\n" ,
-                   await napravlenie_sdelok_3nogi(percent_us_tom_cn_tom_usdcnh, 'US_TOM / CN_TOM / USDCNH(for)', price1=last_prices.get('BBG0013HGFT4', 1),  price2=last_prices.get('BBG0013HRTL0', 1), price3=usdcnh_for),
-                   f"{await valyta_smail(percent_eu_tom_cn_tom_eurcnh)} •  ({percent_eu_tom_cn_tom_eurcnh}%){await smail_vnimanie(percent_eu_tom_cn_tom_eurcnh)}\n{await link_text('EU_TOM / CN_TOM / EURCNH(for)')}\n",
-                   await napravlenie_sdelok_3nogi(percent_eu_tom_cn_tom_eurcnh, 'EU_TOM / CN_TOM / EURCNH(for)', price1=eurrub_inv_tom,  price2=last_prices.get('BBG0013HRTL0', 1), price3=eurcnh_for),
-                   f"{await valyta_smail(percent_us_tom_kz_tom_usdkzt)} •  ({percent_us_tom_kz_tom_usdkzt}%){await smail_vnimanie(percent_us_tom_kz_tom_usdkzt)}\n{await link_text('US_TOM / KZ_TOM / USDKZT(for)')}\n" ,
-                   await napravlenie_sdelok_3nogi(percent_us_tom_kz_tom_usdkzt, 'US_TOM / KZ_TOM / USDKZT(for)', price1=last_prices.get('BBG0013HGFT4', 1) , price2=last_prices.get('BBG0013HG026', 4), price3=usdkzt_for),
-                   f"{await valyta_smail(percent_eu_tom_kz_tom_eurkzt)} •  ({percent_eu_tom_kz_tom_eurkzt}%){await smail_vnimanie(percent_eu_tom_kz_tom_eurkzt)}\n{await link_text('EU_TOM / KZ_TOM / EURKZT(for)')}\n" ,
-                   await napravlenie_sdelok_3nogi(percent_eu_tom_kz_tom_eurkzt, 'EU_TOM / KZ_TOM / EURKZT(for)', price1=eurrub_inv_tom,  price2=last_prices.get('BBG0013HG026', 4), price3=eurkzt_for),
-                   f"{await valyta_smail(percent_us_tom_try_tom_usdtry)} •  ({percent_us_tom_try_tom_usdtry}%){await smail_vnimanie(percent_us_tom_try_tom_usdtry)}\n{await link_text('US_TOM / TRY_TOM / USDTRY(for)')}\n" ,
-                   await napravlenie_sdelok_3nogi(percent_us_tom_try_tom_usdtry, 'US_TOM / TRY_TOM / USDTRY(for)', price1=last_prices.get('BBG0013HGFT4', 1), price2=last_prices.get('BBG0013J12N1', 4), price3=usdtry_for),
-                   f"{await valyta_smail(percent_eu_tom_try_tom_eurtry)} •  ({percent_eu_tom_try_tom_eurtry}%){await smail_vnimanie(percent_eu_tom_try_tom_eurtry)}\n{await link_text('EU_TOM / TRY_TOM / EURTRY(for)')}\n",
-                   await napravlenie_sdelok_3nogi(percent_eu_tom_try_tom_eurtry, 'EU_TOM / TRY_TOM / EURTRY(for)', price1=eurrub_inv_tom, price2=last_prices.get('BBG0013J12N1', 4), price3=eurtry_for),
-                   f"\n\n"
-                           ]
+                   f"⚙️ {await zirniy_text(await podcher_text('Валюта'))}👇👇👇\n\n"]
+            text_valuta_kotirovki =[ [f"{await valyta_smail(percent_us_tom_cn_tom_usdcnh)} •  ({percent_us_tom_cn_tom_usdcnh}%){await smail_vnimanie(percent_us_tom_cn_tom_usdcnh)}\n{await link_text('US_TOM / CN_TOM / SDCNH(for)')}\n" +
+                   await napravlenie_sdelok_3nogi(percent_us_tom_cn_tom_usdcnh, 'US_TOM / CN_TOM / USDCNH(for)', price1=last_prices.get('BBG0013HGFT4', 1),  price2=last_prices.get('BBG0013HRTL0', 1), price3=usdcnh_for), abs(percent_us_tom_cn_tom_usdcnh)],
+                   [f"{await valyta_smail(percent_eu_tom_cn_tom_eurcnh)} •  ({percent_eu_tom_cn_tom_eurcnh}%){await smail_vnimanie(percent_eu_tom_cn_tom_eurcnh)}\n{await link_text('EU_TOM / CN_TOM / EURCNH(for)')}\n" +
+                   await napravlenie_sdelok_3nogi(percent_eu_tom_cn_tom_eurcnh, 'EU_TOM / CN_TOM / EURCNH(for)', price1=eurrub_inv_tom,  price2=last_prices.get('BBG0013HRTL0', 1), price3=eurcnh_for),abs(percent_eu_tom_cn_tom_eurcnh)],
+                   [f"{await valyta_smail(percent_us_tom_kz_tom_usdkzt)} •  ({percent_us_tom_kz_tom_usdkzt}%){await smail_vnimanie(percent_us_tom_kz_tom_usdkzt)}\n{await link_text('US_TOM / KZ_TOM / USDKZT(for)')}\n" +
+                   await napravlenie_sdelok_3nogi(percent_us_tom_kz_tom_usdkzt, 'US_TOM / KZ_TOM / USDKZT(for)', price1=last_prices.get('BBG0013HGFT4', 1) , price2=last_prices.get('BBG0013HG026', 4), price3=usdkzt_for), abs(percent_us_tom_kz_tom_usdkzt)],
+                   [f"{await valyta_smail(percent_eu_tom_kz_tom_eurkzt)} •  ({percent_eu_tom_kz_tom_eurkzt}%){await smail_vnimanie(percent_eu_tom_kz_tom_eurkzt)}\n{await link_text('EU_TOM / KZ_TOM / EURKZT(for)')}\n" +
+                   await napravlenie_sdelok_3nogi(percent_eu_tom_kz_tom_eurkzt, 'EU_TOM / KZ_TOM / EURKZT(for)', price1=eurrub_inv_tom,  price2=last_prices.get('BBG0013HG026', 4), price3=eurkzt_for), abs(percent_eu_tom_kz_tom_eurkzt)],
+                   [f"{await valyta_smail(percent_us_tom_try_tom_usdtry)} •  ({percent_us_tom_try_tom_usdtry}%){await smail_vnimanie(percent_us_tom_try_tom_usdtry)}\n{await link_text('US_TOM / TRY_TOM / USDTRY(for)')}\n" +
+                   await napravlenie_sdelok_3nogi(percent_us_tom_try_tom_usdtry, 'US_TOM / TRY_TOM / USDTRY(for)', price1=last_prices.get('BBG0013HGFT4', 1), price2=last_prices.get('BBG0013J12N1', 4), price3=usdtry_for), abs(percent_us_tom_try_tom_usdtry)],
+                   [f"{await valyta_smail(percent_eu_tom_try_tom_eurtry)} •  ({percent_eu_tom_try_tom_eurtry}%){await smail_vnimanie(percent_eu_tom_try_tom_eurtry)}\n{await link_text('EU_TOM / TRY_TOM / EURTRY(for)')}\n" +
+                   await napravlenie_sdelok_3nogi(percent_eu_tom_try_tom_eurtry, 'EU_TOM / TRY_TOM / EURTRY(for)', price1=eurrub_inv_tom, price2=last_prices.get('BBG0013J12N1', 4), price3=eurtry_for) , abs(percent_eu_tom_try_tom_eurtry) ]
+                   ]
+
+
 
                    # f"Акции\n" \
 
@@ -433,9 +445,12 @@ async def valuta_vtelegram():
             # if time_10x23_50:
             #     text = text + await arbitrage_parniy_futures(fut_sb["SRM4"], fut_sbp["SPM4"], name=name)
             #     text = text + '\n' + await arbtrage_future_akcii()
+            text_fur_sorted = sorted(text_future_kotirovri, key=lambda x: x[1] , reverse=True)
+            text_future_string  = ''.join(text_future_zagolovok) + ''.join([i[0] for i in text_fur_sorted]) + '\n\n'
+            text_valuta_sorted = sorted(text_valuta_kotirovki, key=lambda x: x[1] , reverse=True)
+            text_valuta_string =  ''.join(text_valuta_zagolovok) + ''.join([i[0] for i in text_valuta_sorted] ) + '\n\n'
 
-            # finali_message1 = ''.join(text_future)
-            finali_message2 = ''.join(text_valuta + text_future)
+            finali_message2 = text_valuta_string + text_future_string + ''.join( text_fur_spot)
             # <b>Жирный</b>
             # <i>Курсив</i>
             # <s>Зачеркнутый</s>
