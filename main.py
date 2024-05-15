@@ -8,7 +8,7 @@ import asyncio
 from tinkoff_get_func import (
     time_range, get_last_price, expiration_date_future,asy_get_percent,
     arbtrage_future_akcii, last_prices, get_last_prices_dict, sprav_price_future,
-    )
+    futures)
 from Config import InfoTiker, Config, Chenal
 from aiogram import Bot, Dispatcher, types, executor
 from aiogram.utils.markdown import link
@@ -237,13 +237,13 @@ async def send_signals(percent, message, svyazka):
     #     del dict_interva[svyazka]
 
 
-async def create_tex_sprav_price_future(percent, sprav_price, svyazka, svazkka_moex_forex=None):
+async def create_tex_sprav_price_future(percent, svyazka, svazkka_moex_forex=None, delitel=0.1):
     if svazkka_moex_forex == None:
-        text =  [f"{await valyta_smail(percent)} •  ({percent}%){await smail_vnimanie(percent)}\n",
+        text =  [f"{await valyta_smail(percent)} •  ({percent}%){await smail_vnimanie(percent, delitel=delitel)}\n",
         f"{await link_text(svyazka)}\n"]
         return ''.join(text)
     else:
-        text = [f"{await valyta_smail(percent)} •  ({percent}%){await smail_vnimanie(percent)}\n",
+        text = [f"{await valyta_smail(percent)} •  ({percent}%){await smail_vnimanie(percent, delitel=delitel)}\n",
                 f"{await link_text(svyazka)}\n", ]
         return ''.join(text)
 
@@ -314,6 +314,14 @@ async def valuta_vtelegram():
             message_eu_si_ed = f"{await valyta_smail(percent_eu_si_ed)} •  ({percent_eu_si_ed}%){await smail_vnimanie(percent_eu_si_ed)}\nEu1 / Si1 / $ED ️\n\n\n"
             await send_signals(percent_eu_si_ed, message_eu_si_ed, eu_si_ed)
 
+            percent_usf_cnf_usdcnh = round(last_prices.get(futures['USDRUBF'], 1) / last_prices.get(futures['CNYRUBF'], 1) / usdcnh_for * 100 -100, 3)
+            usf_cnf_usdcnh = 'US.F_CN.F_USDCNH(for)'
+            message_usf_cnf_usdcnh = f"{await valyta_smail(percent_usf_cnf_usdcnh)} •  ({percent_usf_cnf_usdcnh}%){await smail_vnimanie(percent_usf_cnf_usdcnh)}\nUS.F / CN.F / USDCNH(for) ️\n\n\n"
+            await send_signals(percent_usf_cnf_usdcnh, message_usf_cnf_usdcnh, usf_cnf_usdcnh)
+
+            percent_euf_cnf_eurcnh = round(last_prices.get(futures['EURRUBF'], 1) / last_prices.get(futures['CNYRUBF'], 1) / eurcnh_for * 100 - 100, 3)
+            usf_cnf_usdcnh = 'EU.F_CN.F_EURCNH(for)'
+
             percent_us_tom_cn_tom_usdcnh = round(last_prices.get('BBG0013HGFT4', 1) / last_prices.get('BBG0013HRTL0', 1)/ usdcnh_for * 100 -100, 3)
             percent_eu_tom_cn_tom_eurcnh = round(eurrub_inv_tom / last_prices.get('BBG0013HRTL0', 1)/ await valuta_replace_float('EURCNH', yahoo_valyata, 4) * 100 -100, 3)
             percent_us_tom_kz_tom_usdkzt = round(last_prices.get('BBG0013HGFT4', 1) / last_prices.get('BBG0013HG026', 4)/ usdkzt_for * 100 * 100 -100, 3)
@@ -363,6 +371,10 @@ async def valuta_vtelegram():
                    await napravlenie_sdelok_3nogi(percent_eu_si_eurusd, 'Eu1 / Si1 / EURUSD(for)', price1=last_prices.get('FUTEU0624000', 1), price2=si_price, price3=eurusd_for),
                    f"{await valyta_smail(percent_eu_si_ed)} •  ({percent_eu_si_ed}%){await smail_vnimanie(percent_eu_si_ed)}\n{await link_text('Eu1 / Si1 / ED')}\n" ,
                    await napravlenie_sdelok_3nogi(percent_eu_si_eurusd, 'Eu1 / Si1 / ED',  price1=last_prices.get('FUTEU0624000', 1), price2=si_price, price3=last_prices.get('FUTED0624000', 1) ),
+                   f"{await valyta_smail(percent_usf_cnf_usdcnh)} •  ({percent_usf_cnf_usdcnh}%){await smail_vnimanie(percent_usf_cnf_usdcnh)}\n{await link_text('US.F / CN.F / USDCNH(for)')}\n",
+                   await napravlenie_sdelok_3nogi(percent_usf_cnf_usdcnh, 'US.F / CN.F / USDCNH(for)', price1=last_prices.get(futures['USDRUBF'], 1), price2=last_prices.get(futures['CNYRUBF'], 1), price3=usdcnh_for),
+
+
                    f"{await valyta_smail(percent_sprav_price_cr1)} •  ({percent_sprav_price_cr1}%){await smail_vnimanie(percent_sprav_price_cr1)}\n" ,
                    f"{await link_text('CR1 (спр) / CR1 (real)')}\n\n" ,
                    f"CR1 (спр) -> цена справ-вая = {sprav_price_cr1}\n\n\n"]
@@ -389,14 +401,14 @@ async def valuta_vtelegram():
 
             time_apgrade1 = datetime.datetime.now(moscow_tz)
             time_new1 = time_apgrade.strftime("%H:%M:%S")
-            delitel = 0.1
-            silver_text = await create_tex_sprav_price_future(percent_sprav_price_silver, sprav_price_silver, 'SV1 (real) / SV1 (спр)')
+            delitel = 0.5
+            silver_text = await create_tex_sprav_price_future(percent_sv1_silver, 'SV1 / XAGUSD(for)', delitel=0.5)
             silver_text += await napravlenie_sdelok_2nogi(percent_sprav_price_silver, 'SV1 / XAGUSD(for)', price1=last_prices.get('FUTSILV06240', None), price2=silver_in, lot1=lotnost_forex['silver']['moex'], lot2=lotnost_forex['silver']['forex'])
-            gold_text = await create_tex_sprav_price_future(percent_sprav_price_gold, sprav_price_gold, 'GOLD1 (real) / GOLD1 (спр)')
+            gold_text = await create_tex_sprav_price_future(percent_gd1_gold, 'GOLD1 / XAUUSD(for)', delitel=0.5)
             gold_text += await napravlenie_sdelok_2nogi(percent_sprav_price_gold, 'GOLD1 / XAUUSD(for)', price1=last_prices.get('FUTGOLD06240',None), price2=gold_in, lot1=lotnost_forex['gold']['moex'], lot2=lotnost_forex['gold']['forex'])
-            nasdaq_text = await create_tex_sprav_price_future(percent_sprav_price_nasdaq, sprav_price_nasdaq, 'NA1! (real) / NA1! (спр)')
+            nasdaq_text = await create_tex_sprav_price_future(percent_na1_nasdaq, 'NA1 / NDXUSD(for)', delitel=0.5)
             nasdaq_text += await napravlenie_sdelok_2nogi(percent_sprav_price_nasdaq, 'NA1 / NDXUSD(for)', price1=last_prices.get('FUTNASD06240',None), price2=nasdaq_in, lot1=lotnost_forex['nasdaq']['moex'], lot2=lotnost_forex['nasdaq']['forex'])
-            sp500_text = await create_tex_sprav_price_future(percent_sprav_price_sp500, sprav_price_sp500, 'SF!! (real) / SF1! (спр)')
+            sp500_text = await create_tex_sprav_price_future(percent_sf1_sp500, 'SF1 / SPXUSD(for)', delitel=0.5)
             sp500_text += await napravlenie_sdelok_2nogi(percent_sprav_price_sp500, 'SF1 / SPXUSD(for)', price1=last_prices.get('FUTSPYF06240',None) , price2=sp500_in, lot1=lotnost_forex['sp500']['moex'], lot2=lotnost_forex['sp500']['forex'])
             list_text = [f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new1}\n\n",
                          f"Один знак  '❗' =  {delitel}%\n\n",
