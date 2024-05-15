@@ -64,14 +64,14 @@ async def valyta_smail(percent):
     if percent == 0:
         return "📘"
 
-async def smail_vnimanie(percent, delitel=0.1, znak='❗️'):
+async def smail_vnimanie(percent, delitel=0.1, znak='❗️', sma_stop=True):
     # Используем абсолютное значение процента для упрощения
     abs_percent = abs(percent)
     smail = znak
     smail_stop = '  🙅‍'
     # Округляем вверх, чтобы получить правильное количество символов '❗️'
     percent_namber = math.ceil(abs_percent // delitel)
-    if percent_namber == 0:
+    if percent_namber == 0 and sma_stop:
         return smail_stop
     elif percent_namber <= 6:
         return percent_namber * smail
@@ -250,11 +250,11 @@ async def send_signals(percent, message, svyazka):
 
 async def create_tex_sprav_price_future(percent, svyazka, svazkka_moex_forex=None, delitel=0.1):
     if svazkka_moex_forex == None:
-        text =  [f"{await valyta_smail(percent)} •  ({percent}%){await smail_vnimanie(percent, delitel=delitel)}\n",
+        text =  [f"{await valyta_smail(percent)} •  ({percent}%){await smail_vnimanie(percent, delitel=delitel, sma_stop=False)}\n",
         f"{await link_text(svyazka)}\n"]
         return ''.join(text)
     else:
-        text = [f"{await valyta_smail(percent)} •  ({percent}%){await smail_vnimanie(percent, delitel=delitel)}\n",
+        text = [f"{await valyta_smail(percent)} •  ({percent}%){await smail_vnimanie(percent, delitel=delitel, sma_stop=False)}\n",
                 f"{await link_text(svyazka)}\n", ]
         return ''.join(text)
 
@@ -415,18 +415,20 @@ async def valuta_vtelegram():
             time_new1 = time_apgrade.strftime("%H:%M:%S")
             delitel = 0.5
             silver_text = await create_tex_sprav_price_future(percent_sv1_silver, 'SV1 / XAGUSD(for)', delitel=0.5)
-            silver_text += await napravlenie_sdelok_2nogi(percent_sprav_price_silver, 'SV1 / XAGUSD(for)', price1=last_prices.get('FUTSILV06240', None), price2=silver_in, lot1=lotnost_forex['silver']['moex'], lot2=lotnost_forex['silver']['forex'])
+            silver_text += await napravlenie_sdelok_2nogi(percent_sv1_silver, 'SV1 / XAGUSD(for)', price1=last_prices.get('FUTSILV06240', None), price2=silver_in, lot1=lotnost_forex['silver']['moex'], lot2=lotnost_forex['silver']['forex'])
             gold_text = await create_tex_sprav_price_future(percent_gd1_gold, 'GOLD1 / XAUUSD(for)', delitel=0.5)
-            gold_text += await napravlenie_sdelok_2nogi(percent_sprav_price_gold, 'GOLD1 / XAUUSD(for)', price1=last_prices.get('FUTGOLD06240',None), price2=gold_in, lot1=lotnost_forex['gold']['moex'], lot2=lotnost_forex['gold']['forex'])
+            gold_text += await napravlenie_sdelok_2nogi(percent_gd1_gold, 'GOLD1 / XAUUSD(for)', price1=last_prices.get('FUTGOLD06240',None), price2=gold_in, lot1=lotnost_forex['gold']['moex'], lot2=lotnost_forex['gold']['forex'])
             nasdaq_text = await create_tex_sprav_price_future(percent_na1_nasdaq, 'NA1 / NDXUSD(for)', delitel=0.5)
-            nasdaq_text += await napravlenie_sdelok_2nogi(percent_sprav_price_nasdaq, 'NA1 / NDXUSD(for)', price1=last_prices.get('FUTNASD06240',None), price2=nasdaq_in, lot1=lotnost_forex['nasdaq']['moex'], lot2=lotnost_forex['nasdaq']['forex'])
+            nasdaq_text += await napravlenie_sdelok_2nogi(percent_na1_nasdaq, 'NA1 / NDXUSD(for)', price1=last_prices.get('FUTNASD06240',None), price2=nasdaq_in, lot1=lotnost_forex['nasdaq']['moex'], lot2=lotnost_forex['nasdaq']['forex'])
             sp500_text = await create_tex_sprav_price_future(percent_sf1_sp500, 'SF1 / SPXUSD(for)', delitel=0.5)
-            sp500_text += await napravlenie_sdelok_2nogi(percent_sprav_price_sp500, 'SF1 / SPXUSD(for)', price1=last_prices.get('FUTSPYF06240',None) , price2=sp500_in, lot1=lotnost_forex['sp500']['moex'], lot2=lotnost_forex['sp500']['forex'])
-            list_text = [f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new1}\n\n",
-                         f"Один знак  '❗' =  {delitel}%\n\n",
-                         f"⚙️ {await zirniy_text(await podcher_text('Фьючерсы на металлы, индексы '))}\n\n",
-                         silver_text,  gold_text, nasdaq_text, sp500_text]
-            finali_message = ''.join(list_text)
+            sp500_text += await napravlenie_sdelok_2nogi(percent_sf1_sp500, 'SF1 / SPXUSD(for)', price1=last_prices.get('FUTSPYF06240',None) , price2=sp500_in, lot1=lotnost_forex['sp500']['moex'], lot2=lotnost_forex['sp500']['forex'])
+            text_index_metals_zagolovok = [f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new1}\n\n",
+                         f"Один знак  '❗' =  {delitel}%\n\n", f"⚙️ {await zirniy_text(await podcher_text('Фьючерсы на металлы, индексы '))}\n\n",]
+            text_index_metals_kotirovki = [[silver_text, abs(percent_sv1_silver)],  [gold_text, abs(percent_gd1_gold)], [nasdaq_text, abs(percent_na1_nasdaq)], [sp500_text, abs(percent_sf1_sp500)]]
+            text_index_metals_zagolovok_string = ''.join(text_index_metals_zagolovok)
+            text_index_metals_kotirovki_sorted = sorted(text_index_metals_kotirovki, key=lambda x: x[1] , reverse=True)
+            text_index_metals_kotirovki_string = ''.join([i[0] for i in text_index_metals_kotirovki_sorted]) + '\n\n'
+            finali_message = text_index_metals_zagolovok_string + text_index_metals_kotirovki_string
 
 
             fut_sb = {"SRM4" : "FUTSBRF06240"}

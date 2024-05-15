@@ -26,16 +26,16 @@ async def parse_futures_investing(future):
             "sp500" : "https://ru.investing.com/indices/us-spx-500-futures-chart?cid=1175153"
            }
     async with aiohttp.ClientSession() as session:
-        print('11111')
+        # print('11111')
         async with session.get(url[future], headers=headers) as response:
-            print('222222')
+            # print('222222')
             html = await response.text()
             # print(html)
             soup = BeautifulSoup(html, 'html.parser')
             # Поиск элемента по атрибуту data-test
             price = soup.find('div', {'data-test': 'instrument-price-last'}).text
             percent = soup.find('span', {'data-test': 'instrument-price-change-percent'}).text
-            print(price, percent)
+            # print(price, percent)
             if price:
                 # print(price, percent)
                 return price, percent
@@ -58,7 +58,7 @@ async def parse_valuta_invtsting(currency1, currency2, url=True):
             # Поиск элемента по атрибуту data-test
             price = soup.find('div', {'data-test': 'instrument-price-last'}).text
             percent = soup.find('span', {'data-test': 'instrument-price-change-percent'}).text
-            print(price, percent)
+            # print(price, percent)
             if price:
                 # print(price, percent)
                 return price, percent
@@ -88,7 +88,7 @@ async def dict_yahoo_valuta():
                 await asyncio.sleep(0.5)
             yahoo_valyata['valuta'] = prices_valuta
 
-            print(yahoo_valyata)
+            # print(yahoo_valyata)
             # print(await parse_futures_investing())
             await asyncio.sleep(5)
         except Exception as e:
