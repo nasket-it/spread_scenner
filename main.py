@@ -1,6 +1,6 @@
 import traceback
 import math
-from yahoo_finance import  yahoo_valyata, dict_yahoo_valuta
+from yahoo_finance import  yahoo_valyata, dict_yahoo_valuta, time_diapazone, subbota_voskresen
 from telethon.sync import TelegramClient, events
 from info_figi_ti import *
 from secrete import Token
@@ -303,6 +303,8 @@ async def valuta_vtelegram():
             # print(f"forex {usdcnh_for}")
             # print('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
             usd_rub_ru = await get_last_price(usdrub['USD000UTSTOM'])
+            # eur_rub_tom = last_prices.get('EUR000UTSTOM')
+            # print('ldldldldldldldldldldldldlldldldld', eur_rub_tom)
             si_price = last_prices.get(si['si-6.24'], 1)
             # si_sprav_price = round(1000 * (usd_rub_ru * (1 + 0.16 * (await expiration_date_future(si['si-6.24'])/365))))
             percent_si_cr_usdcnh = round(si_price / last_prices.get('FUTCNY062400', 1) / 1000 / usdcnh_for * 100 -100, 3)
@@ -330,8 +332,13 @@ async def valuta_vtelegram():
             message_usf_cnf_usdcnh = f"{await valyta_smail(percent_usf_cnf_usdcnh)} •  ({percent_usf_cnf_usdcnh}%){await smail_vnimanie(percent_usf_cnf_usdcnh)}\nUS.F / CN.F / USDCNH(for) ️\n\n\n"
             await send_signals(percent_usf_cnf_usdcnh, message_usf_cnf_usdcnh, usf_cnf_usdcnh)
 
-            percent_euf_cnf_eurcnh = round(last_prices.get(futures['EURRUBF'], 1) / last_prices.get(futures['CNYRUBF'], 1) / eurcnh_for * 100 - 100, 3)
-            usf_cnf_usdcnh = 'EU.F_CN.F_EURCNH(for)'
+            percent_euf_cnf_eurcnh = round(last_prices.get('FUTEURRUBF00', 1) / last_prices.get(futures['CNYRUBF'], 1) / eurcnh_for * 100 -100, 3)
+            euf_cnf_eurcnh = 'EU.F_CN.F_EURCNH(for)'
+            message_euf_cnf_usdcnh = f"{await valyta_smail(percent_euf_cnf_eurcnh)} •  ({percent_euf_cnf_eurcnh}%){await smail_vnimanie(percent_euf_cnf_eurcnh)}\nUS.F / CN.F / USDCNH(for) ️\n\n\n"
+            await send_signals(percent_euf_cnf_eurcnh, message_usf_cnf_usdcnh, euf_cnf_eurcnh)
+
+            # percent_euf_cnf_eurcnh = round(last_prices.get('FUTEURRUBF00', 1) / last_prices.get(futures['CNYRUBF'], 1) / eurcnh_for * 100 - 100, 3)
+            # usf_cnf_usdcnh = 'EU.F_CN.F_EURCNH(for)'
 
             percent_us_tom_cn_tom_usdcnh = round(last_prices.get('BBG0013HGFT4', 1) / last_prices.get('BBG0013HRTL0', 1)/ usdcnh_for * 100 -100, 3)
             percent_eu_tom_cn_tom_eurcnh = round(eurrub_inv_tom / last_prices.get('BBG0013HRTL0', 1)/ await valuta_replace_float('EURCNH', yahoo_valyata, 4) * 100 -100, 3)
@@ -339,6 +346,7 @@ async def valuta_vtelegram():
             percent_eu_tom_kz_tom_eurkzt = round(eurrub_inv_tom / last_prices.get('BBG0013HG026', 4)/ eurkzt_for * 100 * 100 -100, 3)
             percent_us_tom_try_tom_usdtry = round(last_prices.get('BBG0013HGFT4', 1) / last_prices.get('BBG0013J12N1', 4)/ usdtry_for * 100 -100, 3)
             percent_eu_tom_try_tom_eurtry = round(eurrub_inv_tom / last_prices.get('BBG0013J12N1', 4)/ eurtry_for * 100  -100, 3)
+            percent_eu_tom_us_tom_eurusd = round(eurrub_inv_tom / last_prices.get('BBG0013HGFT4', 1) / eurusd_for * 100 -100, 3)
             percent_sv1_silver = round(last_prices.get('FUTSILV06240',None) / silver_in * 100  -100, 3)
             percent_gd1_gold = round(last_prices.get('FUTGOLD06240',None) / gold_in * 100  -100, 3)
             percent_na1_nasdaq = round(last_prices.get('FUTNASD06240',None) / nasdaq_in * 100  -100, 3)
@@ -383,7 +391,9 @@ async def valuta_vtelegram():
                                     [f"{await valyta_smail(percent_eu_si_ed)} •  ({percent_eu_si_ed}%){await smail_vnimanie(percent_eu_si_ed)}\n{await link_text('Eu1 / Si1 / ED')}\n" +
                                     await napravlenie_sdelok_3nogi(percent_eu_si_eurusd, 'Eu1 / Si1 / ED',  price1=last_prices.get('FUTEU0624000', 1), price2=si_price, price3=last_prices.get('FUTED0624000', 1) ), abs(percent_eu_si_ed)],
                                     [f"{await valyta_smail(percent_usf_cnf_usdcnh)} •  ({percent_usf_cnf_usdcnh}%){await smail_vnimanie(percent_usf_cnf_usdcnh)}\n{await link_text('US.F / CN.F / USDCNH(for)')}\n" +
-                                    await napravlenie_sdelok_3nogi(percent_usf_cnf_usdcnh, 'US.F / CN.F / USDCNH(for)', price1=last_prices.get(futures['USDRUBF'], 1), price2=last_prices.get(futures['CNYRUBF'], 1), price3=usdcnh_for), abs(percent_usf_cnf_usdcnh)]]
+                                    await napravlenie_sdelok_3nogi(percent_usf_cnf_usdcnh, 'US.F / CN.F / USDCNH(for)', price1=last_prices.get(futures['USDRUBF'], 1), price2=last_prices.get(futures['CNYRUBF'], 1), price3=usdcnh_for), abs(percent_usf_cnf_usdcnh)],
+                                    [f"{await valyta_smail(percent_euf_cnf_eurcnh)} •  ({percent_euf_cnf_eurcnh}%){await smail_vnimanie(percent_euf_cnf_eurcnh)}\n{await link_text('EU.F / CN.F / EURCNH(for)')}\n" +
+                                    await napravlenie_sdelok_3nogi(percent_euf_cnf_eurcnh, 'EU.F / CN.F / EURCNH(for)', price1=last_prices.get('FUTEURRUBF00', 1), price2=last_prices.get(futures['CNYRUBF'], 1), price3=eurcnh_for), abs(percent_euf_cnf_eurcnh)]]
 
 
             text_fur_spot = [f"{await valyta_smail(percent_sprav_price_cr1)} •  ({percent_sprav_price_cr1}%){await smail_vnimanie(percent_sprav_price_cr1)}\n" ,
@@ -404,7 +414,9 @@ async def valuta_vtelegram():
                    [f"{await valyta_smail(percent_us_tom_try_tom_usdtry)} •  ({percent_us_tom_try_tom_usdtry}%){await smail_vnimanie(percent_us_tom_try_tom_usdtry)}\n{await link_text('US_TOM / TRY_TOM / USDTRY(for)')}\n" +
                    await napravlenie_sdelok_3nogi(percent_us_tom_try_tom_usdtry, 'US_TOM / TRY_TOM / USDTRY(for)', price1=last_prices.get('BBG0013HGFT4', 1), price2=last_prices.get('BBG0013J12N1', 4), price3=usdtry_for), abs(percent_us_tom_try_tom_usdtry)],
                    [f"{await valyta_smail(percent_eu_tom_try_tom_eurtry)} •  ({percent_eu_tom_try_tom_eurtry}%){await smail_vnimanie(percent_eu_tom_try_tom_eurtry)}\n{await link_text('EU_TOM / TRY_TOM / EURTRY(for)')}\n" +
-                   await napravlenie_sdelok_3nogi(percent_eu_tom_try_tom_eurtry, 'EU_TOM / TRY_TOM / EURTRY(for)', price1=eurrub_inv_tom, price2=last_prices.get('BBG0013J12N1', 4), price3=eurtry_for) , abs(percent_eu_tom_try_tom_eurtry) ]
+                   await napravlenie_sdelok_3nogi(percent_eu_tom_try_tom_eurtry, 'EU_TOM / TRY_TOM / EURTRY(for)', price1=eurrub_inv_tom, price2=last_prices.get('BBG0013J12N1', 4), price3=eurtry_for) , abs(percent_eu_tom_try_tom_eurtry) ],
+                   [f"{await valyta_smail(percent_eu_tom_us_tom_eurusd)} •  ({percent_eu_tom_us_tom_eurusd}%){await smail_vnimanie(percent_eu_tom_us_tom_eurusd)}\n{await link_text('EU_TOM / US_TOM / EURUSD(for)')}\n" +
+                   await napravlenie_sdelok_3nogi(percent_eu_tom_us_tom_eurusd, 'EU_TOM / US_TOM / EURUSD(for)', price1=eurrub_inv_tom, price2=last_prices.get('BBG0013HGFT4', 1), price3=eurusd_for) , abs(percent_eu_tom_us_tom_eurusd) ]
                    ]
 
 
@@ -484,8 +496,43 @@ async def start_cicl_5s():
         await asyncio.sleep(5)
         await start_cicl_5s()
 
+async def start_get_last_prices_dict():
+    x = 0
+    try:
+        while True:
+            print(565656565, last_prices.get('BBG0013HGFT4'))
+            print(f"cxtnxbr = {x}")
+            vihodnie = await subbota_voskresen()
+            if  x < 5:
+                await asyncio.sleep(5)
+                await get_last_prices_dict()
+                x += 1
+                print(111111111111111)
+            elif (vihodnie and x == 5) and  (await time_diapazone('23:59', '06:00') == False)  and x == 5:
+                await get_last_prices_dict()
+                await asyncio.sleep(60)
+                print(222222222222222)
+            elif await time_diapazone('23:59', '06:00') and x == 5:
+                await get_last_prices_dict()
+                await asyncio.sleep(1800)
+            else:
+                await get_last_prices_dict()
+                await asyncio.sleep(5)
+                print(3333333333333333)
+            print(0000000000000)
 
-list_task = [start_cicl_5s(), dict_yahoo_valuta()]
+
+    except Exception as e:
+            error_message = traceback.format_exc()
+            print(f'Произошла ошибка функции valuta_vtelegram:\n{error_message}')
+            print(e)
+            await asyncio.sleep(5)
+            await start_get_last_prices_dict()
+
+
+
+
+list_task = [start_cicl_5s(), dict_yahoo_valuta(), start_get_last_prices_dict()]
 
 async def main():
     # Запуск периодических задач в фоновом режиме

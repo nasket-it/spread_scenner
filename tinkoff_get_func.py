@@ -150,7 +150,7 @@ futures = {'SRM4': 'FUTSBRF06240', 'VKU4': 'FUTVKCO09240', 'NGQ4': 'FUTNG0824000
            'VKH4': 'FUTVKCO03240', 'W4V4': 'FUTWHEAT1024', 'RIZ5': 'FUTRTS122500', 'MMM4': 'FUTMXI062400',
            'GZH5': 'FUTGAZR03250', 'HSM4': 'FUTHANG06240', 'SFZ4': 'FUTSPYF12240', 'TTH4': 'FUTTATN03240',
            'KMM4': 'FUTKMAZ06240', 'CMZ4': 'FUTCBOM12240', 'KZU4': 'FUTKZT092400'}
-# print(futures['EURRRUBF'])
+# print(futures['EURRRUB'])
 f = '456,768,890.987'
 print(f.split(',')[-1])
 async def time_range(start_time: str, end_time: str, current_time: time) -> bool:
@@ -278,10 +278,12 @@ valyuta_dict_info = {}
 def get_valyuta_instrument():
     with Client(TOKEN) as client:
         info =  client.instruments.currencies()
+        # print(info.instruments)
         for i in info.instruments:
+            print(i.name,  i.figi)
             valyuta_dict_info[i.figi] = i
 get_valyuta_instrument()
-
+#
 for i in valyuta_dict_info:
     valyuta_dict[valyuta_dict_info[i].ticker] = i
 print(valyuta_dict)

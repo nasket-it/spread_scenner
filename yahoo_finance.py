@@ -1,4 +1,6 @@
-
+from datetime import datetime, time
+import re
+import pytz
 import asyncio
 # import yfinance as yf
 from tinkoff_get_func import calculate_percentage
@@ -15,6 +17,37 @@ headers = {
 }
 
 
+async def time_diapazone(start_time_str, end_time_str):
+    moscow_tz = pytz.timezone('Europe/Moscow')
+    current_time_moscow = datetime.now(moscow_tz).time()
+
+    start_time = datetime.strptime(start_time_str, "%H:%M").time()
+    end_time = datetime.strptime(end_time_str, "%H:%M").time()
+
+    # Если диапазон времени пересекает полночь
+    if start_time > end_time:
+        # Текущее время должно быть либо после start_time и до полуночи, либо после полуночи и до end_time
+        return current_time_moscow >= start_time or current_time_moscow <= end_time
+    else:
+        # Текущее время должно быть между start_time и end_time
+        return start_time <= current_time_moscow <= end_time
+
+
+
+# async def get_fanding_moex():
+#     url2 = "https://www.moex.com/ru/contract.aspx?code=GLDRUBF"
+#
+#     async with aiohttp.ClientSession() as session1:
+#         # print('11111')
+#         async with session1.get(url2, headers=headers) as response2:
+#             await asyncio.sleep(3)
+#             html = await response2.text()
+#             soup = BeautifulSoup(html, 'html.parser')
+#             poisk_tr = soup.find_all('td')
+#
+#             print(9999999999 , poisk_tr)
+
+
 async def parse_futures_investing(future):
     url = {
             "brent_fut" : "https://ru.investing.com/commodities/brent-oil-streaming-chart",
@@ -25,6 +58,8 @@ async def parse_futures_investing(future):
             "nasdaq" : "https://ru.investing.com/indices/nq-100-futures-chart?cid=1175151",
             "sp500" : "https://ru.investing.com/indices/us-spx-500-futures-chart?cid=1175153"
            }
+
+    # await get_fanding_moex()
     async with aiohttp.ClientSession() as session:
         # print('11111')
         async with session.get(url[future], headers=headers) as response:
@@ -65,6 +100,12 @@ async def parse_valuta_invtsting(currency1, currency2, url=True):
             else:
                 return None, None
 
+async def subbota_voskresen():
+    today = datetime.today().weekday()
+    # В Python понедельник - 0, воскресенье - 6
+    return today == 5 or today == 6
+
+
 
 async def dict_yahoo_valuta():
     prices_valuta = {}
@@ -74,6 +115,8 @@ async def dict_yahoo_valuta():
     symbols = ["XAUUSD", "XAGUSD", "USDTRY", "EURTRY", "USDKZT", "EURKZT", "EURCNH", "EURRUB", "USDCNH", "EURUSD", "CNYRUB",
                "CNYUSD", "brent_fut", "gas_fut", "gold_fut", "silver_fut", "gold_spot", "nasdaq", "sp500"]
     while True:
+        vihodnie = await subbota_voskresen()
+        diapazone_23_6 = await time_diapazone('23:30', '06:00')
         try:
             for i in symbols:
                 # print('0000000')
@@ -90,7 +133,8 @@ async def dict_yahoo_valuta():
 
             # print(yahoo_valyata)
             # print(await parse_futures_investing())
-            await asyncio.sleep(5)
+            await asyncio.sleep(60) if vihodnie or diapazone_23_6 else await asyncio.sleep(5)
+            print(f"Выходные llllllllllllllll - {diapazone_23_6} ")
         except Exception as e:
             print("Ошибка:", e)  # Выводим ошибку
             await asyncio.sleep(5)
