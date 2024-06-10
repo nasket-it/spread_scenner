@@ -15,7 +15,6 @@ from aiogram.utils.markdown import link
 from datetime import *
 import datetime
 import pytz
-from pars_dinamic_site import parse_site
 from all_funnction import calculate_funding
 # Создаем объект временной зоны для Москвы
 moscow_tz = pytz.timezone('Europe/Moscow')
