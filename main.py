@@ -1,6 +1,6 @@
 import traceback
 import math
-from yahoo_finance import  yahoo_valyata, dict_yahoo_valuta, time_diapazone, subbota_voskresen
+from yahoo_finance import  yahoo_valyata, dict_yahoo_valuta, time_diapazone, subbota_voskresen, get_fanding_moex, fanding
 from telethon.sync import TelegramClient, events
 from info_figi_ti import *
 from secrete import Token
@@ -15,7 +15,8 @@ from aiogram.utils.markdown import link
 from datetime import *
 import datetime
 import pytz
-
+from pars_dinamic_site import parse_site
+from all_funnction import calculate_funding
 # Создаем объект временной зоны для Москвы
 moscow_tz = pytz.timezone('Europe/Moscow')
 
@@ -374,7 +375,12 @@ async def valuta_vtelegram():
             print(last_prices.get('FUTSPYF06240',None))
 
 
-
+            text_fandung_zagolovok = f"\n\n💰 Фандинг(тест❗) | задержка 15м \nОбновление каждые 60с \n\n"
+            text_fanding = [f"USDRUBF - {await link_text(fanding.get('USDRUBF', None))}\n",
+                            f"EURRUBF - {await link_text(fanding.get('EURRUBF', None))}\n",
+                            f"CNYRUBF - {await link_text(fanding.get('CNYRUBF', None))}\n",
+                            f"GLDRUBF - {await link_text(fanding.get('GLDRUBF', None))}\n",
+                            f"IMOEXF - {await link_text(fanding.get('IMOEXF', None))}\n\n"]
 
             link_name = '<a href="https://t.me/spread_sca">Eu1 / Cr1 / EURCNH(for)</a>'
             delitel1 = 0.1
@@ -440,7 +446,7 @@ async def valuta_vtelegram():
             text_index_metals_zagolovok_string = ''.join(text_index_metals_zagolovok)
             text_index_metals_kotirovki_sorted = sorted(text_index_metals_kotirovki, key=lambda x: x[1] , reverse=True)
             text_index_metals_kotirovki_string = ''.join([i[0] for i in text_index_metals_kotirovki_sorted]) + '\n\n'
-            finali_message = text_index_metals_zagolovok_string + text_index_metals_kotirovki_string
+            finali_message = text_index_metals_zagolovok_string + text_index_metals_kotirovki_string + text_fandung_zagolovok + ''.join(text_fanding)
 
 
             fut_sb = {"SRM4" : "FUTSBRF06240"}
@@ -480,7 +486,7 @@ async def valuta_vtelegram():
         error_message = traceback.format_exc()
         print(f'Произошла ошибка функции valuta_vtelegram:\n{error_message}')
         print(e)
-
+url_moex = "https://www.moex.com/ru/contract.aspx?code=GLDRUBF"
 async def start_cicl_5s():
     coun = 0
     try:
@@ -489,12 +495,28 @@ async def start_cicl_5s():
             await asyncio.sleep(5)
             await get_last_prices_dict()
             print(dict_interva)
+            # await parse_site(url_moex)
     except Exception as e:
         error_message = traceback.format_exc()
         print(f'Произошла ошибка функции valuta_vtelegram:\n{error_message}')
         print(e)
         await asyncio.sleep(5)
         await start_cicl_5s()
+
+async def start_cicl_15m():
+    coun = 0
+    try:
+        while True:
+            await get_fanding_moex()
+            print(fanding)
+            await asyncio.sleep(60)
+    except Exception as e:
+        error_message = traceback.format_exc()
+        print(f'Произошла ошибка функции start_cicl_15m :\n{error_message}')
+        print(e)
+        await asyncio.sleep(5)
+        await start_cicl_15m()
+
 
 async def start_get_last_prices_dict():
     x = 0
@@ -532,7 +554,7 @@ async def start_get_last_prices_dict():
 
 
 
-list_task = [start_cicl_5s(), dict_yahoo_valuta(), start_get_last_prices_dict()]
+list_task = [start_cicl_5s(), dict_yahoo_valuta(), start_get_last_prices_dict(), start_cicl_15m()]
 
 async def main():
     # Запуск периодических задач в фоновом режиме
