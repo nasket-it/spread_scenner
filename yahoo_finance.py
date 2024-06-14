@@ -50,8 +50,8 @@ async def get_fanding_moex():
             for row in root.findall(".//row"):
                 secid = row.get('SECID')
                 swaprate = row.get('SWAPRATE')
-                fanding[secid] = swaprate
-        #
+                if float(swaprate) != 0 :
+                    fanding[secid] = swaprate
         #
         #
 #
