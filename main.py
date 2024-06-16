@@ -348,8 +348,15 @@ async def valuta_vtelegram():
             await send_signals(percent_euf_cnf_eurcnh, message_euf_cnf_eurcnh, euf_cnf_eurcnh)
 
             percent_ed_eurusd = round(last_prices.get('FUTED0624000', 1) / await valuta_replace_float('EURUSD', yahoo_valyata, 4) * 100 - 100, 3)
+            percent_si_si2 = round(last_prices.get('FUTSI0624000', 1) / last_prices.get('FUTSI0924000', 1) * 100 - 100, 3)
+            percent_eu_eu2 = round(last_prices.get('FUTEU0624000', 1) / last_prices.get('FUTEU0924000', 1) * 100 - 100, 3)
+            percent_cr_cr2 = round(last_prices.get('FUTCNY062400', 1) / last_prices.get('FUTCNY092400', 1) * 100 - 100, 3)
+            percent_usf_si = round(last_prices.get(futures['USDRUBF'], 1) / (last_prices.get('FUTSI0624000', 1) / 1000) * 100 - 100, 3)
+            percent_euf_eu = round(last_prices.get('FUTEURRUBF00', 1) / (last_prices.get('FUTEU0624000', 1) / 1000)* 100 - 100, 3)
+            percent_crf_cr = round(last_prices.get(futures['CNYRUBF'], 1) / last_prices.get('FUTCNY062400', 1) * 100 - 100, 3)
+            percent_cr_tom_cr = round(last_prices.get('FUTED0624000', 1) / await valuta_replace_float('EURUSD', yahoo_valyata, 4) * 100 - 100, 3)
 
-            # percent_si2_cr2_usdcnh = round(last_prices.get('FUTED0624000', 1) / await valuta_replace_float('EURUSD', yahoo_valyata, 4) * 100 - 100, 3)
+
 
 
 
@@ -386,7 +393,7 @@ async def valuta_vtelegram():
 
 
 
-            text_fandung_zagolovok = f"\n\n💰 Фандинг(тест❗ ) | задержка 15м \nОбновление каждые 60с \n\n"
+            text_fandung_zagolovok = f"💰 {await podcher_text(await zirniy_text('Фандинг(тест❗ )'))}\nЗадержка 15м \nОбновление каждые 60с \nЧасы работы с 10:15 до 18:50, в нерабочие часы последнее значение или None\n"
             text_fanding = [f"USDRUBF - {await link_text(fanding.get('USDRUBF', None))}\n",
                             f"EURRUBF - {await link_text(fanding.get('EURRUBF', None))}\n",
                             f"CNYRUBF - {await link_text(fanding.get('CNYRUBF', None))}\n",
@@ -419,10 +426,24 @@ async def valuta_vtelegram():
                                     await napravlenie_sdelok_3nogi(percent_usf_cnf_usdcnh, 'US.F / CN.F / USDCNH(for)', price1=last_prices.get(futures['USDRUBF'], 1), price2=last_prices.get(futures['CNYRUBF'], 1), price3=usdcnh_for), abs(percent_usf_cnf_usdcnh)],
                                     [f"{await valyta_smail(percent_euf_cnf_eurcnh)} •  ({percent_euf_cnf_eurcnh}%){await smail_vnimanie(percent_euf_cnf_eurcnh)}\n{await link_text('EU.F / CN.F / EURCNH(for)')}\n" +
                                     await napravlenie_sdelok_3nogi(percent_euf_cnf_eurcnh, 'EU.F / CN.F / EURCNH(for)', price1=last_prices.get('FUTEURRUBF00', 1), price2=last_prices.get(futures['CNYRUBF'], 1), price3=eurcnh_for), abs(percent_euf_cnf_eurcnh)],
-                                    [f"{await valyta_smail(percent_ed_eurusd)} •  ({percent_ed_eurusd}%){await smail_vnimanie(percent_ed_eurusd)}\n{await link_text('ED / EURCNH(for)')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_ed_eurusd, 'ED / EURCNH(for)', price1=last_prices.get('FUTED0624000', 1), price2=eurusd_for, lot1=1, lot2=lotnost_forex['EURUSD']), abs(percent_ed_eurusd)],
-                                     ]
+                                    [f"{await valyta_smail(percent_ed_eurusd)} •  ({percent_ed_eurusd}%){await smail_vnimanie(percent_ed_eurusd)}\n{await link_text('ED / EURUSD(for)')}\n" +
+                                    await napravlenie_sdelok_2nogi(percent_ed_eurusd, 'ED / EURUSD(for)', price1=last_prices.get('FUTED0624000', 1), price2=eurusd_for, lot1=1, lot2=lotnost_forex['EURUSD']), abs(percent_ed_eurusd)],
 
+                                     ]
+            text_future_kotirovri2 = [[f"{await valyta_smail(percent_si_si2)} •  ({percent_si_si2}%)\n{await link_text('SI1 / SI2')}\n" +
+                                    await napravlenie_sdelok_2nogi(percent_si_si2, 'SI1 / SI2', price1=last_prices.get('FUTSI0624000', 1), price2=last_prices.get('FUTSI0924000', 1), lot1=1, lot2=1), abs(percent_si_si2)],
+                                    [f"{await valyta_smail(percent_eu_eu2)} •  ({percent_eu_eu2}%)\n{await link_text('EU1 / EU2')}\n" +
+                                    await napravlenie_sdelok_2nogi(percent_eu_eu2, 'EU1 / EU2', price1=last_prices.get('FUTEU0624000', 1), price2=last_prices.get('FUTEU0924000', 1), lot1=1, lot2=1), abs(percent_eu_eu2)],
+                                    [f"{await valyta_smail(percent_cr_cr2)} •  ({percent_cr_cr2}%)\n{await link_text('CR1 / CR2')}\n" +
+                                    await napravlenie_sdelok_2nogi(percent_cr_cr2, 'CR1 / CR2', price1=last_prices.get('FUTCNY062400', 1), price2=last_prices.get('FUTCNY092400', 1), lot1=1, lot2=1), abs(percent_cr_cr2)],
+                                    [f"{await valyta_smail(percent_usf_si)} •  ({percent_usf_si}%)\n{await link_text('US.F / SI1')}\n" +
+                                    await napravlenie_sdelok_2nogi(percent_usf_si, 'US.F / SI1', price1=last_prices.get(futures['USDRUBF'], 1), price2=last_prices.get('FUTSI0624000', 1), lot1=1, lot2=1), abs(percent_usf_si)],
+                                    [f"{await valyta_smail(percent_euf_eu)} •  ({percent_euf_eu}%)\n{await link_text('EU.F / EU1')}\n" +
+                                    await napravlenie_sdelok_2nogi(percent_euf_eu, 'EU.F / EU1', price1=last_prices.get('FUTEURRUBF00', 1), price2=last_prices.get('FUTEU0624000', 1), lot1=1, lot2=1), abs(percent_euf_eu)],
+                                    [f"{await valyta_smail(percent_crf_cr)} •  ({percent_crf_cr}%)\n{await link_text('CR.F / CR1')}\n" +
+                                    await napravlenie_sdelok_2nogi(percent_crf_cr, 'CR.F / CR1', price1=last_prices.get(futures['CNYRUBF'], 1), price2=last_prices.get('FUTCNY062400', 1), lot1=1, lot2=1), abs(percent_crf_cr)],
+
+                                     ]
 
             text_fur_spot = [f"{await valyta_smail(percent_sprav_price_cr1)} •  ({percent_sprav_price_cr1}%){await smail_vnimanie(percent_sprav_price_cr1)}\n" ,
                              f"{await link_text('CR1 (спр) / CR1 (real)')}\n" ,
@@ -468,7 +489,7 @@ async def valuta_vtelegram():
             text_index_metals_zagolovok_string = ''.join(text_index_metals_zagolovok)
             text_index_metals_kotirovki_sorted = sorted(text_index_metals_kotirovki, key=lambda x: x[1] , reverse=True)
             text_index_metals_kotirovki_string = ''.join([i[0] for i in text_index_metals_kotirovki_sorted]) + '\n\n'
-            finali_message = text_index_metals_zagolovok_string + text_index_metals_kotirovki_string + text_fandung_zagolovok + ''.join(text_fanding)
+            finali_message = text_index_metals_zagolovok_string + text_index_metals_kotirovki_string
 
 
             fut_sb = {"SRM4" : "FUTSBRF06240"}
@@ -479,7 +500,8 @@ async def valuta_vtelegram():
                 delitel = 0.1
                 tatn_tex = await arbitrage_parniy_akcii('TATN', 'TATNP')
                 sber_text = await arbitrage_parniy_akcii('SBER', 'SBERP')
-                list_akcii = [f"\n⚙️ {await zirniy_text(await podcher_text('Акции'))}\n\n",
+                zagolovok_akcii = 'Акции(торговля на выходных в Тиньков)' if await subbota_voskresen() else 'Акции'
+                list_akcii = [f"\n⚙️ {await zirniy_text(await podcher_text(zagolovok_akcii))}\n\n",
                               tatn_tex, sber_text]
                 finali_message_akcii = ''.join(list_akcii)
                 finali_message = finali_message + finali_message_akcii
@@ -488,12 +510,13 @@ async def valuta_vtelegram():
             #     text = text + await arbitrage_parniy_futures(fut_sb["SRM4"], fut_sbp["SPM4"], name=name)
             #     text = text + '\n' + await arbtrage_future_akcii()
             text_fur_sorted = sorted(text_future_kotirovri, key=lambda x: x[1] , reverse=True)
-            text_future_string  = ''.join(text_future_zagolovok) + ''.join([i[0] for i in text_fur_sorted]) + '\n\n'
+            text_fur2_sorted = sorted(text_future_kotirovri2, key=lambda x: x[1] , reverse=True)
+            text_future_string  = ''.join(text_future_zagolovok) + ''.join([i[0] for i in text_fur_sorted]) +  text_fandung_zagolovok + ''.join(text_fanding) + ''.join([i[0] for i in text_fur2_sorted]) + '\n\n'
             text_valuta_sorted = sorted(text_valuta_kotirovki, key=lambda x: x[1] , reverse=True)
             # text_valuta_string =  ''.join(text_valuta_zagolovok) + ''.join([i[0] for i in text_valuta_sorted] ) + '\n\n'
             text_valuta_string =  ''.join(text_valuta_zagolovok) + 'В разработке ... 👨‍💻' + '\n\n\n'
 
-            finali_message2 = text_valuta_string + text_future_string + ''.join( text_fur_spot)
+            finali_message2 = text_valuta_string + text_future_string # ''.join( text_fur_spot)
             # <b>Жирный</b>
             # <i>Курсив</i>
             # <s>Зачеркнутый</s>
