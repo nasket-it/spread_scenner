@@ -300,13 +300,16 @@ async def valuta_vtelegram():
             nasdaq_in = await valuta_replace_float("nasdaq", yahoo_valyata, 4)
             sp500_in = await valuta_replace_float("sp500", yahoo_valyata, 4)
 
+            kurs_usdrub_spr = round(last_prices.get('BBG0013HRTL0', 1) * usdcnh_for, 4)
+            kurs_eurrub_spr = round(last_prices.get('BBG0013HRTL0', 1) * eurcnh_for, 4)
+
             kurs_cb_usdrub = 87.0354
             kurs_cb_eurrub = 93.2994
             kurs_cb_cnyrub = 11.7964
 
 
-            kurs_usdrub = round(last_prices.get('BBG0013HRTL0', 1) * usdcnh_for, 4)
-            kurs_eurrub = round(last_prices.get('BBG0013HRTL0', 1) * eurcnh_for, 4)
+            kurs_usdrub_spr = round(last_prices.get('BBG0013HRTL0', 1) * usdcnh_for, 4)
+            kurs_eurrub_spr = round(last_prices.get('BBG0013HRTL0', 1) * eurcnh_for, 4)
 
             print(sp500_in)
 
@@ -374,7 +377,6 @@ async def valuta_vtelegram():
 
 
 
-
             percent_us_tom_cn_tom_usdcnh = round(last_prices.get('BBG0013HGFT4', 1) / last_prices.get('BBG0013HRTL0', 1)/ usdcnh_for * 100 -100, 3)
             percent_eu_tom_cn_tom_eurcnh = round(eurrub_megbank / last_prices.get('BBG0013HRTL0', 1)/ await valuta_replace_float('EURCNH', yahoo_valyata, 4) * 100 -100, 3)
             percent_us_tom_kz_tom_usdkzt = round(last_prices.get('BBG0013HGFT4', 1) / last_prices.get('BBG0013HG026', 4)/ usdkzt_for * 100 * 100 -100, 3)
@@ -382,12 +384,14 @@ async def valuta_vtelegram():
             percent_us_tom_try_tom_usdtry = round(last_prices.get('BBG0013HGFT4', 1) / last_prices.get('BBG0013J12N1', 4)/ usdtry_for * 100 -100, 3)
             percent_eu_tom_try_tom_eurtry = round(eurrub_megbank / last_prices.get('BBG0013J12N1', 4)/ eurtry_for * 100  -100, 3)
             percent_eu_tom_us_tom_eurusd = round(eurrub_megbank / last_prices.get('BBG0013HGFT4', 1) / eurusd_for * 100 -100, 3)
+            percent_usdrub_megb_spr = round(usdrub_megbank / kurs_usdrub_spr, 4)
+            percent_eurrub_megb_spr = round(eurrub_megbank / kurs_eurrub_spr, 4)
 
             kurs_cb_usdrub = 89.0499
             kurs_cb_eurrub = 95.3906
 
-            kurs_usdrub = round(last_prices.get('BBG0013HRTL0', 1) * usdcnh_for, 4)
-            kurs_eurrub = round(last_prices.get('BBG0013HRTL0', 1) * eurcnh_for, 4)
+
+
 
 
 
@@ -501,10 +505,9 @@ async def valuta_vtelegram():
             #        [f"{await valyta_smail(percent_eu_tom_us_tom_eurusd)} •  ({percent_eu_tom_us_tom_eurusd}%){await smail_vnimanie(percent_eu_tom_us_tom_eurusd)}\n{await link_text('EU_TOM / US_TOM / EURUSD(for)')}\n" +
             #        await napravlenie_sdelok_3nogi(percent_eu_tom_us_tom_eurusd, 'EU_TOM / US_TOM / EURUSD(for)', price1=eurrub_megbank, price2=last_prices.get('BBG0013HGFT4', 1), price3=eurusd_for) , abs(percent_eu_tom_us_tom_eurusd) ]
             #        ]
-            text_valuta_kotirovki = [[f"CNY_TOM x USDCNH(for) • {kurs_usdrub}\n", 3],
-                                     [f"CNY_TOM x EURCNH(for) • {kurs_eurrub}\n", 4],
-                                     [f"Курс {await link_text('USDRUB межбанк')} • {usdrub_megbank}\n", 1],
-                                     [f"Курс {await link_text('EURRUB межбанк')} • {eurrub_megbank}\n", 2],
+            text_valuta_kotirovki = [[f"{await valyta_smail(percent_usdrub_megb_spr)} •  ({percent_usdrub_megb_spr}%)\n{await link_text('USDRUB(межб) / USDRUB(спр)')}\nCNY_TOM x USDCNH(for) • {kurs_usdrub_spr}\nКурс {await link_text('USDRUB межбанк')} • {usdrub_megbank}\n\n", abs(percent_usdrub_megb_spr)],
+                                     [f"{await valyta_smail(percent_eurrub_megb_spr)} •  ({percent_eurrub_megb_spr}%)\n{await link_text('EURRUB(межб) / EURRUB(спр)')}\nCNY_TOM x EURCNH(for) • {kurs_eurrub_spr}\nКурс {await link_text('USDRUB межбанк')} • {eurrub_megbank}\n\n", abs(percent_eurrub_megb_spr)],
+
                                      ]
 
 
