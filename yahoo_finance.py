@@ -128,9 +128,9 @@ async def dict_yahoo_valuta():
             try:
                 for i in symbols:
                     # print('0000000')
-                    if i == "EURRUB":
-                        rezult = await parse_valuta_invtsting(i[:3], i[3:6], url=False)
-                    elif i in fut:
+                    # if i == "EURRUB":
+                    #     rezult = await parse_valuta_invtsting(i[:3], i[3:6], url=False)
+                    if  i in fut:
                         rezult = await parse_futures_investing(i)
                     else:
                         rezult = await parse_valuta_invtsting(i[:3], i[3:6])

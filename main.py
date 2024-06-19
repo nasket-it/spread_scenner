@@ -388,6 +388,7 @@ async def valuta_vtelegram():
             percent_eurrub_megb_spr = round(eurrub_megbank / kurs_eurrub_spr, 2)
             percent_si1_usdrub_megb = round(last_prices.get('FUTSI0624000', 1) / 1000 / usdrub_megbank, 2)
             percent_eu1_eurrub_megb = round(last_prices.get('FUTEU0624000', 1) / 1000 / eurrub_megbank, 2)
+            print('ioioioiooioiio', usdrub_megbank, eurrub_megbank)
             kurs_cb_usdrub = 89.0499
             kurs_cb_eurrub = 95.3906
 
