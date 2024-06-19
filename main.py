@@ -318,7 +318,7 @@ async def valuta_vtelegram():
             usd_rub_ru = await get_last_price(usdrub['USD000UTSTOM'])
             # eur_rub_tom = last_prices.get('EUR000UTSTOM')
             # print('ldldldldldldldldldldldldlldldldld', eur_rub_tom)
-            si_price = last_prices.get(si['si-6.24'], 1)
+            si_price = last_prices.get('FUTSI0624000', 1)
             # si_sprav_price = round(1000 * (usd_rub_ru * (1 + 0.16 * (await expiration_date_future(si['si-6.24'])/365))))
 
 
@@ -386,7 +386,8 @@ async def valuta_vtelegram():
             percent_eu_tom_us_tom_eurusd = round(eurrub_megbank / last_prices.get('BBG0013HGFT4', 1) / eurusd_for * 100 -100, 3)
             percent_usdrub_megb_spr = round(usdrub_megbank / kurs_usdrub_spr, 4)
             percent_eurrub_megb_spr = round(eurrub_megbank / kurs_eurrub_spr, 4)
-
+            percent_si1_usdrub_megb = round(last_prices.get('FUTSI0624000', 1) / 1000 / usdrub_megbank, 4)
+            percent_eu1_eurrub_megb = round(last_prices.get('FUTEU0624000', 1) / 1000 / eurrub_megbank, 4)
             kurs_cb_usdrub = 89.0499
             kurs_cb_eurrub = 95.3906
 
@@ -506,7 +507,9 @@ async def valuta_vtelegram():
             #        await napravlenie_sdelok_3nogi(percent_eu_tom_us_tom_eurusd, 'EU_TOM / US_TOM / EURUSD(for)', price1=eurrub_megbank, price2=last_prices.get('BBG0013HGFT4', 1), price3=eurusd_for) , abs(percent_eu_tom_us_tom_eurusd) ]
             #        ]
             text_valuta_kotirovki = [[f"{await valyta_smail(percent_usdrub_megb_spr)} •  ({percent_usdrub_megb_spr}%)\n{await link_text('USDRUB(межб) / USDRUB(спр)')}\nCNY_TOM x USDCNH(for) • {kurs_usdrub_spr}\nКурс {await link_text('USDRUB межбанк')} • {usdrub_megbank}\n\n", abs(percent_usdrub_megb_spr)],
-                                     [f"{await valyta_smail(percent_eurrub_megb_spr)} •  ({percent_eurrub_megb_spr}%)\n{await link_text('EURRUB(межб) / EURRUB(спр)')}\nCNY_TOM x EURCNH(for) • {kurs_eurrub_spr}\nКурс {await link_text('USDRUB межбанк')} • {eurrub_megbank}\n\n", abs(percent_eurrub_megb_spr)],
+                                     [f"{await valyta_smail(percent_eurrub_megb_spr)} •  ({percent_eurrub_megb_spr}%)\n{await link_text('EURRUB(межб) / EURRUB(спр)')}\nCNY_TOM x EURCNH(for) • {kurs_eurrub_spr}\nКурс {await link_text('EURRUB межбанк')} • {eurrub_megbank}\n\n", abs(percent_eurrub_megb_spr)],
+                                     [f"\n{await valyta_smail(percent_si1_usdrub_megb)} •  ({percent_si1_usdrub_megb}%)\n{await link_text('SI1 / USDRUB(межб)')}\nSI1  • {last_prices.get('FUTEU0624000', 1)}\nUSDRUB({await link_text('межбанк')}) • {usdrub_megbank}\n\n", 0],
+                                     [f"{await valyta_smail(percent_eu1_eurrub_megb)} •  ({percent_eu1_eurrub_megb}%)\n{await link_text('EU1 / EURRUB(спр)')}\nEU1 • {kurs_eurrub_spr}\nEURRUB({await link_text('межбанк')}) • {eurrub_megbank}\n\n", 0],
 
                                      ]
 
