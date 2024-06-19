@@ -384,10 +384,10 @@ async def valuta_vtelegram():
             percent_us_tom_try_tom_usdtry = round(last_prices.get('BBG0013HGFT4', 1) / last_prices.get('BBG0013J12N1', 4)/ usdtry_for * 100 -100, 3)
             percent_eu_tom_try_tom_eurtry = round(eurrub_megbank / last_prices.get('BBG0013J12N1', 4)/ eurtry_for * 100  -100, 3)
             percent_eu_tom_us_tom_eurusd = round(eurrub_megbank / last_prices.get('BBG0013HGFT4', 1) / eurusd_for * 100 -100, 3)
-            percent_usdrub_megb_spr = round(usdrub_megbank / kurs_usdrub_spr, 4)
-            percent_eurrub_megb_spr = round(eurrub_megbank / kurs_eurrub_spr, 4)
-            percent_si1_usdrub_megb = round(last_prices.get('FUTSI0624000', 1) / 1000 / usdrub_megbank, 4)
-            percent_eu1_eurrub_megb = round(last_prices.get('FUTEU0624000', 1) / 1000 / eurrub_megbank, 4)
+            percent_usdrub_megb_spr = round(usdrub_megbank / kurs_usdrub_spr, 2)
+            percent_eurrub_megb_spr = round(eurrub_megbank / kurs_eurrub_spr, 2)
+            percent_si1_usdrub_megb = round(last_prices.get('FUTSI0624000', 1) / 1000 / usdrub_megbank, 2)
+            percent_eu1_eurrub_megb = round(last_prices.get('FUTEU0624000', 1) / 1000 / eurrub_megbank, 2)
             kurs_cb_usdrub = 89.0499
             kurs_cb_eurrub = 95.3906
 
