@@ -119,7 +119,7 @@ async def dict_yahoo_valuta():
     price_futures = {}
     global yahoo_valyata
     fut = ["brent_fut", "gas_fut", "gold_fut", "silver_fut", "gold_spot", "nasdaq", "sp500"]
-    symbols = ["XAUUSD", "XAGUSD", "USDTRY", "EURTRY", "USDKZT", "EURKZT", "EURCNH", "EURRUB", "USDCNH", "EURUSD", "CNYRUB",
+    symbols = ["USDRUB","XAUUSD", "XAGUSD", "USDTRY", "EURTRY", "USDKZT", "EURKZT", "EURCNH", "EURRUB", "USDCNH", "EURUSD", "CNYRUB",
                "CNYUSD", "brent_fut", "gas_fut", "gold_fut", "silver_fut", "gold_spot", "nasdaq", "sp500"]
     try:
         while True:
