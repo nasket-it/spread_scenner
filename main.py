@@ -318,61 +318,61 @@ async def valuta_vtelegram():
             usd_rub_ru = await get_last_price(usdrub['USD000UTSTOM'])
             # eur_rub_tom = last_prices.get('EUR000UTSTOM')
             # print('ldldldldldldldldldldldldlldldldld', eur_rub_tom)
-            si_price = last_prices.get('FUTSI0624000', 1)
+            si_price = last_prices.get('FUTSI0924000', 1)
             # si_sprav_price = round(1000 * (usd_rub_ru * (1 + 0.16 * (await expiration_date_future(si['si-6.24'])/365))))
 
 
-            percent_si2_cr2_usdcnh = round(last_prices.get('FUTSI0924000', 1) / last_prices.get('FUTCNY092400', 1) / 1000 / usdcnh_for * 100 -100, 3)
+            percent_si2_cr2_usdcnh = round(last_prices.get('FUTSI1224000', 1) / last_prices.get('FUTCNY122400', 1) / 1000 / usdcnh_for * 100 -100, 3)
 
-            percent_si_cr_usdcnh = round(si_price / last_prices.get('FUTCNY062400', 1) / 1000 / usdcnh_for * 100 -100, 3)#usdcnh_for
+            percent_si_cr_usdcnh = round(si_price / last_prices.get('FUTCNY092400', 1) / 1000 / usdcnh_for * 100 -100, 3)#usdcnh_for
             si_cr_usdcnh = 'Si1_Cr1_USDCNH(for)'
-            message_si_cr_usdcnh = f"{await valyta_smail(percent_si_cr_usdcnh)} •  ({percent_si_cr_usdcnh}%){await smail_vnimanie(percent_si_cr_usdcnh)}\nSi1 / CR1 / $USDCNH(for)\nSi - 1 лот | CNY - {si_price/100/last_prices.get('FUTCNY062400', 1)}лот\n\n"
-            await send_signals(percent_si_cr_usdcnh, message_si_cr_usdcnh, si_cr_usdcnh)
+            # message_si_cr_usdcnh = f"{await valyta_smail(percent_si_cr_usdcnh)} •  ({percent_si_cr_usdcnh}%){await smail_vnimanie(percent_si_cr_usdcnh)}\nSi1 / CR1 / $USDCNH(for)\nSi - 1 лот | CNY - {si_price/100/last_prices.get('FUTCNY092400', 1)}лот\n\n"
+            # await send_signals(percent_si_cr_usdcnh, message_si_cr_usdcnh, si_cr_usdcnh)
 
-            percent_eu2_cr2_eurcnh = round(last_prices.get('FUTEU0924000', 1) / last_prices.get('FUTCNY092400', 1) / 1000 / await valuta_replace_float('EURCNH', yahoo_valyata, 4) * 100 -100, 3)
+            percent_eu2_cr2_eurcnh = round(last_prices.get('FUTEU1224000', 1) / last_prices.get('FUTCNY122400', 1) / 1000 / await valuta_replace_float('EURCNH', yahoo_valyata, 4) * 100 -100, 3)
 
-            percent_eu_cr_eurcnh = round(last_prices.get('FUTEU0624000', 1) / last_prices.get('FUTCNY062400', 1) / 1000 / await valuta_replace_float('EURCNH', yahoo_valyata, 4) * 100 -100, 3) # await valuta_replace_float('EURCNH', yahoo_valyata, 4)
+            percent_eu_cr_eurcnh = round(last_prices.get('FUTEU0924000', 1) / last_prices.get('FUTCNY092400', 1) / 1000 / await valuta_replace_float('EURCNH', yahoo_valyata, 4) * 100 -100, 3) # await valuta_replace_float('EURCNH', yahoo_valyata, 4)
             eu_cr_eurcnh = 'Eu1_Cr1_EURCNH(for)'
-            message_eu_cr_eurcnh = f"{await valyta_smail(percent_eu_cr_eurcnh)} •  ({percent_eu_cr_eurcnh}%){await smail_vnimanie(percent_eu_cr_eurcnh)}\nEu1 / CR1 / $EURCNH(for)\n\n"
-            await send_signals(percent_eu_cr_eurcnh, message_eu_cr_eurcnh, eu_cr_eurcnh)
+            # message_eu_cr_eurcnh = f"{await valyta_smail(percent_eu_cr_eurcnh)} •  ({percent_eu_cr_eurcnh}%){await smail_vnimanie(percent_eu_cr_eurcnh)}\nEu1 / CR1 / $EURCNH(for)\n\n"
+            # await send_signals(percent_eu_cr_eurcnh, message_eu_cr_eurcnh, eu_cr_eurcnh)
 
-            percent_eu2_si2_eurusd = round(last_prices.get('FUTEU0924000', 1) / last_prices.get('FUTSI0924000', 1)/ await valuta_replace_float('EURUSD', yahoo_valyata, 4) * 100 -100, 3)
+            percent_eu2_si2_eurusd = round(last_prices.get('FUTEU1224000', 1) / last_prices.get('FUTSI1224000', 1)/ await valuta_replace_float('EURUSD', yahoo_valyata, 4) * 100 -100, 3)
 
-            percent_eu_si_eurusd = round(last_prices.get('FUTEU0624000', 1) / si_price / await valuta_replace_float('EURUSD', yahoo_valyata, 4) * 100 -100, 3)
-            eu_si_eurusd = 'Eu1_Si1_EURUSD(for)'
-            message_eu_si_eurusd = f"{await valyta_smail(percent_eu_si_eurusd)} •  ({percent_eu_si_eurusd}%){await smail_vnimanie(percent_eu_si_eurusd)}\nEu1 / Si1 / $EURUSD(for)\n\n"
-            await send_signals(percent_eu_si_eurusd, message_eu_si_eurusd, eu_si_eurusd)
+            percent_eu_si_eurusd = round(last_prices.get('FUTEU0924000', 1) / si_price / await valuta_replace_float('EURUSD', yahoo_valyata, 4) * 100 -100, 3)
+            # eu_si_eurusd = 'Eu1_Si1_EURUSD(for)'
+            # message_eu_si_eurusd = f"{await valyta_smail(percent_eu_si_eurusd)} •  ({percent_eu_si_eurusd}%){await smail_vnimanie(percent_eu_si_eurusd)}\nEu1 / Si1 / $EURUSD(for)\n\n"
+            # await send_signals(percent_eu_si_eurusd, message_eu_si_eurusd, eu_si_eurusd)
 
-            percent_eu2_si2_ed2 = round(last_prices.get('FUTEU0924000', 1) / last_prices.get('FUTSI0924000', 1) / last_prices.get('FUTED0924000', 1) * 100 -100, 3)
+            percent_eu2_si2_ed2 = round(last_prices.get('FUTEU1224000', 1) / last_prices.get('FUTSI1224000', 1) / last_prices.get('FUTED1224000', 1) * 100 -100, 3)
 
-            percent_eu_si_ed = round(last_prices.get('FUTEU0624000', 1) / si_price / last_prices.get('FUTED0624000', 1) * 100 -100, 3)
-            eu_si_ed = 'Eu1_Si1_Ed1'
-            message_eu_si_ed = f"{await valyta_smail(percent_eu_si_ed)} •  ({percent_eu_si_ed}%){await smail_vnimanie(percent_eu_si_ed)}\nEu1 / Si1 / $ED ️\n\n\n"
-            await send_signals(percent_eu_si_ed, message_eu_si_ed, eu_si_ed)
+            percent_eu_si_ed = round(last_prices.get('FUTEU0924000', 1) / si_price / last_prices.get('FUTED0624000', 1) * 100 -100, 3)
+            # eu_si_ed = 'Eu1_Si1_Ed1'
+            # message_eu_si_ed = f"{await valyta_smail(percent_eu_si_ed)} •  ({percent_eu_si_ed}%){await smail_vnimanie(percent_eu_si_ed)}\nEu1 / Si1 / $ED ️\n\n\n"
+            # await send_signals(percent_eu_si_ed, message_eu_si_ed, eu_si_ed)
 
             percent_usf_cnf_usdcnh = round(last_prices.get(futures['USDRUBF'], 1) / last_prices.get(futures['CNYRUBF'], 1) / usdcnh_for * 100 -100, 3)
-            usf_cnf_usdcnh = 'US.F_CN.F_USDCNH(for)'
-            message_usf_cnf_usdcnh = f"{await valyta_smail(percent_usf_cnf_usdcnh)} •  ({percent_usf_cnf_usdcnh}%){await smail_vnimanie(percent_usf_cnf_usdcnh)}\nUS.F / CN.F / USDCNH(for) ️\n\n\n"
-            await send_signals(percent_usf_cnf_usdcnh, message_usf_cnf_usdcnh, usf_cnf_usdcnh)
+            # usf_cnf_usdcnh = 'US.F_CN.F_USDCNH(for)'
+            # message_usf_cnf_usdcnh = f"{await valyta_smail(percent_usf_cnf_usdcnh)} •  ({percent_usf_cnf_usdcnh}%){await smail_vnimanie(percent_usf_cnf_usdcnh)}\nUS.F / CN.F / USDCNH(for) ️\n\n\n"
+            # await send_signals(percent_usf_cnf_usdcnh, message_usf_cnf_usdcnh, usf_cnf_usdcnh)
 
             percent_euf_cnf_eurcnh = round(last_prices.get('FUTEURRUBF00', 1) / last_prices.get(futures['CNYRUBF'], 1) / eurcnh_for * 100 -100, 3)
-            euf_cnf_eurcnh = 'EU.F_CN.F_EURCNH(for)'
-            message_euf_cnf_eurcnh = f"{await valyta_smail(percent_euf_cnf_eurcnh)} •  ({percent_euf_cnf_eurcnh}%){await smail_vnimanie(percent_euf_cnf_eurcnh)}\nUS.F / CN.F / USDCNH(for) ️\n\n\n"
-            await send_signals(percent_euf_cnf_eurcnh, message_euf_cnf_eurcnh, euf_cnf_eurcnh)
+            # euf_cnf_eurcnh = 'EU.F_CN.F_EURCNH(for)'
+            # message_euf_cnf_eurcnh = f"{await valyta_smail(percent_euf_cnf_eurcnh)} •  ({percent_euf_cnf_eurcnh}%){await smail_vnimanie(percent_euf_cnf_eurcnh)}\nUS.F / CN.F / USDCNH(for) ️\n\n\n"
+            # await send_signals(percent_euf_cnf_eurcnh, message_euf_cnf_eurcnh, euf_cnf_eurcnh)
 
             percent_euf_usf_eurusd = round(last_prices.get('FUTEURRUBF00', 1) / last_prices.get(futures['USDRUBF'], 1) / eurusd_for * 100 -100, 3)
 
-            percent_ed_eurusd = round(last_prices.get('FUTED0624000', 1) / await valuta_replace_float('EURUSD', yahoo_valyata, 4) * 100 - 100, 3)
-            percent_ed2_eurusd = round(last_prices.get('FUTED0924000', 1) / await valuta_replace_float('EURUSD', yahoo_valyata, 4) * 100 - 100, 3)
-            percent_ed_ed2 = round(last_prices.get('FUTED0624000', 1) / last_prices.get('FUTED0924000', 1) * 100 - 100, 3)
-            percent_si_si2 = round(last_prices.get('FUTSI0624000', 1) / last_prices.get('FUTSI0924000', 1) * 100 - 100, 3)
-            percent_eu_eu2 = round(last_prices.get('FUTEU0624000', 1) / last_prices.get('FUTEU0924000', 1) * 100 - 100, 3)
-            percent_cr_cr2 = round(last_prices.get('FUTCNY062400', 1) / last_prices.get('FUTCNY092400', 1) * 100 - 100, 3)
-            percent_usf_si = round(last_prices.get(futures['USDRUBF'], 1) / (last_prices.get('FUTSI0624000', 1) / 1000) * 100 - 100, 3)
-            percent_euf_eu = round(last_prices.get('FUTEURRUBF00', 1) / (last_prices.get('FUTEU0624000', 1) / 1000)* 100 - 100, 3)
-            percent_crf_cr = round(last_prices.get(futures['CNYRUBF'], 1) / last_prices.get('FUTCNY062400', 1) * 100 - 100, 3)
-            percent_cr1_cr_tom = round(last_prices.get('FUTCNY062400', 1) / last_prices.get('BBG0013HRTL0', 1) * 100 - 100, 3)
-            percent_cr2_cr_tom = round(last_prices.get('FUTCNY092400', 1) / last_prices.get('BBG0013HRTL0', 1) * 100 - 100, 3)
+            percent_ed_eurusd = round(last_prices.get('FUTED0924000', 1) / await valuta_replace_float('EURUSD', yahoo_valyata, 4) * 100 - 100, 3)
+            percent_ed2_eurusd = round(last_prices.get('FUTED1224000', 1) / await valuta_replace_float('EURUSD', yahoo_valyata, 4) * 100 - 100, 3)
+            percent_ed_ed2 = round(last_prices.get('FUTED0924000', 1) / last_prices.get('FUTED1224000', 1) * 100 - 100, 3)
+            percent_si_si2 = round(last_prices.get('FUTSI0924000', 1) / last_prices.get('FUTSI1224000', 1) * 100 - 100, 3)
+            percent_eu_eu2 = round(last_prices.get('FUTEU0924000', 1) / last_prices.get('FUTEU1224000', 1) * 100 - 100, 3)
+            percent_cr_cr2 = round(last_prices.get('FUTCNY092400', 1) / last_prices.get('FUTCNY122400', 1) * 100 - 100, 3)
+            percent_usf_si = round(last_prices.get(futures['USDRUBF'], 1) / (last_prices.get('FUTSI0924000', 1) / 1000) * 100 - 100, 3)
+            percent_euf_eu = round(last_prices.get('FUTEURRUBF00', 1) / (last_prices.get('FUTEU0924000', 1) / 1000)* 100 - 100, 3)
+            percent_crf_cr = round(last_prices.get(futures['CNYRUBF'], 1) / last_prices.get('FUTCNY092400', 1) * 100 - 100, 3)
+            percent_cr1_cr_tom = round(last_prices.get('FUTCNY092400', 1) / last_prices.get('BBG0013HRTL0', 1) * 100 - 100, 3)
+            percent_cr2_cr_tom = round(last_prices.get('FUTCNY122400', 1) / last_prices.get('BBG0013HRTL0', 1) * 100 - 100, 3)
 
 
 
@@ -386,8 +386,8 @@ async def valuta_vtelegram():
             percent_eu_tom_us_tom_eurusd = round(eurrub_megbank / last_prices.get('BBG0013HGFT4', 1) / eurusd_for * 100 -100, 3)
             percent_usdrub_megb_spr = round(usdrub_megbank / kurs_usdrub_spr * 100 - 100 , 2)
             percent_eurrub_megb_spr = round(eurrub_megbank / kurs_eurrub_spr * 100 - 100 , 2)
-            percent_si1_usdrub_megb = round(last_prices.get('FUTSI0624000', 1) / 1000 / usdrub_megbank * 100 - 100 , 2)
-            percent_eu1_eurrub_megb = round(last_prices.get('FUTEU0624000', 1) / 1000 / eurrub_megbank * 100 - 100 , 2)
+            percent_si1_usdrub_megb = round(last_prices.get('FUTSI0924000', 1) / 1000 / usdrub_megbank * 100 - 100 , 2)
+            percent_eu1_eurrub_megb = round(last_prices.get('FUTEU0924000', 1) / 1000 / eurrub_megbank * 100 - 100 , 2)
             print('ioioioiooioiio', usdrub_megbank, eurrub_megbank)
             kurs_cb_usdrub = 89.0499
             kurs_cb_eurrub = 95.3906
@@ -397,28 +397,32 @@ async def valuta_vtelegram():
 
 
 
-            percent_sv1_silver = round(last_prices.get('FUTSILV06240',None) / silver_in * 100  -100, 3)
-            percent_gd1_gold = round(last_prices.get('FUTGOLD06240',None) / gold_in * 100  -100, 3)
-            percent_na1_nasdaq = round(last_prices.get('FUTNASD06240',None) / nasdaq_in * 100  -100, 3)
-            percent_sf1_sp500 = round((last_prices.get('FUTSPYF06240',None) * 10) / sp500_in * 100  -100, 3)
+            percent_sv1_silver = round(last_prices.get('FUTSILV09240',None) / silver_in * 100  -100, 3)
+            percent_gd1_gold = round(last_prices.get('FUTGOLD09240',None) / gold_in * 100  -100, 3)
+            percent_na1_nasdaq = round(last_prices.get('FUTNASD09240',None) / nasdaq_in * 100  -100, 3)
+            percent_sf1_sp500 = round((last_prices.get('FUTSPYF09240',None) * 10) / sp500_in * 100  -100, 3)
+            percent_sv2_silver = round(last_prices.get('FUTSILV12240',None) / silver_in * 100  -100, 3)
+            percent_gd2_gold = round(last_prices.get('FUTGOLD12240',None) / gold_in * 100  -100, 3)
+            percent_na2_nasdaq = round(last_prices.get('FUTNASD12240',None) / nasdaq_in * 100  -100, 3)
+            percent_sf2_sp500 = round((last_prices.get('FUTSPYF12240',None) * 10) / sp500_in * 100  -100, 3)
 
 
 
-            sprav_price_cr1 = await sprav_price_future(last_prices.get('BBG0013HRTL0', 1), figi='FUTCNY062400', max_percente_first_day=2.7)
-            percent_sprav_price_cr1 = round(last_prices.get('FUTCNY062400', 1) / sprav_price_cr1 * 100 -100, 3)
+            sprav_price_cr1 = await sprav_price_future(last_prices.get('BBG0013HRTL0', 1), figi='FUTCNY092400', max_percente_first_day=2.7)
+            percent_sprav_price_cr1 = round(last_prices.get('FUTCNY092400', 1) / sprav_price_cr1 * 100 -100, 3)
 
-            sprav_price_silver = await sprav_price_future(silver_in, figi='FUTSILV06240', max_percente_first_day=3.25)
-            percent_sprav_price_silver = await asy_get_percent(sprav_price_silver, last_prices.get('FUTSILV06240', None) )
+            sprav_price_silver = await sprav_price_future(silver_in, figi='FUTSILV09240', max_percente_first_day=3.25)
+            percent_sprav_price_silver = await asy_get_percent(sprav_price_silver, last_prices.get('FUTSILV09240', None) )
 
-            sprav_price_gold = await sprav_price_future(gold_in, figi='FUTGOLD06240', max_percente_first_day=2.7)
-            percent_sprav_price_gold = await asy_get_percent(sprav_price_gold, last_prices.get('FUTGOLD06240',None))
+            sprav_price_gold = await sprav_price_future(gold_in, figi='FUTGOLD09240', max_percente_first_day=2.7)
+            percent_sprav_price_gold = await asy_get_percent(sprav_price_gold, last_prices.get('FUTGOLD09240',None))
             # percent_sprav_price_gold =round(percent_sprav_price_gold -  1.3 if percent_sprav_price_gold >= 0 else percent_sprav_price_gold - -1.3, 3)
 
-            sprav_price_nasdaq = await sprav_price_future(nasdaq_in, figi='FUTNASD06240', max_percente_first_day=1.7)
-            percent_sprav_price_nasdaq = await asy_get_percent(sprav_price_nasdaq, last_prices.get('FUTNASD06240',None))
+            sprav_price_nasdaq = await sprav_price_future(nasdaq_in, figi='FUTNASD09240', max_percente_first_day=1.7)
+            percent_sprav_price_nasdaq = await asy_get_percent(sprav_price_nasdaq, last_prices.get('FUTNASD09240',None))
 
-            sprav_price_sp500 = await sprav_price_future(sp500_in, figi='FUTSPYF06240', max_percente_first_day=1.9)
-            percent_sprav_price_sp500 = await asy_get_percent(sprav_price_sp500, last_prices.get('FUTSPYF06240',None) * 10 )
+            sprav_price_sp500 = await sprav_price_future(sp500_in, figi='FUTSPYF09240', max_percente_first_day=1.9)
+            percent_sprav_price_sp500 = await asy_get_percent(sprav_price_sp500, last_prices.get('FUTSPYF09240',None) * 10 )
 
 
 
@@ -436,21 +440,21 @@ async def valuta_vtelegram():
             text_future_zagolovok = f"⚙️ {await podcher_text(await zirniy_text('Фьючерсы на валюту'))} 👇👇👇\n\n"
 
             text_future_kotirovri = [[f"{await valyta_smail(percent_si_cr_usdcnh)} •  ({percent_si_cr_usdcnh}%){await smail_vnimanie(percent_si_cr_usdcnh)}\n{await link_text('Si1 / CR1 / USDCNH(for)')}\n" +
-                                    await napravlenie_sdelok_3nogi(percent_si_cr_usdcnh, 'Si1 / CR1 / USDCNH(for)', price1=si_price, price2=last_prices.get('FUTCNY062400', 1), price3=usdcnh_for) , abs(percent_si_cr_usdcnh)],
+                                    await napravlenie_sdelok_3nogi(percent_si_cr_usdcnh, 'Si1 / CR1 / USDCNH(for)', price1=si_price, price2=last_prices.get('FUTCNY092400', 1), price3=usdcnh_for) , abs(percent_si_cr_usdcnh)],
                                     [f"{await valyta_smail(percent_si2_cr2_usdcnh)} •  ({percent_si2_cr2_usdcnh}%){await smail_vnimanie(percent_si2_cr2_usdcnh)}\n{await link_text('Si2 / CR2 / USDCNH(for)')}\n" +
-                                    await napravlenie_sdelok_3nogi(percent_si2_cr2_usdcnh, 'Si2 / CR2 / USDCNH(for)', price1=last_prices.get('FUTSI0924000', 1), price2=last_prices.get('FUTCNY092400', 1), price3=usdcnh_for) , abs(percent_si2_cr2_usdcnh)],
+                                    await napravlenie_sdelok_3nogi(percent_si2_cr2_usdcnh, 'Si2 / CR2 / USDCNH(for)', price1=last_prices.get('FUTSI1224000', 1), price2=last_prices.get('FUTCNY122400', 1), price3=usdcnh_for) , abs(percent_si2_cr2_usdcnh)],
                                     [f"{await valyta_smail(percent_eu_cr_eurcnh)} •  ({percent_eu_cr_eurcnh}%){await smail_vnimanie(percent_eu_cr_eurcnh)}\n{await link_text('Eu1 / Cr1 / EURCNH(for)')}\n" +
-                                    await napravlenie_sdelok_3nogi(percent_eu_cr_eurcnh, 'Eu1 / Cr1 / EURCNH(for)', price1=last_prices.get('FUTEU0624000', 1), price2=last_prices.get('FUTCNY062400', 1), price3=eurcnh_for), abs(percent_eu_cr_eurcnh)],
+                                    await napravlenie_sdelok_3nogi(percent_eu_cr_eurcnh, 'Eu1 / Cr1 / EURCNH(for)', price1=last_prices.get('FUTEU0924000', 1), price2=last_prices.get('FUTCNY092400', 1), price3=eurcnh_for), abs(percent_eu_cr_eurcnh)],
                                     [f"{await valyta_smail(percent_eu2_cr2_eurcnh)} •  ({percent_eu2_cr2_eurcnh}%){await smail_vnimanie(percent_eu2_cr2_eurcnh)}\n{await link_text('Eu2 / Cr2 / EURCNH(for)')}\n" +
-                                    await napravlenie_sdelok_3nogi(percent_eu2_cr2_eurcnh, 'Eu2 / Cr2 / EURCNH(for)', price1=last_prices.get('FUTEU0924000', 1), price2=last_prices.get('FUTCNY092400', 1), price3=eurcnh_for), abs(percent_eu2_cr2_eurcnh)],
+                                    await napravlenie_sdelok_3nogi(percent_eu2_cr2_eurcnh, 'Eu2 / Cr2 / EURCNH(for)', price1=last_prices.get('FUTEU1224000', 1), price2=last_prices.get('FUTCNY122400', 1), price3=eurcnh_for), abs(percent_eu2_cr2_eurcnh)],
                                     [f"{await valyta_smail(percent_eu_si_eurusd)} •  ({percent_eu_si_eurusd}%){await smail_vnimanie(percent_eu_si_eurusd)}\n{await link_text('Eu1 / Si1 / EURUSD(for)')}\n" +
-                                    await napravlenie_sdelok_3nogi(percent_eu_si_eurusd, 'Eu1 / Si1 / EURUSD(for)', price1=last_prices.get('FUTEU0624000', 1), price2=si_price, price3=eurusd_for), abs(percent_eu_si_eurusd)],
+                                    await napravlenie_sdelok_3nogi(percent_eu_si_eurusd, 'Eu1 / Si1 / EURUSD(for)', price1=last_prices.get('FUTEU0924000', 1), price2=si_price, price3=eurusd_for), abs(percent_eu_si_eurusd)],
                                     [f"{await valyta_smail(percent_eu2_si2_eurusd)} •  ({percent_eu2_si2_eurusd}%){await smail_vnimanie(percent_eu2_si2_eurusd)}\n{await link_text('Eu2 / Si2 / EURUSD(for)')}\n" +
-                                    await napravlenie_sdelok_3nogi(percent_eu2_si2_eurusd, 'Eu2 / Si2 / EURUSD(for)', price1=last_prices.get('FUTEU0924000', 1), price2=last_prices.get('FUTSI0924000', 1), price3=eurusd_for), abs(percent_eu2_si2_eurusd)],
+                                    await napravlenie_sdelok_3nogi(percent_eu2_si2_eurusd, 'Eu2 / Si2 / EURUSD(for)', price1=last_prices.get('FUTEU1224000', 1), price2=last_prices.get('FUTSI1224000', 1), price3=eurusd_for), abs(percent_eu2_si2_eurusd)],
                                     [f"{await valyta_smail(percent_eu_si_ed)} •  ({percent_eu_si_ed}%){await smail_vnimanie(percent_eu_si_ed)}\n{await link_text('Eu1 / Si1 / ED')}\n" +
-                                    await napravlenie_sdelok_3nogi(percent_eu_si_ed, 'Eu1 / Si1 / ED',  price1=last_prices.get('FUTEU0624000', 1), price2=si_price, price3=last_prices.get('FUTED0624000', 1) ), abs(percent_eu_si_ed)],
+                                    await napravlenie_sdelok_3nogi(percent_eu_si_ed, 'Eu1 / Si1 / ED',  price1=last_prices.get('FUTEU0924000', 1), price2=si_price, price3=last_prices.get('FUTED0924000', 1) ), abs(percent_eu_si_ed)],
                                     [f"{await valyta_smail(percent_eu2_si2_ed2)} •  ({percent_eu2_si2_ed2}%){await smail_vnimanie(percent_eu2_si2_ed2)}\n{await link_text('Eu2 / Si2 / ED2')}\n" +
-                                    await napravlenie_sdelok_3nogi(percent_eu2_si2_ed2, 'Eu2 / Si2 / ED2',  price1=last_prices.get('FUTEU0924000', 1), price2=last_prices.get('FUTSI0924000', 1), price3=last_prices.get('FUTED0924000', 1) ), abs(percent_eu2_si2_ed2)],
+                                    await napravlenie_sdelok_3nogi(percent_eu2_si2_ed2, 'Eu2 / Si2 / ED2',  price1=last_prices.get('FUTEU1224000', 1), price2=last_prices.get('FUTSI1224000', 1), price3=last_prices.get('FUTED1224000', 1) ), abs(percent_eu2_si2_ed2)],
                                     [f"{await valyta_smail(percent_usf_cnf_usdcnh)} •  ({percent_usf_cnf_usdcnh}%){await smail_vnimanie(percent_usf_cnf_usdcnh)}\n{await link_text('US.F / CN.F / USDCNH(for)')}\n" +
                                     await napravlenie_sdelok_3nogi(percent_usf_cnf_usdcnh, 'US.F / CN.F / USDCNH(for)', price1=last_prices.get(futures['USDRUBF'], 1), price2=last_prices.get(futures['CNYRUBF'], 1), price3=usdcnh_for), abs(percent_usf_cnf_usdcnh)],
                                     [f"{await valyta_smail(percent_euf_cnf_eurcnh)} •  ({percent_euf_cnf_eurcnh}%){await smail_vnimanie(percent_euf_cnf_eurcnh)}\n{await link_text('EU.F / CN.F / EURCNH(for)')}\n" +
@@ -458,30 +462,30 @@ async def valuta_vtelegram():
                                     [f"{await valyta_smail(percent_euf_usf_eurusd)} •  ({percent_euf_usf_eurusd}%){await smail_vnimanie(percent_euf_usf_eurusd)}\n{await link_text('EU.F / US.F / EURUSD(for)')}\n" +
                                     await napravlenie_sdelok_3nogi(percent_euf_usf_eurusd, 'EU.F / US.F / EURUSD(for)', price1=last_prices.get('FUTEURRUBF00', 1), price2=last_prices.get(futures['USDRUBF'], 1), price3=eurusd_for), abs(percent_euf_usf_eurusd)],
                                     [f"{await valyta_smail(percent_ed_eurusd)} •  ({percent_ed_eurusd}%){await smail_vnimanie(percent_ed_eurusd)}\n{await link_text('ED / EURUSD(for)')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_ed_eurusd, 'ED / EURUSD(for)', price1=last_prices.get('FUTED0624000', 1), price2=eurusd_for, lot1=1, lot2=lotnost_forex['EURUSD']), abs(percent_ed_eurusd)],
+                                    await napravlenie_sdelok_2nogi(percent_ed_eurusd, 'ED / EURUSD(for)', price1=last_prices.get('FUTED0924000', 1), price2=eurusd_for, lot1=1, lot2=lotnost_forex['EURUSD']), abs(percent_ed_eurusd)],
                                     [f"{await valyta_smail(percent_ed2_eurusd)} •  ({percent_ed2_eurusd}%){await smail_vnimanie(percent_ed2_eurusd)}\n{await link_text('ED2 / EURUSD(for)')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_ed2_eurusd, 'ED2 / EURUSD(for)', price1=last_prices.get('FUTED0924000', 1), price2=eurusd_for, lot1=1, lot2=lotnost_forex['EURUSD']), abs(percent_ed2_eurusd)],
+                                    await napravlenie_sdelok_2nogi(percent_ed2_eurusd, 'ED2 / EURUSD(for)', price1=last_prices.get('FUTED1224000', 1), price2=eurusd_for, lot1=1, lot2=lotnost_forex['EURUSD']), abs(percent_ed2_eurusd)],
 
                                      ]
 
             text_future_kotirovri2 = [[f"{await valyta_smail(percent_si_si2)} •  ({percent_si_si2}%)\n{await link_text('SI1 / SI2')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_si_si2, 'SI1 / SI2', price1=last_prices.get('FUTSI0624000', 1), price2=last_prices.get('FUTSI0924000', 1), lot1=1, lot2=1), abs(percent_si_si2)],
+                                    await napravlenie_sdelok_2nogi(percent_si_si2, 'SI1 / SI2', price1=last_prices.get('FUTSI0924000', 1), price2=last_prices.get('FUTSI1224000', 1), lot1=1, lot2=1), abs(percent_si_si2)],
                                     [f"{await valyta_smail(percent_eu_eu2)} •  ({percent_eu_eu2}%)\n{await link_text('EU1 / EU2')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_eu_eu2, 'EU1 / EU2', price1=last_prices.get('FUTEU0624000', 1), price2=last_prices.get('FUTEU0924000', 1), lot1=1, lot2=1), abs(percent_eu_eu2)],
+                                    await napravlenie_sdelok_2nogi(percent_eu_eu2, 'EU1 / EU2', price1=last_prices.get('FUTEU0924000', 1), price2=last_prices.get('FUTEU1224000', 1), lot1=1, lot2=1), abs(percent_eu_eu2)],
                                     [f"{await valyta_smail(percent_cr_cr2)} •  ({percent_cr_cr2}%)\n{await link_text('CR1 / CR2')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_cr_cr2, 'CR1 / CR2', price1=last_prices.get('FUTCNY062400', 1), price2=last_prices.get('FUTCNY092400', 1), lot1=1, lot2=1), abs(percent_cr_cr2)],
+                                    await napravlenie_sdelok_2nogi(percent_cr_cr2, 'CR1 / CR2', price1=last_prices.get('FUTCNY092400', 1), price2=last_prices.get('FUTCNY122400', 1), lot1=1, lot2=1), abs(percent_cr_cr2)],
                                     [f"{await valyta_smail(percent_usf_si)} •  ({percent_usf_si}%)\n{await link_text('US.F / SI1')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_usf_si, 'US.F / SI1', price1=last_prices.get(futures['USDRUBF'], 1), price2=last_prices.get('FUTSI0624000', 1), lot1=1, lot2=1), abs(percent_usf_si)],
+                                    await napravlenie_sdelok_2nogi(percent_usf_si, 'US.F / SI1', price1=last_prices.get(futures['USDRUBF'], 1), price2=last_prices.get('FUTSI0924000', 1), lot1=1, lot2=1), abs(percent_usf_si)],
                                     [f"{await valyta_smail(percent_euf_eu)} •  ({percent_euf_eu}%)\n{await link_text('EU.F / EU1')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_euf_eu, 'EU.F / EU1', price1=last_prices.get('FUTEURRUBF00', 1), price2=last_prices.get('FUTEU0624000', 1), lot1=1, lot2=1), abs(percent_euf_eu)],
+                                    await napravlenie_sdelok_2nogi(percent_euf_eu, 'EU.F / EU1', price1=last_prices.get('FUTEURRUBF00', 1), price2=last_prices.get('FUTEU0924000', 1), lot1=1, lot2=1), abs(percent_euf_eu)],
                                     [f"{await valyta_smail(percent_crf_cr)} •  ({percent_crf_cr}%)\n{await link_text('CR.F / CR1')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_crf_cr, 'CR.F / CR1', price1=last_prices.get(futures['CNYRUBF'], 1), price2=last_prices.get('FUTCNY062400', 1), lot1=1, lot2=1), abs(percent_crf_cr)],
+                                    await napravlenie_sdelok_2nogi(percent_crf_cr, 'CR.F / CR1', price1=last_prices.get(futures['CNYRUBF'], 1), price2=last_prices.get('FUTCNY092400', 1), lot1=1, lot2=1), abs(percent_crf_cr)],
                                     [f"{await valyta_smail(percent_cr1_cr_tom)} •  ({percent_cr1_cr_tom}%)\n{await link_text('CR1 / CR_TOM')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_cr1_cr_tom, 'CR1 / CR_TOM', price1=last_prices.get('FUTCNY062400', 1), price2=last_prices.get('BBG0013HRTL0', 1), lot1=1, lot2=1), abs(percent_cr1_cr_tom)],
+                                    await napravlenie_sdelok_2nogi(percent_cr1_cr_tom, 'CR1 / CR_TOM', price1=last_prices.get('FUTCNY092400', 1), price2=last_prices.get('BBG0013HRTL0', 1), lot1=1, lot2=1), abs(percent_cr1_cr_tom)],
                                     [f"{await valyta_smail(percent_cr2_cr_tom)} •  ({percent_cr2_cr_tom}%)\n{await link_text('CR2 / CR_TOM')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_cr2_cr_tom, 'CR2 / CR_TOM', price1=last_prices.get('FUTCNY092400', 1), price2=last_prices.get('BBG0013HRTL0', 1), lot1=1, lot2=1), abs(percent_cr2_cr_tom)],
+                                    await napravlenie_sdelok_2nogi(percent_cr2_cr_tom, 'CR2 / CR_TOM', price1=last_prices.get('FUTCNY122400', 1), price2=last_prices.get('BBG0013HRTL0', 1), lot1=1, lot2=1), abs(percent_cr2_cr_tom)],
                                     [f"{await valyta_smail(percent_ed_ed2)} •  ({percent_ed_ed2}%)\n{await link_text('ED / ED2')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_ed_ed2, 'ED / ED2', price1=last_prices.get('FUTED0624000', 1), price2=last_prices.get('FUTED0924000', 1), lot1=1, lot2=1), abs(percent_ed_ed2)],
+                                    await napravlenie_sdelok_2nogi(percent_ed_ed2, 'ED / ED2', price1=last_prices.get('FUTED0924000', 1), price2=last_prices.get('FUTED1224000', 1), lot1=1, lot2=1), abs(percent_ed_ed2)],
 
                                      ]
 
@@ -509,8 +513,8 @@ async def valuta_vtelegram():
             #        ]
             text_valuta_kotirovki = [[f"{await valyta_smail(percent_usdrub_megb_spr)} •  ({percent_usdrub_megb_spr}%)\n{await link_text('USDRUB(межб) / USDRUB(спр)')}\nCNY_TOM x USDCNH(for) • {kurs_usdrub_spr}\nКурс {await link_text('USDRUB межбанк')} • {usdrub_megbank}\n\n", abs(percent_usdrub_megb_spr)],
                                      [f"{await valyta_smail(percent_eurrub_megb_spr)} •  ({percent_eurrub_megb_spr}%)\n{await link_text('EURRUB(межб) / EURRUB(спр)')}\nCNY_TOM x EURCNH(for) • {kurs_eurrub_spr}\nКурс {await link_text('EURRUB межбанк')} • {eurrub_megbank}\n\n", abs(percent_eurrub_megb_spr)],
-                                     [f"\n{await valyta_smail(percent_si1_usdrub_megb)} •  ({percent_si1_usdrub_megb}%)\n{await link_text('SI1 / USDRUB(межб)')}\nSI1  • {last_prices.get('FUTSI0624000', 1)}\nUSDRUB({await link_text('межбанк')}) • {usdrub_megbank}\n\n", 0],
-                                     [f"{await valyta_smail(percent_eu1_eurrub_megb)} •  ({percent_eu1_eurrub_megb}%)\n{await link_text('EU1 / EURRUB(межб)')}\nEU1 • {last_prices.get('FUTEU0624000', 1)}\nEURRUB({await link_text('межбанк')}) • {eurrub_megbank}\n\n", 0],
+                                     [f"\n{await valyta_smail(percent_si1_usdrub_megb)} •  ({percent_si1_usdrub_megb}%)\n{await link_text('SI1 / USDRUB(межб)')}\nSI1  • {last_prices.get('FUTSI0924000', 1)}\nUSDRUB({await link_text('межбанк')}) • {usdrub_megbank}\n\n", 0],
+                                     [f"{await valyta_smail(percent_eu1_eurrub_megb)} •  ({percent_eu1_eurrub_megb}%)\n{await link_text('EU1 / EURRUB(межб)')}\nEU1 • {last_prices.get('FUTEU0924000', 1)}\nEURRUB({await link_text('межбанк')}) • {eurrub_megbank}\n\n", 0],
 
                                      ]
 
@@ -521,13 +525,13 @@ async def valuta_vtelegram():
             time_new1 = time_apgrade.strftime("%H:%M:%S")
             delitel = 0.5
             silver_text = await create_tex_sprav_price_future(percent_sv1_silver, 'SV1 / XAGUSD(for)', delitel=0.5)
-            silver_text += await napravlenie_sdelok_2nogi(percent_sv1_silver, 'SV1 / XAGUSD(for)', price1=last_prices.get('FUTSILV06240', None), price2=silver_in, lot1=lotnost_forex['silver']['moex'], lot2=lotnost_forex['silver']['forex'])
+            silver_text += await napravlenie_sdelok_2nogi(percent_sv1_silver, 'SV1 / XAGUSD(for)', price1=last_prices.get('FUTSILV09240', None), price2=silver_in, lot1=lotnost_forex['silver']['moex'], lot2=lotnost_forex['silver']['forex'])
             gold_text = await create_tex_sprav_price_future(percent_gd1_gold, 'GOLD1 / XAUUSD(for)', delitel=0.5)
-            gold_text += await napravlenie_sdelok_2nogi(percent_gd1_gold, 'GOLD1 / XAUUSD(for)', price1=last_prices.get('FUTGOLD06240',None), price2=gold_in, lot1=lotnost_forex['gold']['moex'], lot2=lotnost_forex['gold']['forex'])
+            gold_text += await napravlenie_sdelok_2nogi(percent_gd1_gold, 'GOLD1 / XAUUSD(for)', price1=last_prices.get('FUTGOLD09240',None), price2=gold_in, lot1=lotnost_forex['gold']['moex'], lot2=lotnost_forex['gold']['forex'])
             nasdaq_text = await create_tex_sprav_price_future(percent_na1_nasdaq, 'NA1 / NDXUSD(for)', delitel=0.5)
-            nasdaq_text += await napravlenie_sdelok_2nogi(percent_na1_nasdaq, 'NA1 / NDXUSD(for)', price1=last_prices.get('FUTNASD06240',None), price2=nasdaq_in, lot1=lotnost_forex['nasdaq']['moex'], lot2=lotnost_forex['nasdaq']['forex'])
+            nasdaq_text += await napravlenie_sdelok_2nogi(percent_na1_nasdaq, 'NA1 / NDXUSD(for)', price1=last_prices.get('FUTNASD09240',None), price2=nasdaq_in, lot1=lotnost_forex['nasdaq']['moex'], lot2=lotnost_forex['nasdaq']['forex'])
             sp500_text = await create_tex_sprav_price_future(percent_sf1_sp500, 'SF1 / SPXUSD(for)', delitel=0.5)
-            sp500_text += await napravlenie_sdelok_2nogi(percent_sf1_sp500, 'SF1 / SPXUSD(for)', price1=last_prices.get('FUTSPYF06240',None) , price2=sp500_in, lot1=lotnost_forex['sp500']['moex'], lot2=lotnost_forex['sp500']['forex'])
+            sp500_text += await napravlenie_sdelok_2nogi(percent_sf1_sp500, 'SF1 / SPXUSD(for)', price1=last_prices.get('FUTSPYF09240',None) , price2=sp500_in, lot1=lotnost_forex['sp500']['moex'], lot2=lotnost_forex['sp500']['forex'])
             text_index_metals_zagolovok = [f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new1}\n\n",
                          f"Один знак  '❗' =  {delitel}%\n\n", f"⚙️ {await zirniy_text(await podcher_text('Фьючерсы на металлы, индексы '))}\n\n",]
             text_index_metals_kotirovki = [[silver_text, abs(percent_sv1_silver)],  [gold_text, abs(percent_gd1_gold)], [nasdaq_text, abs(percent_na1_nasdaq)], [sp500_text, abs(percent_sf1_sp500)]]
