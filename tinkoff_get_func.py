@@ -270,7 +270,7 @@ def get_fures_instrument():
             future_all_info[i.figi] = i
             # print(f"")
         # print(last_prices)
-
+print(future_all_info)
 get_fures_instrument()
 print(future_all_info['FUTCNY062400'].lot)
 valyuta_dict = {}
@@ -335,7 +335,7 @@ def get_orderbook_ti(symbol, bid_ask, step_in_orderbook):
 async def get_last_prices_dict():
     async with AsyncClient(TOKEN) as client:
         resp = await client.market_data.get_last_prices(
-            figi=[futures[i] for i in futures] + [i for i in Info_figi.figi_tiker] + [valyuta_dict[i] for i in valyuta_dict])
+            figi=[futures[i] for i in futures] + [i for i in Info_figi.figi_tiker] + [valyuta_dict[i] for i in valyuta_dict] + ['FUTED1224000',])
         for i in resp.last_prices:
             last_prices[i.figi] = await asy_price_float_ti(i.price)
 

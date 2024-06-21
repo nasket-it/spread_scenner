@@ -453,8 +453,8 @@ async def valuta_vtelegram():
                                     await napravlenie_sdelok_3nogi(percent_eu2_si2_eurusd, 'Eu2 / Si2 / EURUSD(for)', price1=last_prices.get('FUTEU1224000', 1), price2=last_prices.get('FUTSI1224000', 1), price3=eurusd_for), abs(percent_eu2_si2_eurusd)],
                                     [f"{await valyta_smail(percent_eu_si_ed)} •  ({percent_eu_si_ed}%){await smail_vnimanie(percent_eu_si_ed)}\n{await link_text('Eu1 / Si1 / ED')}\n" +
                                     await napravlenie_sdelok_3nogi(percent_eu_si_ed, 'Eu1 / Si1 / ED',  price1=last_prices.get('FUTEU0924000', 1), price2=si_price, price3=last_prices.get('FUTED0924000', 1) ), abs(percent_eu_si_ed)],
-                                    # [f"{await valyta_smail(percent_eu2_si2_ed2)} •  ({percent_eu2_si2_ed2}%){await smail_vnimanie(percent_eu2_si2_ed2)}\n{await link_text('Eu2 / Si2 / ED2')}\n" +
-                                    # await napravlenie_sdelok_3nogi(percent_eu2_si2_ed2, 'Eu2 / Si2 / ED2',  price1=last_prices.get('FUTEU1224000', 1), price2=last_prices.get('FUTSI1224000', 1), price3=last_prices.get('FUTED1224000', 1) ), abs(percent_eu2_si2_ed2)],
+                                    [f"{await valyta_smail(percent_eu2_si2_ed2)} •  ({percent_eu2_si2_ed2}%){await smail_vnimanie(percent_eu2_si2_ed2)}\n{await link_text('Eu2 / Si2 / ED2')}\n" +
+                                    await napravlenie_sdelok_3nogi(percent_eu2_si2_ed2, 'Eu2 / Si2 / ED2',  price1=last_prices.get('FUTEU1224000', 1), price2=last_prices.get('FUTSI1224000', 1), price3=last_prices.get('FUTED1224000', 1) ), abs(percent_eu2_si2_ed2)],
                                     [f"{await valyta_smail(percent_usf_cnf_usdcnh)} •  ({percent_usf_cnf_usdcnh}%){await smail_vnimanie(percent_usf_cnf_usdcnh)}\n{await link_text('US.F / CN.F / USDCNH(for)')}\n" +
                                     await napravlenie_sdelok_3nogi(percent_usf_cnf_usdcnh, 'US.F / CN.F / USDCNH(for)', price1=last_prices.get(futures['USDRUBF'], 1), price2=last_prices.get(futures['CNYRUBF'], 1), price3=usdcnh_for), abs(percent_usf_cnf_usdcnh)],
                                     [f"{await valyta_smail(percent_euf_cnf_eurcnh)} •  ({percent_euf_cnf_eurcnh}%){await smail_vnimanie(percent_euf_cnf_eurcnh)}\n{await link_text('EU.F / CN.F / EURCNH(for)')}\n" +
@@ -463,8 +463,8 @@ async def valuta_vtelegram():
                                     await napravlenie_sdelok_3nogi(percent_euf_usf_eurusd, 'EU.F / US.F / EURUSD(for)', price1=last_prices.get('FUTEURRUBF00', 1), price2=last_prices.get(futures['USDRUBF'], 1), price3=eurusd_for), abs(percent_euf_usf_eurusd)],
                                     [f"{await valyta_smail(percent_ed_eurusd)} •  ({percent_ed_eurusd}%){await smail_vnimanie(percent_ed_eurusd)}\n{await link_text('ED / EURUSD(for)')}\n" +
                                     await napravlenie_sdelok_2nogi(percent_ed_eurusd, 'ED / EURUSD(for)', price1=last_prices.get('FUTED0924000', 1), price2=eurusd_for, lot1=1, lot2=lotnost_forex['EURUSD']), abs(percent_ed_eurusd)],
-                                    # [f"{await valyta_smail(percent_ed2_eurusd)} •  ({percent_ed2_eurusd}%){await smail_vnimanie(percent_ed2_eurusd)}\n{await link_text('ED2 / EURUSD(for)')}\n" +
-                                    # await napravlenie_sdelok_2nogi(percent_ed2_eurusd, 'ED2 / EURUSD(for)', price1=last_prices.get('FUTED1224000', 1), price2=eurusd_for, lot1=1, lot2=lotnost_forex['EURUSD']), abs(percent_ed2_eurusd)],
+                                    [f"{await valyta_smail(percent_ed2_eurusd)} •  ({percent_ed2_eurusd}%){await smail_vnimanie(percent_ed2_eurusd)}\n{await link_text('ED2 / EURUSD(for)')}\n" +
+                                    await napravlenie_sdelok_2nogi(percent_ed2_eurusd, 'ED2 / EURUSD(for)', price1=last_prices.get('FUTED1224000', 1), price2=eurusd_for, lot1=1, lot2=lotnost_forex['EURUSD']), abs(percent_ed2_eurusd)],
 
                                      ]
 
@@ -484,8 +484,8 @@ async def valuta_vtelegram():
                                     await napravlenie_sdelok_2nogi(percent_cr1_cr_tom, 'CR1 / CR_TOM', price1=last_prices.get('FUTCNY092400', 1), price2=last_prices.get('BBG0013HRTL0', 1), lot1=1, lot2=1), abs(percent_cr1_cr_tom)],
                                     [f"{await valyta_smail(percent_cr2_cr_tom)} •  ({percent_cr2_cr_tom}%)\n{await link_text('CR2 / CR_TOM')}\n" +
                                     await napravlenie_sdelok_2nogi(percent_cr2_cr_tom, 'CR2 / CR_TOM', price1=last_prices.get('FUTCNY122400', 1), price2=last_prices.get('BBG0013HRTL0', 1), lot1=1, lot2=1), abs(percent_cr2_cr_tom)],
-                                    # [f"{await valyta_smail(percent_ed_ed2)} •  ({percent_ed_ed2}%)\n{await link_text('ED / ED2')}\n" +
-                                    # await napravlenie_sdelok_2nogi(percent_ed_ed2, 'ED / ED2', price1=last_prices.get('FUTED0924000', 1), price2=last_prices.get('FUTED1224000', 1), lot1=1, lot2=1), abs(percent_ed_ed2)],
+                                    [f"{await valyta_smail(percent_ed_ed2)} •  ({percent_ed_ed2}%)\n{await link_text('ED / ED2')}\n" +
+                                    await napravlenie_sdelok_2nogi(percent_ed_ed2, 'ED / ED2', price1=last_prices.get('FUTED0924000', 1), price2=last_prices.get('FUTED1224000', 1), lot1=1, lot2=1), abs(percent_ed_ed2)],
 
                                      ]
 
@@ -605,6 +605,9 @@ async def start_cicl_15m():
             await get_fanding_moex()
             print(fanding)
             await asyncio.sleep(60)
+            for i in last_prices:
+                if 'FUTED' in i:
+                    print(i)
     except Exception as e:
         error_message = traceback.format_exc()
         print(f'Произошла ошибка функции start_cicl_15m :\n{error_message}')
