@@ -394,7 +394,7 @@ async def valuta_vtelegram():
 
 
 
-
+            percent_glf_gd1_si = round((last_prices.get('FUTGLDRUBF00', 1 ) * 31.1) / last_prices.get('FUTGOLD09240',None) / (last_prices.get('FUTSI0924000', 1) / 1000) * 100 - 100 , 3)
 
 
             percent_sv1_silver = round(last_prices.get('FUTSILV09240',None) / silver_in * 100  -100, 3)
@@ -515,6 +515,7 @@ async def valuta_vtelegram():
                                      [f"{await valyta_smail(percent_eurrub_megb_spr)} •  ({percent_eurrub_megb_spr}%)\n{await link_text('EURRUB(межб) / EURRUB(спр)')}\nCNY_TOM x EURCNH(for) • {kurs_eurrub_spr}\nКурс {await link_text('EURRUB межбанк')} • {eurrub_megbank}\n\n", abs(percent_eurrub_megb_spr)],
                                      [f"\n{await valyta_smail(percent_si1_usdrub_megb)} •  ({percent_si1_usdrub_megb}%)\n{await link_text('SI1 / USDRUB(межб)')}\nSI1  • {last_prices.get('FUTSI0924000', 1)}\nUSDRUB({await link_text('межбанк')}) • {usdrub_megbank}\n\n", 0],
                                      [f"{await valyta_smail(percent_eu1_eurrub_megb)} •  ({percent_eu1_eurrub_megb}%)\n{await link_text('EU1 / EURRUB(межб)')}\nEU1 • {last_prices.get('FUTEU0924000', 1)}\nEURRUB({await link_text('межбанк')}) • {eurrub_megbank}\n\n", 0],
+                                     [f"{await valyta_smail(percent_glf_gd1_si)} •  ({percent_glf_gd1_si}%)\n{await link_text('***F / *1 / *I1')}\n\n", 0],
 
                                      ]
 
