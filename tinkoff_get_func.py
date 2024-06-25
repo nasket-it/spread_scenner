@@ -272,7 +272,7 @@ def get_fures_instrument():
         # print(last_prices)
 print(future_all_info)
 get_fures_instrument()
-print(future_all_info['FUTCNY062400'].lot)
+# print(future_all_info['FUTCNY062400'].lot)
 valyuta_dict = {}
 valyuta_dict_info = {}
 def get_valyuta_instrument():
@@ -340,10 +340,10 @@ async def get_last_prices_dict():
             last_prices[i.figi] = await asy_price_float_ti(i.price)
 
 
-async def arbtrage_future_akcii():
+async def arbtrage_future_akcii(kvartal):
     message = []
     for i in future_all_info:
-        if future_all_info[i].expiration_date.date().month == 6 and future_all_info[i].expiration_date.date().year == 2024 and future_all_info[i].basic_asset in Info_figi.tiker_figi:
+        if future_all_info[i].expiration_date.date().month == kvartal and future_all_info[i].expiration_date.date().year == 2024 and future_all_info[i].basic_asset in Info_figi.tiker_figi:
             if last_prices.get(i, None) != None:
                 lots = math.floor(future_all_info[i].basic_asset_size.units)
                 price_fut = last_prices.get(i, None)

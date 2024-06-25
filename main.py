@@ -269,7 +269,7 @@ async def valuta_vtelegram():
     # chenal_id = {'Сверчок': -1001854614186}
     chenal_id = Token.chenal_id
     # last_message = await bot.request()
-
+    gr_unc = 31.1035
     last_message = await client2.get_messages(chenal_id, limit=5)
     last_messa_id = last_message[0].id
     last_messa2_id = last_message[1].id
@@ -299,6 +299,7 @@ async def valuta_vtelegram():
             gold_in = await valuta_replace_float("XAUUSD", yahoo_valyata, 4)
             nasdaq_in = await valuta_replace_float("nasdaq", yahoo_valyata, 4)
             sp500_in = await valuta_replace_float("sp500", yahoo_valyata, 4)
+            price_gold_gr_usd = round(gold_in / gr_unc, 2)
 
             kurs_usdrub_spr = round(last_prices.get('BBG0013HRTL0', 1) * usdcnh_for, 4)
             kurs_eurrub_spr = round(last_prices.get('BBG0013HRTL0', 1) * eurcnh_for, 4)
@@ -315,7 +316,7 @@ async def valuta_vtelegram():
 
             # print(f"forex {usdcnh_for}")
             # print('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
-            usd_rub_ru = await get_last_price(usdrub['USD000UTSTOM'])
+            # usd_rub_ru = await get_last_price(usdrub['USD000UTSTOM'])
             # eur_rub_tom = last_prices.get('EUR000UTSTOM')
             # print('ldldldldldldldldldldldldlldldldld', eur_rub_tom)
             si_price = last_prices.get('FUTSI0924000', 1)
@@ -394,7 +395,7 @@ async def valuta_vtelegram():
 
 
 
-            percent_glf_gd1_si = round((last_prices.get('FUTGLDRUBF00', 1 ) * 31.1) / last_prices.get('FUTGOLD09240',None) / (last_prices.get('FUTSI0924000', 1) / 1000) * 100 - 100 , 3)
+            percent_glf_gd1_si = round((last_prices.get('FUTGLDRUBF00', 1 ) * 31.1035) / last_prices.get('FUTGOLD09240',None) / (last_prices.get('FUTSI0924000', 1) / 1000) * 100 - 100 , 3)
 
 
             percent_sv1_silver = round(last_prices.get('FUTSILV09240',None) / silver_in * 100  -100, 3)
