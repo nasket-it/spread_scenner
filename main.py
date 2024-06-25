@@ -266,6 +266,7 @@ async def valuta_vtelegram():
     global yahoo_valyata
     current_time = datetime.datetime.now(moscow_tz).time()
     time_10x23_50 = await time_range('09:50:00', '23:50:00', current_time)
+
     # chenal_id = {'Сверчок': -1001854614186}
     chenal_id = Token.chenal_id
     # last_message = await bot.request()
@@ -604,7 +605,10 @@ async def start_cicl_15m():
     coun = 0
     try:
         while True:
-            await get_fanding_moex()
+            current_time = datetime.datetime.now(moscow_tz).time()
+            time_10_15_18_50 = await time_range('10:15:00', '18:50:00', current_time)
+            if time_10_15_18_50:
+                await get_fanding_moex()
             print(fanding)
             await asyncio.sleep(60)
             for i in last_prices:

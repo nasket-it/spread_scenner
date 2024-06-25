@@ -38,6 +38,7 @@ async def time_diapazone(start_time_str, end_time_str):
 
 async def get_fanding_moex():
     url2 = "https://iss.moex.com/iss/engines/futures/markets/forts/securities?securities=IMOEXF,GLDRUBF,USDRUBF,EURRUBF,CNYRUBF&iss.meta=off&iss.only=marketdata&marketdata.columns=SECID,SWAPRATE"
+
     async with aiohttp.ClientSession() as session1:
         # print('11111')
         async with session1.get(url2, headers=headers) as response2:
