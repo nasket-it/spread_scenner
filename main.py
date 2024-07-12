@@ -239,7 +239,7 @@ async def arbtrage_future_akcii(kvartal, future_akcii=False, percent=0.5):
                 else:
                     if percent_fut_ot_sprav_price >= percent or percent_fut_ot_sprav_price <= -percent:
                         rez = f"{await valyta_smail(percent_fut_ot_sprav_price)} • ({percent_fut_ot_sprav_price}%) {await link_text(tiker)}\n" \
-                              f"{await napravlenie_sdelok_2nogi(percent_fut_ot_sprav_price,  f'{name_future} / {tiker}', price_fut, price_akc,  1, int(lots / lot_akcii))}\n"#\nPrice(справ) - {sprav_price_fut}\nPrice(реал) - {price_fut}
+                              f"{await napravlenie_sdelok_2nogi(percent_fut_ot_sprav_price,  f'{tiker} / {name_future}', price_fut, price_akc,  1, int(lots / lot_akcii))}\n"#\nPrice(справ) - {sprav_price_fut}\nPrice(реал) - {price_fut}
 
                         message.append([rez, abs(percent_fut_ot_sprav_price)])
     mesage_sorted = sorted(message, key=lambda x: x[1], reverse=True)
