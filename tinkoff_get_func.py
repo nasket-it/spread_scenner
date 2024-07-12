@@ -2,6 +2,7 @@ import math
 from time import timezone, time
 from secrete import Token
 from pytz import timezone
+import datetime
 from tinkoff import invest
 from tinkoff.invest import (
     AsyncClient,
@@ -34,6 +35,7 @@ from tinkoff.invest.utils import now
 TOKEN = Token.tinkov_token_slv
 acaunt_id = '2028504625'
 future_all_info ={}
+akcii_all_info = {}
 orderbooks_reltime = {}
 
 price_plus = {i : [] for i in  Info_figi.figi_tiker}
@@ -201,12 +203,38 @@ async def expiration_date_future(figi):
     except:
         return None
 
-async def sprav_price_future(price_base, lots=None, stavka_cb=0.16, figi=None, date_expiration=None, max_percente_first_day=None):
+async def sprav_price_future(price_base, lots=None, stavka_cb=0.17, figi=None, date_expiration=None, max_percente_first_day=None, future_akcii=False, divid_rub=0, po_formyle_popova=False):
     stavka = stavka_cb if max_percente_first_day == None else (max_percente_first_day * 0.16) / 4
     date_exp = future_all_info[figi].expiration_date.date() if figi else date_expiration
-    lot = future_all_info[figi].lot if lots == None else lots
+    lot_fut = await asy_price_float_ti(future_all_info[figi].basic_asset_size) if lots == None else lots
     day_expiration = date_exp - datetime.now().date()
-    return round(lot * (price_base * (1 + stavka * (day_expiration.days / 365))), 3)
+    percent_one_day = stavka * 100  / 365
+    dey_exp = (date_exp - datetime.now().date()).days
+    sprav_percent_stavka = percent_one_day * dey_exp
+    sprav_price_fut = (price_base + ((price_base / 100) * sprav_percent_stavka)) - divid_rub
+    if po_formyle_popova:
+        pass
+    elif future_akcii:
+        price_stavka = price_base * (1 + stavka * (day_expiration.days / 365))
+        price_stavka_div = price_stavka - divid_rub
+        # return round(lot_fut * price_stavka_div, 3)
+        return round(lot_fut * sprav_price_fut, 3)
+    else:
+        return round(lot_fut * (price_base * (1 + stavka * (day_expiration.days / 365))), 3)
+
+
+async def sprav_price_spread(price_base, spread_real, stavka_cb=0.17, figi=None, date_expiration=None, divid_rub=0):
+    stavka = stavka_cb
+    percent_div_dohodnosti = divid_rub / (price_base / 100 ) if divid_rub > 0 else 0
+    date_exp = future_all_info[figi].expiration_date.date() if figi else date_expiration
+    percent_one_day = stavka * 100  / 365
+    dey_exp = (date_exp - datetime.now().date()).days
+
+    sprav_percent_stavka = percent_one_day * dey_exp
+    return round(100 - sprav_percent_stavka + percent_div_dohodnosti, 2)
+
+
+
 
 
 
@@ -227,7 +255,7 @@ def get_percent(price, new_price):
     return round(((new_price - price) / price) * 100, 3) if new_price != None and price > 0 else None
 
 async def asy_get_percent(price, new_price):
-    return round(((new_price - price) / price) * 100, 3) if new_price != None and price > 0 else None
+    return round(price / new_price * 100 -100 , 2) if new_price != None and price > 0  else None
 
 def nano(price):
     price = round(price, 9)  # Округляем число до 9 знаков после запятой
@@ -263,15 +291,31 @@ async def get_last_price(figi):
             return None
 
 last_prices = {}
+akcii_moex_tiker = {}
 def get_fures_instrument():
     with Client(TOKEN) as client:
         info =  client.instruments.futures()
+        # print(info.instruments)
         for i in info.instruments:
             future_all_info[i.figi] = i
+
+        info = client.instruments.shares()
+        # print(info.instruments)
+        for i in info.instruments:
+            if 'moex' in i.exchange.lower():
+                akcii_moex_tiker[i.ticker] = i.figi
+                akcii_all_info[i.figi] = i
+
+
+            # future_all_info[i.figi] = i
+            # print(i.basic_asset)
+            # print(price_float_ti(i.basic_asset_size))
             # print(f"")
-        # print(last_prices)
-print(future_all_info)
+        # print([akcii_all_info[i].lot for i in akcii_all_info])
+        # print(len(akcii_moex_tiker))
+
 get_fures_instrument()
+print(*[future_all_info[i].basic_asset for i in future_all_info if future_all_info[i].basic_asset in akcii_moex_tiker])
 # print(future_all_info['FUTCNY062400'].lot)
 valyuta_dict = {}
 valyuta_dict_info = {}
@@ -335,28 +379,12 @@ def get_orderbook_ti(symbol, bid_ask, step_in_orderbook):
 async def get_last_prices_dict():
     async with AsyncClient(TOKEN) as client:
         resp = await client.market_data.get_last_prices(
-            figi=[futures[i] for i in futures] + [i for i in Info_figi.figi_tiker] + [valyuta_dict[i] for i in valyuta_dict] + ['FUTED1224000',])
+            figi=[i for i in future_all_info] + [akcii_moex_tiker[i] for i in akcii_moex_tiker] + [valyuta_dict[i] for i in valyuta_dict] + ['FUTED1224000',])
         for i in resp.last_prices:
             last_prices[i.figi] = await asy_price_float_ti(i.price)
 
 
-async def arbtrage_future_akcii(kvartal):
-    message = []
-    for i in future_all_info:
-        if future_all_info[i].expiration_date.date().month == kvartal and future_all_info[i].expiration_date.date().year == 2024 and future_all_info[i].basic_asset in Info_figi.tiker_figi:
-            if last_prices.get(i, None) != None:
-                lots = math.floor(future_all_info[i].basic_asset_size.units)
-                price_fut = last_prices.get(i, None)
-                price_akc = last_prices.get(Info_figi.tiker_figi[future_all_info[i].basic_asset], None)
-                sprav_price_fut = await sprav_price_future(price_akc, future_all_info[i].expiration_date.date(), future_all_info[i].basic_asset_size.units)
-                percent_fut_ot_sprav_price = await asy_get_percent(sprav_price_fut, price_fut)
-                if percent_fut_ot_sprav_price >= 0.5 or percent_fut_ot_sprav_price <= -0.5:
-                    text = f"       Long • ${future_all_info[i].name[0:9]} - 1 lot\n       Short • ${future_all_info[i].basic_asset} - {lots} lot" if percent_fut_ot_sprav_price < 0 else f"      Long • ${future_all_info[i].basic_asset} - {lots}1 lot\n      Short • ${future_all_info[i].name[0:9]} - 1 lot"
-                    rez = f"🔸 ${future_all_info[i].name[0:9]}•{price_fut}({sprav_price_fut})" \
-                          f"  {percent_fut_ot_sprav_price}%\n{text}"
-                    message.append(rez)
 
-        return '\n'.join(message)
             # print(di[i].expiration_date.date().month)
         # print(len(g))
         # info = client.instruments.currencies(

@@ -9,6 +9,7 @@ import requests
 from bs4 import BeautifulSoup
 import xml.etree.ElementTree as ET
 
+
 # class CurrencyData:
 #     def __init__(self):
 #         self.yahoo_valyata = {}
@@ -33,6 +34,26 @@ async def time_diapazone(start_time_str, end_time_str):
     else:
         # Текущее время должно быть между start_time и end_time
         return start_time <= current_time_moscow <= end_time
+
+async def parse_site_dohod():
+    url2 = "https://www.dohod.ru/ik/analytics/dividend"
+
+    async with aiohttp.ClientSession() as session1:
+        # print('11111')
+        async with session1.get(url2, headers=headers) as response2:
+            # await asyncio.sleep(3)
+            html = await response2.text()
+            print(html)
+            # Создаем дерево элементов из XML-данных
+            # root = ET.fromstring(html)
+            #
+            # # Находим все элементы <row> и выводим их атрибуты SECID и SWAPRATE
+            # for row in root.findall(".//row"):
+            #     secid = row.get('SECID')
+            #     swaprate = row.get('SWAPRATE')
+            #     if float(swaprate) != 0:
+            #         fanding[secid] = swaprate
+        #
 
 
 
@@ -126,6 +147,7 @@ async def dict_yahoo_valuta():
         while True:
             vihodnie = await subbota_voskresen()
             diapazone_23_6 = await time_diapazone('23:30', '06:00')
+            # await parse_site()
             try:
                 for i in symbols:
                     # print('0000000')

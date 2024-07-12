@@ -1,13 +1,15 @@
 import traceback
+from funkction_future_akcii import dividend_data, arb_fut_akcii, parse_dividend
 import math
+from pars_dinamic_site import fetch_dividend_data
 from yahoo_finance import  yahoo_valyata, dict_yahoo_valuta, time_diapazone, subbota_voskresen, get_fanding_moex, fanding
 from telethon.sync import TelegramClient, events
 from info_figi_ti import *
 from secrete import Token
 import asyncio
-from tinkoff_get_func import (
-    time_range, get_last_price, expiration_date_future,asy_get_percent,
-    arbtrage_future_akcii, last_prices, get_last_prices_dict, sprav_price_future,
+from tinkoff_get_func import ( future_all_info, akcii_moex_tiker, akcii_all_info, asy_price_float_ti,
+    time_range, get_last_price, expiration_date_future,asy_get_percent, sprav_price_spread,
+     last_prices, get_last_prices_dict, sprav_price_future,
     futures)
 from Config import InfoTiker, Config, Chenal
 from aiogram import Bot, Dispatcher, types, executor
@@ -15,7 +17,6 @@ from aiogram.utils.markdown import link
 from datetime import *
 import datetime
 import pytz
-from all_funnction import calculate_funding
 # Создаем объект временной зоны для Москвы
 moscow_tz = pytz.timezone('Europe/Moscow')
 
@@ -123,15 +124,15 @@ async def napravlenie_sdelok_2nogi(percent, svazka : str, price1 : float, price2
     abs_percent = abs(percent)
     percent_namber = math.ceil(abs_percent // delitel)
     if percent < 0 and percent_namber >= 1 :
-        return f"Лонг {list_tiker[0].strip()}- {lot1} ({await link_text(price1)})\n" \
-               f"Шорт {list_tiker[1].strip()}- {lot2} ({await link_text(price2)})\n\n"
+        return f"Лонг {list_tiker[0].strip()} - {lot1} ({await link_text(price1)})\n" \
+               f"Шорт {list_tiker[1].strip()} - {lot2} ({await link_text(price2)})\n\n"
     elif percent > 0 and percent_namber >= 1 :
-        return f"Шорт {list_tiker[0].strip()}- {lot1} ({await link_text(price1)})\n" \
-               f"Лонг {list_tiker[1].strip()}- {lot2} ({await link_text(price2)})\n\n"
+        return f"Шорт {list_tiker[0].strip()} - {lot1} ({await link_text(price1)})\n" \
+               f"Лонг {list_tiker[1].strip()} - {lot2} ({await link_text(price2)})\n\n"
     else:
         return f"Цена в пределах справедливой \n"\
-               f"{list_tiker[0].strip()}- {lot1} ({await link_text(price1)})\n" \
-               f"{list_tiker[1].strip()}- {lot2} ({await link_text(price2)})\n\n"
+               f"{list_tiker[0].strip()} - {lot1} ({await link_text(price1)})\n" \
+               f"{list_tiker[1].strip()} - {lot2} ({await link_text(price2)})\n\n"
 # <i>Курсив</i>
 # <s>Зачеркнутый</s>
 # <u>Подчеркнутый</u>
@@ -189,6 +190,67 @@ async def arbitrage_parniy_akcii(tiker1, tiker2, price_percent=True, perenos_str
             text = f"{tiker1} / {tiker2}"
             return f"{await valyta_smail(percents)} • {await link_text(text)}{await smail_vnimanie(percents)}\n{punkti}п | {rubli}р | {percents}%\n" \
                    f"{await napravlenie_sdelok_2nogi(percents, text, price1=tiker1_last_price, price2=tiker2_last_price, lot1=1, lot2=1)}\n"
+
+
+
+async def arbtrage_future_akcii(kvartal, future_akcii=False, percent=0.5):
+    time_apgrade = datetime.datetime.now(moscow_tz)
+    time_new = time_apgrade.strftime("%H:%M:%S")
+    chenal_id = Token.chenal_id
+    # last_message = await bot.request()
+    gr_unc = 31.1035
+    last_message = await client2.get_messages(chenal_id, limit=5)
+    last_messa_id = last_message[0].id
+    last_messa2_id = last_message[1].id
+    last_messa3_id = last_message[2].id
+    last_messa4_id = last_message[3].id
+    last_messa5_id = last_message[4].id
+    message = []
+    for i in future_all_info:
+        # print(future_all_info[i]) if future_all_info[i].basic_asset == 'ABIO' else None
+        # print([[future_all_info[i].basic_asset , last_prices[i], last_prices[akcii_moex_tiker[future_all_info[i].basic_asset]] * akcii_all_info[akcii_moex_tiker[future_all_info[i].basic_asset]].lot, await asy_get_percent(last_prices[i], last_prices[akcii_moex_tiker[future_all_info[i].basic_asset]]), await sprav_price_future(last_prices[akcii_moex_tiker[future_all_info[i].basic_asset]], figi=i, future_akcii=future_akcii)] for i in future_all_info if future_all_info[i].expiration_date.date().month == kvartal and  future_all_info[i].expiration_date.date().year == 2024 and future_all_info[i].basic_asset in akcii_moex_tiker])
+        if (future_all_info[i].basic_asset in akcii_moex_tiker) and  (future_all_info[i].expiration_date.date().month == kvartal) and (future_all_info[i].expiration_date.date().year == 2024 ):
+            # print(f"Функция арбитраж проверка 2")
+            tiker = future_all_info[i].basic_asset
+            figi_akcii = akcii_moex_tiker[tiker]
+            lot_akcii = akcii_all_info[figi_akcii].lot
+            price_akc = last_prices.get(figi_akcii, None) #if dividend_data.get(tiker, 0) == 0 else last_prices.get(figi_akcii, None) + dividend_data[tiker].get('dividend_rub', 0)
+            # print(tiker , price_akc, last_prices.get(figi_akcii, None))
+            if last_prices.get(i, None) != None and last_prices.get(i, None) > 0 and price_akc != None and price_akc > 0:
+                lots = math.floor(future_all_info[i].basic_asset_size.units)
+                price_fut = last_prices.get(i, None)
+                spread_real = price_akc / (price_fut / lots) * 100
+                spread_sprav = await sprav_price_spread(price_akc, spread_real, figi=i, divid_rub=dividend_data[tiker].get('dividend_rub', 0) if dividend_data.get(tiker, 0) != 0 else 0)
+                # print(f"{tiker} - {spread_sprav} real {spread_real}")
+                sprav_price_fut = await sprav_price_future(price_akc, figi=i, future_akcii=future_akcii, divid_rub=dividend_data[tiker].get('dividend_rub', 0) if dividend_data.get(tiker, 0) != 0 else 0)
+                # print(f"{tiker} price fut  - {price_fut} , price akcii {price_akc} , sprav price - {sprav_price_fut}")
+                percent_fut_ot_sprav_price = await asy_get_percent(spread_real, spread_sprav)
+                name_future = f"{future_all_info[i].basic_asset if future_all_info[i].basic_asset != 'ABIO' else 'ISKJ'}-{kvartal}-{future_all_info[i].expiration_date.date().year % 100}"
+                if tiker in dividend_data:
+                    if percent_fut_ot_sprav_price >= percent or percent_fut_ot_sprav_price <= -percent:
+
+                        percen_dohodn = round(dividend_data[tiker].get('dividend_rub', 0) / (price_akc / 100), 2)
+                        rez = f"{await valyta_smail(percent_fut_ot_sprav_price)} • ({percent_fut_ot_sprav_price}%) {await link_text(tiker)}\n" \
+                              f"{dividend_data[tiker]['dividend_rub']}р.{'👌' if dividend_data[tiker]['odobrenie_div'] else '⁉️'} • {percen_dohodn}% • {dividend_data[tiker]['date_close']}{'👌' if dividend_data[tiker]['odobrenie_reestr'] else '⁉️'}\n" \
+                              f"{await napravlenie_sdelok_2nogi(percent_fut_ot_sprav_price,  f'{name_future} / {tiker}', price_fut, price_akc,  1, int(lots / lot_akcii))}\n"#\nPrice(справ) - {sprav_price_fut}\nPrice(реал) - {price_fut}
+                              # f"Див.(прогноз) - {dividend_data[tiker]['dividend_rub']}р.\nЗакр. реес.(ожидание)- {dividend_data[tiker]['date_close']}\nИндекс стаб. выпл. див - {dividend_data[tiker]['dsi']}\n"#\nPrice(справ) - {sprav_price_fut}\nPrice(реал) - {price_fut}
+
+                        message.append([rez, abs(percent_fut_ot_sprav_price)])
+                else:
+                    if percent_fut_ot_sprav_price >= percent or percent_fut_ot_sprav_price <= -percent:
+                        rez = f"{await valyta_smail(percent_fut_ot_sprav_price)} • ({percent_fut_ot_sprav_price}%) {await link_text(tiker)}\n" \
+                              f"{await napravlenie_sdelok_2nogi(percent_fut_ot_sprav_price,  f'{name_future} / {tiker}', price_fut, price_akc,  1, int(lots / lot_akcii))}\n"#\nPrice(справ) - {sprav_price_fut}\nPrice(реал) - {price_fut}
+
+                        message.append([rez, abs(percent_fut_ot_sprav_price)])
+    mesage_sorted = sorted(message, key=lambda x: x[1], reverse=True)
+    # return '\n'.join(message_)
+    text_mesage_sorted  = ''.join([i[0] for i in mesage_sorted]) + '\n' if len(mesage_sorted) <= 25 else ''.join([i[0] for i in mesage_sorted[:25]]) + '\n'
+    zagolovok = f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new}\n\n⚙️ {await podcher_text('Сканер спредовых расхождений')}\nSPREAD(реал) / SPREAD(справ)\n\n" \
+                f"Ставка ЦБ используется - 17%\nДиапазон отк-я цены:  (- 0.5%) - (+0.5%)\n⁉️ - прогноз \n👌 - рекомендован сов.дир \n\n"
+    finale_message = zagolovok + '\n' +  text_mesage_sorted
+    print(f"dlina zagolovka {len(zagolovok)} - text {len(mesage_sorted) } ")
+    s1 = await bot.edit_message_text(finale_message, chat_id=chenal_id, message_id=last_messa_id, parse_mode='HTML')
+
 
 
 
@@ -541,8 +603,9 @@ async def valuta_vtelegram():
             text_index_metals_zagolovok_string = ''.join(text_index_metals_zagolovok)
             text_index_metals_kotirovki_sorted = sorted(text_index_metals_kotirovki, key=lambda x: x[1] , reverse=True)
             text_index_metals_kotirovki_string = ''.join([i[0] for i in text_index_metals_kotirovki_sorted]) + '\n\n'
-            finali_message = text_index_metals_zagolovok_string + text_index_metals_kotirovki_string
+            finali_message = text_index_metals_zagolovok_string + text_index_metals_kotirovki_string #+ await arbtrage_future_akcii(9, future_akcii=True)
 
+            # print(f"Функция арбитраж проверка {await arbtrage_future_akcii(9)}")
 
             fut_sb = {"SRM4" : "FUTSBRF06240"}
             fut_sbp = {"SPM4" : "FUTSBPR06240"}
@@ -577,8 +640,8 @@ async def valuta_vtelegram():
             # <href='Сылка'>Курсив</a>
             #<tg-spoiler>Скрытый</tg-spoiler>
             # s = await bot.edit_message_text(finali_message1, chat_id=chenal_id, message_id=last_messa3_id, parse_mode='HTML')
-            s1 = await bot.edit_message_text(finali_message2, chat_id=chenal_id, message_id=last_messa2_id, parse_mode='HTML')
-            s2 = await bot.edit_message_text(finali_message, chat_id=chenal_id, message_id=last_messa_id, parse_mode='HTML')
+            s1 = await bot.edit_message_text(finali_message2, chat_id=chenal_id, message_id=last_messa3_id, parse_mode='HTML')
+            s2 = await bot.edit_message_text(finali_message, chat_id=chenal_id, message_id=last_messa2_id, parse_mode='HTML')
 
     except Exception as e:
         error_message = traceback.format_exc()
@@ -589,9 +652,12 @@ async def start_cicl_5s():
     coun = 0
     try:
         while True:
+            await asyncio.sleep(5)
             await valuta_vtelegram()
             await asyncio.sleep(5)
+            await arbtrage_future_akcii(9, future_akcii=True)
             await get_last_prices_dict()
+
             print(dict_interva)
             # await parse_site(url_moex)
     except Exception as e:
@@ -611,15 +677,41 @@ async def start_cicl_15m():
                 await get_fanding_moex()
             print(fanding)
             await asyncio.sleep(60)
-            for i in last_prices:
-                if 'FUTED' in i:
-                    print(i)
+
     except Exception as e:
         error_message = traceback.format_exc()
         print(f'Произошла ошибка функции start_cicl_15m :\n{error_message}')
         print(e)
         await asyncio.sleep(5)
         await start_cicl_15m()
+async def start_cicl_60m():
+    coun = 0
+    try:
+        while True:
+            current_time = datetime.datetime.now(moscow_tz).time()
+            diapazone  = await time_range('07:00:00', '23:50:00', current_time)
+            if coun == 0  :
+                print(f"count 1 ")
+                await parse_dividend()
+                await asyncio.sleep(60)
+                coun += 1
+            elif coun == 1 and diapazone == False:
+                print(f"count 2 ")
+                await parse_dividend()
+                await asyncio.sleep(4000)
+            else:
+                print(f"count 3 ")
+                await parse_dividend()
+                await asyncio.sleep(3600)
+            print(dividend_data)
+    except Exception as e:
+        error_message = traceback.format_exc()
+        print(f'Произошла ошибка функции start_cicl_60m :\n{error_message}')
+        print(e)
+
+        await asyncio.sleep(5)
+        coun = 0
+        await start_cicl_60m()
 
 
 async def start_get_last_prices_dict():
@@ -658,7 +750,7 @@ async def start_get_last_prices_dict():
 
 
 
-list_task = [start_cicl_5s(), dict_yahoo_valuta(), start_get_last_prices_dict(), start_cicl_15m()]
+list_task = [start_cicl_5s(), dict_yahoo_valuta(), start_get_last_prices_dict(), start_cicl_15m(), start_cicl_60m()]
 
 async def main():
     # Запуск периодических задач в фоновом режиме
