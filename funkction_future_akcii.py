@@ -182,3 +182,18 @@ async def arb_fut_akcii(price_akcii, price_fut, stavka, date_exp, div_rub):
     sread = sprav_price_fut / price_fut * 100 - 100
 
     return sread
+
+
+
+def parse_dividend_vsdelke():
+    url = 'https://vsdelke.ru/dividendy/kalendar-vyplat-rossiyskih-kompaniy-2024.html'
+
+    html = requests.get(url).text
+    soup = BeautifulSoup(html, 'html.parser')
+    # Здесь добавьте правильные селекторы для таблицы и её строк
+    table = soup.find('table')  # Пример, найдите правильный элемент
+    rows = table.find_all('tr')[1:]  # Пропускаем заголовок таблицы
+    for row in rows:
+        columns = row.find_all('td')
+        print(columns[3].text)
+# parse_dividend_vsdelke()

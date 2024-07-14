@@ -409,7 +409,9 @@ async def valuta_vtelegram():
 
             percent_eu2_si2_ed2 = round(last_prices.get('FUTEU1224000', 1) / last_prices.get('FUTSI1224000', 1) / last_prices.get('FUTED1224000', 1) * 100 -100, 3)
 
-            percent_eu_si_ed = round(last_prices.get('FUTEU0924000', 1) / si_price / last_prices.get('FUTED0624000', 1) * 100 -100, 3)
+            percent_eu_si_ed = round(last_prices.get('FUTEU0924000', 1) / si_price / last_prices.get('FUTED0924000', 1) * 100 -100, 3)
+            print()
+
             # eu_si_ed = 'Eu1_Si1_Ed1'
             # message_eu_si_ed = f"{await valyta_smail(percent_eu_si_ed)} •  ({percent_eu_si_ed}%){await smail_vnimanie(percent_eu_si_ed)}\nEu1 / Si1 / $ED ️\n\n\n"
             # await send_signals(percent_eu_si_ed, message_eu_si_ed, eu_si_ed)
