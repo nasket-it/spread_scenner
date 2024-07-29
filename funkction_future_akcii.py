@@ -140,7 +140,7 @@ async def parse_dividend():
             dividend_rub = float(columns[3].text.strip())
             dohodnost_percent = float(columns[6].text.strip().replace('%', ''))
             date_close = columns[8].text.strip()
-            dsi = float(columns[11].text.strip())
+            dsi = float(columns[11].text.strip()) if columns[11].text.strip().isdigit() else 0
         # print(f"{ticker} - div rub {dividend_rub}({dohodnost_percent}%) date_close - {date_close} вероятность дивидендов {dsi}")
     #     name = columns[1].text.strip()
     #     dividend_rub = float(columns[2].text.strip())

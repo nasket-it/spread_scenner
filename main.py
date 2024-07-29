@@ -1,11 +1,13 @@
 import traceback
+import re
+from all_function import webhook_discord
 from funkction_future_akcii import dividend_data, arb_fut_akcii, parse_dividend
 import math
 from pars_dinamic_site import fetch_dividend_data
 from yahoo_finance import  yahoo_valyata, dict_yahoo_valuta, time_diapazone, subbota_voskresen, get_fanding_moex, fanding
 from telethon.sync import TelegramClient, events
 from info_figi_ti import *
-from secrete import Token
+from secrete import Token, Flag
 import asyncio
 from tinkoff_get_func import ( future_all_info, akcii_moex_tiker, akcii_all_info, asy_price_float_ti,
     time_range, get_last_price, expiration_date_future,asy_get_percent, sprav_price_spread,
@@ -17,11 +19,13 @@ from aiogram.utils.markdown import link
 from datetime import *
 import datetime
 import pytz
+import diskord
+from diskord.ext import commands
 # Создаем объект временной зоны для Москвы
 moscow_tz = pytz.timezone('Europe/Moscow')
 
 client2 = TelegramClient(Token.phone2, Token.api_id2, Token.api_hash2)
-
+bot_discord = commands.Bot(command_prefix='/')
 API_TOKEN = Token.bot_token
 
 
@@ -30,12 +34,11 @@ bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
 
 
-
 account = ['-1001892817733','-1001857334624']
 api_id = Token.api_id  # задаем API
 api_hash = Token.api_hash  # задаем HASH
 phone = Token.phone
-
+client = TelegramClient('my_account.session', api_id, api_hash)
 #<b>Жирный</b>
 #<i>Курсив</i>
 #<s>Зачеркнутый</s>
@@ -649,16 +652,37 @@ async def valuta_vtelegram():
         error_message = traceback.format_exc()
         print(f'Произошла ошибка функции valuta_vtelegram:\n{error_message}')
         print(e)
+
+
 url_moex = "https://www.moex.com/ru/contract.aspx?code=GLDRUBF"
+
+async def update_message1_2():
+    await valuta_vtelegram()
+    await asyncio.sleep(5)
+
+
+async def update_message3_4():
+    await arbtrage_future_akcii(9, future_akcii=True)
+    await asyncio.sleep(5)
+    await get_last_prices_dict()
+
+
+
+
+
+
+
 async def start_cicl_5s():
     coun = 0
     try:
         while True:
-            await asyncio.sleep(5)
-            await valuta_vtelegram()
-            await asyncio.sleep(5)
-            await arbtrage_future_akcii(9, future_akcii=True)
-            await get_last_prices_dict()
+            await update_message1_2()
+            await update_message3_4()
+            # await asyncio.sleep(5)
+            # await valuta_vtelegram()
+            # await asyncio.sleep(5)
+            # await arbtrage_future_akcii(9, future_akcii=True)
+            # await get_last_prices_dict()
 
             print(dict_interva)
             # await parse_site(url_moex)
@@ -752,7 +776,7 @@ async def start_get_last_prices_dict():
 
 
 
-list_task = [start_cicl_5s(), dict_yahoo_valuta(), start_get_last_prices_dict(), start_cicl_15m(), start_cicl_60m()]
+list_task = [start_cicl_5s(), dict_yahoo_valuta(), start_get_last_prices_dict(), start_cicl_15m(), start_cicl_60m(), bot_discord.start(Token.discordBot_WarrenWallet)]
 
 async def main():
     # Запуск периодических задач в фоновом режиме
@@ -761,10 +785,58 @@ async def main():
     # Запуск бота
     await dp.start_polling()
 
+p = ['KZOSP', 'TATNP', 'NKHP', 'BANEP', 'MRKP', 'TRNFP', 'SNGSP', 'KAZTP', 'TGKBP',
+     'KRKNP', 'NKNCP', 'RTKMP', 'FIXP', 'MGTSP', 'PMSBP', 'GAZP', 'SBERP', 'LNZLP', 'RASP',
+     'LSNGP', 'NMTP', 'CNTLP', 'MTLRP', '📅', '🔮', '📁', '🛩', '#отчётность',  '#мсфо' , '#банки',
+     '#консенсус',  '#металлурги' , '⭐', '#календарь', '#никель', '#цбрф', 'PN Alert', '#рсбу', '#дивиденды',
+     '📏', '💼', '— PN', '📘', '#банки' , '#авиа', '❗', '💳']
+
+tradin_times = {'The Trading Times' : -1001823451677}
+
+news = {'ALL NEWS MOEX | Priority News': -1001904303351, 'Королёвский | вестник' : -1001701470058}
+fast_id  = [-1001750058000,]
+url_jont_news_moex = 'https://discordapp.com/api/webhooks/1262849198882164766/WACqtXgL9TAgLu-I2kZCiWj_sNy8ZWTGLlOGQkbm6B29a-18m9Ef95oSUr43ajYXtUI4'
+webhook_BST2_server_news = 'https://discord.com/api/webhooks/1263747088697528360/oEVrj6anDzx0Qzw_qmcUHCFZENhpzFdEY-O4iyc_O-I4GatGie-vq_EP62b3nVEP61VE'
+@client.on(events.NewMessage(chats=news['ALL NEWS MOEX | Priority News']))#chats=Config.fast_id + Chenal.all_chenal_list_client + Config.news_vip_id    #chats=[news.get('ALL NEWS MOEX | Priority News') + news.get('Королёвский | вестник')]
+async def hendler(event):
+    text = event.message.message
+    text = text.replace('$', '').replace('@prioritynews_bot', '').replace('Alert', '')
+    text_list = text.split('\n')
+    text = ' '.join([i for i in text.split() if  i.strip()])
+    tiker = text_list[0]
+    text = text.replace(tiker, '')
+    for i in p:
+        text = text.replace(i, '')
+    for i in akcii_moex_tiker:
+        text = text.replace(i, '')
+    text = text.strip()
+    text = tiker +'\n' +  text
+
+    text2 = f"📜  •  {text}"
+    if Flag.vikluchatel_webhook:
+        await webhook_discord(webhook_BST2_server_news, text)
+        await webhook_discord(url_jont_news_moex, text)
+    if Flag.knoka_send_post:
+        await bot.send_message(tradin_times['The Trading Times'], text2)
+    dialogs = await client.get_dialogs()
+    for i in dialogs:
+        if i.name == 'Bloomberg':
+            print(f"'Bloomberg' - {i.entity.id}")
+
+
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
+    client.start()
     client2.start()
+    # bot_discord.start(Token.discordBot_WarrenWallet)
+    # bot_discord.run(Token.discordBot_WarrenWallet)
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
 
