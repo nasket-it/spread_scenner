@@ -127,15 +127,15 @@ async def napravlenie_sdelok_2nogi(percent, svazka : str, price1 : float, price2
     abs_percent = abs(percent)
     percent_namber = math.ceil(abs_percent // delitel)
     if percent < 0 and percent_namber >= 1 :
-        return f"Лонг {list_tiker[0].strip()} - {lot1} ({await link_text(price1)})\n" \
-               f"Шорт {list_tiker[1].strip()} - {lot2} ({await link_text(price2)})\n\n"
+        return f"Лонг {list_tiker[0].strip()} - {lot1} ({await link_text(price2)})\n" \
+               f"Шорт {list_tiker[1].strip()} - {lot2} ({await link_text(price1)})\n\n"
     elif percent > 0 and percent_namber >= 1 :
-        return f"Шорт {list_tiker[0].strip()} - {lot1} ({await link_text(price1)})\n" \
-               f"Лонг {list_tiker[1].strip()} - {lot2} ({await link_text(price2)})\n\n"
+        return f"Шорт {list_tiker[0].strip()} - {lot1} ({await link_text(price2)})\n" \
+               f"Лонг {list_tiker[1].strip()} - {lot2} ({await link_text(price1)})\n\n"
     else:
         return f"Цена в пределах справедливой \n"\
-               f"{list_tiker[0].strip()} - {lot1} ({await link_text(price1)})\n" \
-               f"{list_tiker[1].strip()} - {lot2} ({await link_text(price2)})\n\n"
+               f"{list_tiker[0].strip()} - {lot1} ({await link_text(price2)})\n" \
+               f"{list_tiker[1].strip()} - {lot2} ({await link_text(price1)})\n\n"
 # <i>Курсив</i>
 # <s>Зачеркнутый</s>
 # <u>Подчеркнутый</u>
@@ -594,9 +594,9 @@ async def valuta_vtelegram():
             text_valuta_kotirovki = [[f"{await valyta_smail(percent_usdrub_megb_spr)} •  ({percent_usdrub_megb_spr}%)\n{await link_text('USDRUB(межб) / USDRUB(спр)')}\nCNY_TOM x USDCNH(for) • {kurs_usdrub_spr}\nКурс {await link_text('USDRUB межбанк')} • {usdrub_megbank}\n\n", abs(percent_usdrub_megb_spr)],
                                      [f"{await valyta_smail(percent_eurrub_megb_spr)} •  ({percent_eurrub_megb_spr}%)\n{await link_text('EURRUB(межб) / EURRUB(спр)')}\nCNY_TOM x EURCNH(for) • {kurs_eurrub_spr}\nКурс {await link_text('EURRUB межбанк')} • {eurrub_megbank}\n\n", abs(percent_eurrub_megb_spr)],
                                      [f"\n{await valyta_smail(percent_si1_usdrub_megb)} •  ({percent_si1_usdrub_megb}%)\n{await link_text('SI1 / USDRUB(межб)')}\nSI1  • {last_prices.get('FUTSI0924000', 1)}\nUSDRUB({await link_text('межбанк')}) • {usdrub_megbank}\n\n", 0],
-                                     [f"{await valyta_smail(percent_usf_usdrub_megb)} •  ({percent_usf_usdrub_megb}%)\n{await link_text('USF / USDRUB(межб)')}\nUSF  • {last_prices.get(futures['USDRUBF'], 1)}\nUSDRUB({await link_text('межбанк')}) • {usdrub_megbank}\n\n", 0],
+                                     [f"{await valyta_smail(percent_usf_usdrub_megb)} •  ({percent_usf_usdrub_megb}%)\n{await link_text('USDRUBF / USDRUB(межб)')}\nUSF  • {last_prices.get(futures['USDRUBF'], 1)}\nUSDRUB({await link_text('межбанк')}) • {usdrub_megbank}\n\n", 0],
                                      [f"{await valyta_smail(percent_eu1_eurrub_megb)} •  ({percent_eu1_eurrub_megb}%)\n{await link_text('EU1 / EURRUB(межб)')}\nEU1 • {last_prices.get('FUTEU0924000', 1)}\nEURRUB({await link_text('межбанк')}) • {eurrub_megbank}\n\n", 0],
-                                     [f"{await valyta_smail(percent_euf_eurrub_megb)} •  ({percent_euf_eurrub_megb}%)\n{await link_text('EUF / EURRUB(межб)')}\nEU1 • {last_prices.get('FUTEURRUBF00', 1)}\nEURRUB({await link_text('межбанк')}) • {eurrub_megbank}\n\n", 0],
+                                     [f"{await valyta_smail(percent_euf_eurrub_megb)} •  ({percent_euf_eurrub_megb}%)\n{await link_text('EURRUBF / EURRUB(межб)')}\nEU1 • {last_prices.get('FUTEURRUBF00', 1)}\nEURRUB({await link_text('межбанк')}) • {eurrub_megbank}\n\n", 0],
                                      [f"{await valyta_smail(percent_glf_gd1_si)} •  ({percent_glf_gd1_si}%)\n🔒 {await link_text('***P** / *1* / *I1**')}\n\n", 0],
 
                                      ]
