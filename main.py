@@ -813,30 +813,31 @@ webhook_BST2_server_news = 'https://discord.com/api/webhooks/1263747088697528360
 async def hendler(event):
     id_chennal = event.message.chat_id
     text = event.message.message
-    if len(text.strip()) >= 20:
-        print(text)
-        text = text.replace('$', '').replace('@prioritynews_bot', '').replace('Alert', '')
-        text_list = text.split('\n')
-        text = ' '.join([i for i in text.split() if  i.strip()])
-        tiker = text_list[0]
-        text = text.replace(tiker, '')
-        for i in p:
-            text = text.replace(i, '')
-        for i in akcii_moex_tiker:
-            text = text.replace(i, '')
-        text = text.strip()
-        text = tiker +'\n' + '🪢' + text
-        text1 = f"{text}\n\n▫️ The Trading Times"
-        text2 = f"{text}\n\n🅾️ The Trading Times"
-        if Flag.vikluchatel_webhook:
-            await webhook_discord(WebhookDiscod.webhook2, text1)
-            await webhook_discord(WebhookDiscod.webhook1, text)
-        if Flag.knoka_send_post:
-            await bot.send_message(Chenal_id.trading_times_id, text2)
-    # dialogs = await client.get_dialogs()
-    # for i in dialogs:
-    #     if i.name == 'Bloomberg':
-    #         print(f"'Bloomberg' - {i.entity.id}")
+    if (Chenal_id.istochnik_news2 == id_chennal and '🇷🇺' in text) or (id_chennal == Chenal_id.istochnik_news1):
+        if len(text.strip()) >= 20:
+            print(text)
+            text = text.replace('$', '').replace('@prioritynews_bot', '').replace('Alert', '')
+            text_list = text.split('\n')
+            text = ' '.join([i for i in text.split() if  i.strip()])
+            tiker = text_list[0]
+            text = text.replace(tiker, '')
+            for i in p:
+                text = text.replace(i, '')
+            for i in akcii_moex_tiker:
+                text = text.replace(i, '')
+            text = text.strip()
+            text = tiker +'\n' + '🪢' + text
+            text1 = f"{text}\n\n▫️ The Trading Times"
+            text2 = f"{text}\n\n🅾️ The Trading Times"
+            if Flag.vikluchatel_webhook:
+                await webhook_discord(WebhookDiscod.webhook2, text1)
+                await webhook_discord(WebhookDiscod.webhook1, text)
+            if Flag.knoka_send_post:
+                await bot.send_message(Chenal_id.trading_times_id, text2)
+        # dialogs = await client.get_dialogs()
+        # for i in dialogs:
+        #     if i.name == 'Bloomberg':
+        #         print(f"'Bloomberg' - {i.entity.id}")
 
 
 
