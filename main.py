@@ -602,7 +602,7 @@ async def valuta_vtelegram():
                                      ]
 
 
-                   # f"Акции\n" \
+                   # f"Акции\n"
 
             time_apgrade1 = datetime.datetime.now(moscow_tz)
             time_new1 = time_apgrade.strftime("%H:%M:%S")
@@ -723,6 +723,7 @@ async def start_cicl_15m():
         print(e)
         await asyncio.sleep(5)
         await start_cicl_15m()
+
 async def start_cicl_60m():
     coun = 0
     try:
@@ -812,7 +813,7 @@ webhook_BST2_server_news = 'https://discord.com/api/webhooks/1263747088697528360
 async def hendler(event):
     id_chennal = event.message.chat_id
     text = event.message.message
-    if text.strip() >= 10:
+    if len(text.strip()) >= 20:
         print(text)
         text = text.replace('$', '').replace('@prioritynews_bot', '').replace('Alert', '')
         text_list = text.split('\n')
