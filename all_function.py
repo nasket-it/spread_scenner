@@ -7,7 +7,7 @@ import requests
 async def webhook_discord(webhook_url, content, username="The Trading Times"):
     async with aiohttp.ClientSession() as session:
         data = {
-            "content": f"📜  •  {content}\n\n---",
+            "content": f"{content}",
             "username": username
         }
         headers = {"Content-Type": "application/json"}
