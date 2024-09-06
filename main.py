@@ -225,14 +225,11 @@ async def arbtrage_future_akcii(kvartal, future_akcii=False, percent=0.5):
                 price_fut = last_prices.get(i, None)
                 spread_real = price_akc / (price_fut / lots) * 100
                 spread_sprav = await sprav_price_spread(price_akc, spread_real, figi=i, divid_rub=dividend_data[tiker].get('dividend_rub', 0) if dividend_data.get(tiker, 0) != 0 else 0)
-                # print(f"{tiker} - {spread_sprav} real {spread_real}")
                 sprav_price_fut = await sprav_price_future(price_akc, figi=i, future_akcii=future_akcii, divid_rub=dividend_data[tiker].get('dividend_rub', 0) if dividend_data.get(tiker, 0) != 0 else 0)
-                # print(f"{tiker} price fut  - {price_fut} , price akcii {price_akc} , sprav price - {sprav_price_fut}")
                 percent_fut_ot_sprav_price = await asy_get_percent(spread_real, spread_sprav)
                 name_future = f"{future_all_info[i].basic_asset if future_all_info[i].basic_asset != 'ABIO' else 'ISKJ'}-{kvartal}-{future_all_info[i].expiration_date.date().year % 100}"
                 if tiker in dividend_data:
                     if percent_fut_ot_sprav_price >= percent or percent_fut_ot_sprav_price <= -percent:
-
                         percen_dohodn = round(dividend_data[tiker].get('dividend_rub', 0) / (price_akc / 100), 2)
                         rez = f"{await valyta_smail(percent_fut_ot_sprav_price)} • ({percent_fut_ot_sprav_price}%) {await link_text(tiker)}\n" \
                               f"{dividend_data[tiker]['dividend_rub']}р.{'👌' if dividend_data[tiker]['odobrenie_div'] else '⁉️'} • {percen_dohodn}% • {dividend_data[tiker]['date_close']}{'👌' if dividend_data[tiker]['odobrenie_reestr'] else '⁉️'}\n" \

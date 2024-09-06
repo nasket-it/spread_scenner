@@ -203,8 +203,8 @@ async def expiration_date_future(figi):
     except:
         return None
 
-async def sprav_price_future(price_base, lots=None, stavka_cb=0.17, figi=None, date_expiration=None, max_percente_first_day=None, future_akcii=False, divid_rub=0, po_formyle_popova=False):
-    stavka = stavka_cb if max_percente_first_day == None else (max_percente_first_day * 0.16) / 4
+async def sprav_price_future(price_base, lots=None, stavka_cb=0.18, figi=None, date_expiration=None, max_percente_first_day=None, future_akcii=False, divid_rub=0, po_formyle_popova=False):
+    stavka = stavka_cb if max_percente_first_day == None else (max_percente_first_day * 0.18) / 4
     date_exp = future_all_info[figi].expiration_date.date() if figi else date_expiration
     lot_fut = await asy_price_float_ti(future_all_info[figi].basic_asset_size) if lots == None else lots
     day_expiration = date_exp - datetime.now().date()
@@ -217,13 +217,12 @@ async def sprav_price_future(price_base, lots=None, stavka_cb=0.17, figi=None, d
     elif future_akcii:
         price_stavka = price_base * (1 + stavka * (day_expiration.days / 365))
         price_stavka_div = price_stavka - divid_rub
-        # return round(lot_fut * price_stavka_div, 3)
         return round(lot_fut * sprav_price_fut, 3)
     else:
         return round(lot_fut * (price_base * (1 + stavka * (day_expiration.days / 365))), 3)
 
 
-async def sprav_price_spread(price_base, spread_real, stavka_cb=0.17, figi=None, date_expiration=None, divid_rub=0):
+async def sprav_price_spread(price_base, spread_real, stavka_cb=0.18, figi=None, date_expiration=None, divid_rub=0):
     stavka = stavka_cb
     percent_div_dohodnosti = divid_rub / (price_base / 100 ) if divid_rub > 0 else 0
     date_exp = future_all_info[figi].expiration_date.date() if figi else date_expiration
