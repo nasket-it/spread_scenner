@@ -849,7 +849,7 @@ def trtetete(cek):
     print(1111111111111111111111111111111111111111111111111111111111)
 
 
-
+crypto_blumberg = -1001872252940
 cointelegraph =  -1001072723547
 cripto_time = -1002330259431
 ya = 321329414
@@ -865,6 +865,13 @@ async def hendler(event):
             await dowload_photo_adn_send(bot, event, ru_text, cripto_time)
         else:
             await bot.send_message(chat_id=cripto_time, text=ru_text)
+    elif id_chennal == crypto_blumberg:
+        if event.photo:
+            await dowload_photo_adn_send(bot, event, text, cripto_time)
+        else:
+            await bot.send_message(chat_id=cripto_time, text=text)
+
+
 
 
 
