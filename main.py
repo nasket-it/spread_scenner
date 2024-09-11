@@ -1,7 +1,9 @@
+import time
+import threading
 import traceback
 from clas_text import Text
 import re
-from all_function import webhook_discord
+from all_function import webhook_discord, dowload_photo_adn_send, translate_text
 from funkction_future_akcii import dividend_data, arb_fut_akcii, parse_dividend
 import math
 from pars_dinamic_site import fetch_dividend_data
@@ -17,7 +19,7 @@ from tinkoff_get_func import ( future_all_info, akcii_moex_tiker, akcii_all_info
 from Config import InfoTiker, Config, Chenal
 from aiogram import Bot, Dispatcher, types, executor
 from aiogram.utils.markdown import link
-from datetime import *
+from datetime import datetime
 import datetime
 import pytz
 import diskord
@@ -842,7 +844,27 @@ async def hendler(event):
         #     if i.name == 'Bloomberg':
         #         print(f"'Bloomberg' - {i.entity.id}")
 
+def trtetete(cek):
+    time.sleep(cek)
+    print(1111111111111111111111111111111111111111111111111111111111)
 
+
+
+cointelegraph =  -1001072723547
+cripto_time = -1002330259431
+ya = 321329414
+@client2.on(events.NewMessage(chats=[cointelegraph,]))#chats=[]chats=[cointelegraph,]
+async def hendler(event):
+    id_chennal = event.message.chat_id
+    print(id_chennal)
+    text = Text(event.message.message)
+    if id_chennal == cointelegraph or id_chennal == ya:
+        loop = asyncio.get_event_loop()
+        ru_text = await loop.run_in_executor(None, translate_text, text)
+        if event.photo:
+            await dowload_photo_adn_send(bot, event, ru_text, cripto_time)
+        else:
+            await bot.send_message(chat_id=cripto_time, text=ru_text)
 
 
 

@@ -1,8 +1,18 @@
+import os
 import aiohttp
 import asyncio
 import json
 import requests
+from deep_translator import MyMemoryTranslator
+from concurrent.futures import ThreadPoolExecutor
 
+
+
+
+translator = MyMemoryTranslator(source="en-GB", target="ru-RU")
+def translate_text(text):
+    translation = translator.translate(text)
+    return translation
 
 async def webhook_discord(webhook_url, content, username="The Trading Times"):
     async with aiohttp.ClientSession() as session:
@@ -34,3 +44,15 @@ def hhhh():
 
 
 # hhhh()
+async def dowload_photo_adn_send(bot, event, text, target_chat):
+    await event.download_media(file='photo.jpg')
+    # Отправляем фото через Aiogram
+    with open('photo.jpg', 'rb') as photo:
+        await bot.send_photo(chat_id=target_chat, photo=photo, caption=text)
+
+    # Удаляем фото после отправки
+    if os.path.exists('photo.jpg'):
+        os.remove('photo.jpg')
+
+
+
