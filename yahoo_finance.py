@@ -150,9 +150,6 @@ async def dict_yahoo_valuta():
             # await parse_site()
             try:
                 for i in symbols:
-                    # print('0000000')
-                    # if i == "EURRUB":
-                    #     rezult = await parse_valuta_invtsting(i[:3], i[3:6], url=False)
                     if  i in fut:
                         rezult = await parse_futures_investing(i)
                     else:
@@ -161,9 +158,6 @@ async def dict_yahoo_valuta():
                         prices_valuta[i] = [rezult[0], rezult[1]]
                     await asyncio.sleep(0.5)
                 yahoo_valyata['valuta'] = prices_valuta
-
-                # print(yahoo_valyata)
-                # print(await parse_futures_investing())
                 await asyncio.sleep(60) if vihodnie or diapazone_23_6 else await asyncio.sleep(5)
                 print(f"Выходные llllllllllllllll - {diapazone_23_6} ")
             except Exception as e:
