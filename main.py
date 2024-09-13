@@ -205,12 +205,13 @@ async def arbtrage_future_akcii(kvartal, future_akcii=False, percent=0.5):
     chenal_id = Token.chenal_id
     # last_message = await bot.request()
     gr_unc = 31.1035
-    last_message = await client2.get_messages(chenal_id, limit=5)
-    last_messa_id = last_message[0].id
+    last_message = await client2.get_messages(chenal_id, limit=100)
+    last_messa_id =  last_message[-6].id
     last_messa2_id = last_message[1].id
     last_messa3_id = last_message[2].id
     last_messa4_id = last_message[3].id
     last_messa5_id = last_message[4].id
+    print(last_message[-1])
     message = []
     for i in future_all_info:
         # print(future_all_info[i]) if future_all_info[i].basic_asset == 'ABIO' else None
@@ -249,7 +250,7 @@ async def arbtrage_future_akcii(kvartal, future_akcii=False, percent=0.5):
     # return '\n'.join(message_)
     text_mesage_sorted  = ''.join([i[0] for i in mesage_sorted]) + '\n' if len(mesage_sorted) <= 25 else ''.join([i[0] for i in mesage_sorted[:25]]) + '\n'
     zagolovok = f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new}\n\n⚙️ {await podcher_text('Сканер спредовых расхождений')}\nSPREAD(реал) / SPREAD(справ)\n\n" \
-                f"Ставка ЦБ используется - 18%\nДиапазон отк-я цены:  (- 0.5%) - (+0.5%)\n⁉️ - прогноз \n👌 - рекомендован сов.дир \n\n"
+                f"Ставка ЦБ используется - 19%\nДиапазон отк-я цены:  (- 0.5%) - (+0.5%)\n⁉️ - прогноз \n👌 - рекомендован сов.дир \n\n"
     finale_message = zagolovok + '\n' +  text_mesage_sorted
     print(f"dlina zagolovka {len(zagolovok)} - text {len(mesage_sorted) } ")
     s1 = await bot.edit_message_text(finale_message, chat_id=chenal_id, message_id=last_messa_id, parse_mode='HTML')
@@ -336,13 +337,13 @@ async def valuta_vtelegram():
     chenal_id = Token.chenal_id
     # last_message = await bot.request()
     gr_unc = 31.1035
-    last_message = await client2.get_messages(chenal_id, limit=5)
-    last_messa_id = last_message[0].id
-    last_messa2_id = last_message[1].id
-    last_messa3_id = last_message[2].id
-    last_messa4_id = last_message[3].id
-    last_messa5_id = last_message[4].id
-    # print(bool(yahoo_valyata['valuta']))
+    last_message = await client2.get_messages(chenal_id, limit=100)
+    last_messa_id = last_message[-6].id
+    last_messa2_id = last_message[-5].id
+    last_messa3_id = last_message[-4].id
+    last_messa4_id = last_message[-3].id
+    last_messa5_id = last_message[-2].id
+    print('Id message - ', last_messa2_id, last_messa3_id, last_messa_id)
     try:
         if yahoo_valyata.get('valuta', False):
             usdrub = {'USD000UTSTOM': 'BBG0013HGFT4'}
@@ -600,7 +601,7 @@ async def valuta_vtelegram():
             #        ]
             text_valuta_kotirovki = [[f"{await valyta_smail(percent_usdrub_megb_spr)} •  ({percent_usdrub_megb_spr}%)\n{await link_text('USDRUB(межб) / USDRUB(спр)')}\nCNY_TOM x USDCNH(for) • {kurs_usdrub_spr}\nКурс {await link_text('USDRUB межбанк')} • {usdrub_megbank}\n\n", abs(percent_usdrub_megb_spr)],
                                      [f"{await valyta_smail(percent_eurrub_megb_spr)} •  ({percent_eurrub_megb_spr}%)\n{await link_text('EURRUB(межб) / EURRUB(спр)')}\nCNY_TOM x EURCNH(for) • {kurs_eurrub_spr}\nКурс {await link_text('EURRUB межбанк')} • {eurrub_megbank}\n\n", abs(percent_eurrub_megb_spr)],
-                                     [f"{await valyta_smail(percent_cnyrub_megb_cn_tom)} •  ({percent_cnyrub_megb_cn_tom}%)\n{await link_text('CNYRUB(межб) / CN_TOM')}\nCNYRUB({await link_text('межбанк')}) • {cnyrub_megbank}\nCN_TOM • {last_prices.get('BBG0013HRTL0', 1)}\n\n", abs(percent_cnyrub_megb_cn_tom)],
+                                     [f"{await valyta_smail(percent_cnyrub_megb_cn_tom)} •  ({percent_cnyrub_megb_cn_tom}%)\n{await link_text('CNYRUB(межб) / CN_TOM')}\nCN_TOM • {last_prices.get('BBG0013HRTL0', 1)}\nCNYRUB({await link_text('межбанк')}) • {cnyrub_megbank}\n\n", abs(percent_cnyrub_megb_cn_tom)],
                                      [f"\n{await valyta_smail(percent_si1_usdrub_megb)} •  ({percent_si1_usdrub_megb}%)\n{await link_text('SI1 / USDRUB(межб)')}\nSI1  • {last_prices.get('FUTSI0924000', 1)}\nUSDRUB({await link_text('межбанк')}) • {usdrub_megbank}\n\n", 0],
                                      [f"{await valyta_smail(percent_usf_usdrub_megb)} •  ({percent_usf_usdrub_megb}%)\n{await link_text('USDRUBF / USDRUB(межб)')}\nUSF  • {last_prices.get(futures['USDRUBF'], 1)}\nUSDRUB({await link_text('межбанк')}) • {usdrub_megbank}\n\n", 0],
                                      [f"{await valyta_smail(percent_eu1_eurrub_megb)} •  ({percent_eu1_eurrub_megb}%)\n{await link_text('EU1 / EURRUB(межб)')}\nEU1 • {last_prices.get('FUTEU0924000', 1)}\nEURRUB({await link_text('межбанк')}) • {eurrub_megbank}\n\n", 0],
@@ -822,7 +823,7 @@ async def hendler(event):
     id_chennal = event.message.chat_id
     text = Text(event.message.message)
     blumberg_chek_list = ['🇨🇳', '🇷🇺', '⚔️', '🛢']
-    if (Chenal_id.istochnik_news2 == id_chennal and text.check_words_in_text(blumberg_chek_list)) or (id_chennal == Chenal_id.istochnik_news1):
+    if id_chennal == Chenal_id.istochnik_news1:
         if len(text.strip()) >= 20:
             print(text)
             text = text.replace_all(['$', '@prioritynews_bot', 'Alert'])
@@ -833,10 +834,6 @@ async def hendler(event):
             text = Text(text.replace(tiker, ''))
             text = text.replace_all(p)
             text = text.replace_all(akcii_moex_tiker)
-            # for i in p:
-            #     text = text.replace(i, '')
-            # for i in akcii_moex_tiker:
-            #     text = text.replace(i, '')
             text = text.strip()
             text_discord = tiker +'\n' + text if len(text_list) > 1 else text
             text_telegram = '🔹🔻🔸\n\n' + tiker +'\n' + text if len(text_list) > 1 else '🔹🔻🔸\n\n' + text
@@ -847,10 +844,23 @@ async def hendler(event):
                 await webhook_discord(WebhookDiscod.webhook1, text)
             if Flag.knoka_send_post:
                 await bot.send_message(Chenal_id.trading_times_id, text_telegram)
-        # dialogs = await client.get_dialogs()
-        # for i in dialogs:
-        #     if i.name == 'Bloomberg':
-        #         print(f"'Bloomberg' - {i.entity.id}")
+    elif Chenal_id.istochnik_news2 == id_chennal and text.check_words_in_text(blumberg_chek_list):
+        if len(text.strip()) >= 20:
+            print(text)
+            text = text.replace_all([ '💳', 'Bloomberg ✅', '-[статья]', '[статья]'])
+            text = text.strip()
+            text_discord = text
+            text_telegram = '🔹🔻🔸\n\n' + text
+            text_discord = f"{text_discord}\n\n▫️ The Trading Times"
+            text_telegram = f"{text_telegram}\n\n🅾️ The Trading Times"
+            if Flag.vikluchatel_webhook:
+                await webhook_discord(WebhookDiscod.webhook2, text_discord)
+                await webhook_discord(WebhookDiscod.webhook1, text)
+            if Flag.knoka_send_post:
+                await bot.send_message(Chenal_id.trading_times_id, text_telegram)
+
+
+
 
 def trtetete(cek):
     time.sleep(cek)
