@@ -55,14 +55,14 @@ async def dowload_photo_adn_send(bot, event, text, target_chat):
         os.remove('photo.jpg')
 
 
-
-async def dowload_photos(event):
-    """Функция для загрузки фото"""
-    photos = []
-    file_paths = []
-    if isinstance(event.media, MessageMediaPhoto):
-        # Скачиваем каждое фото в байтах и сохраняем в список
-        file_path = await event.download_media(file='photo.jpg')
-        photos.append(InputMediaPhoto(open(file_path, 'rb')))
-        file_paths.append(file_path)  # Добавляем путь к файлу для последующего удаления
-    return photos, file_paths
+#
+# async def dowload_photos(event):
+#     """Функция для загрузки фото"""
+#     photos = []
+#     file_paths = []
+#     if isinstance(event.media, MessageMediaPhoto):
+#         # Скачиваем каждое фото в байтах и сохраняем в список
+#         file_path = await event.download_media(file='photo.jpg')
+#         photos.append(InputMediaPhoto(open(file_path, 'rb')))
+#         file_paths.append(file_path)  # Добавляем путь к файлу для последующего удаления
+#     return photos, file_paths

@@ -86,7 +86,8 @@ async def parse_futures_investing(future):
             "silver_fut" : "https://ru.investing.com/commodities/silver-streaming-chart",
             "gold_spot" : "https://ru.investing.com/currencies/xau-usd-chart",
             "nasdaq" : "https://ru.investing.com/indices/nq-100-futures-chart?cid=1175151",
-            "sp500" : "https://ru.investing.com/indices/us-spx-500-futures-chart?cid=1175153"
+            "sp500" : "https://ru.investing.com/indices/us-spx-500-futures-chart?cid=1175153",
+            'QQQ':  'https://ru.investing.com/etfs/powershares-qqqq-chart'
            }
 
     async with aiohttp.ClientSession() as session:
@@ -97,8 +98,13 @@ async def parse_futures_investing(future):
             # print(html)
             soup = BeautifulSoup(html, 'html.parser')
             # Поиск элемента по атрибуту data-test
-            price = soup.find('div', {'data-test': 'instrument-price-last'}).text
-            percent = soup.find('span', {'data-test': 'instrument-price-change-percent'}).text
+            if future == 'QQQ':
+                price = soup.find('span', class_='text-base/6 text-[#232526]').text.strip()
+                percent = 0.01
+                print(f"qqq price - {price}")
+            else:
+                price = soup.find('div', {'data-test': 'instrument-price-last'}).text
+                percent = soup.find('span', {'data-test': 'instrument-price-change-percent'}).text
             # print(price, percent)
             if price:
                 # print(price, percent)
@@ -140,9 +146,9 @@ async def dict_yahoo_valuta():
     prices_valuta = {}
     price_futures = {}
     global yahoo_valyata
-    fut = ["brent_fut", "gas_fut", "gold_fut", "silver_fut", "gold_spot", "nasdaq", "sp500"]
+    fut = ["brent_fut", "gas_fut", "gold_fut", "silver_fut", "gold_spot", "nasdaq", "sp500", "QQQ"]
     symbols = ["USDRUB","XAUUSD", "XAGUSD", "USDTRY", "EURTRY", "USDKZT", "EURKZT", "EURCNH", "EURRUB", "USDCNH", "EURUSD", "CNYRUB",
-               "CNYUSD", "brent_fut", "gas_fut", "gold_fut", "silver_fut", "gold_spot", "nasdaq", "sp500"]
+               "CNYUSD", "brent_fut", "gas_fut", "gold_fut", "silver_fut", "gold_spot", "nasdaq", "sp500", 'QQQ']
     try:
         while True:
             vihodnie = await subbota_voskresen()

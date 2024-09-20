@@ -314,6 +314,7 @@ def get_fures_instrument():
         # print(len(akcii_moex_tiker))
 
 get_fures_instrument()
+print(' OR '.join([i for i in akcii_moex_tiker]))
 print(*[future_all_info[i].basic_asset for i in future_all_info if future_all_info[i].basic_asset in akcii_moex_tiker])
 # print(future_all_info['FUTCNY062400'].lot)
 valyuta_dict = {}
