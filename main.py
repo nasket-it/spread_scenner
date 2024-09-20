@@ -1,5 +1,5 @@
 import time
-import threading
+# import threading
 import traceback
 from clas_text import Text
 import re
@@ -10,7 +10,7 @@ from pars_dinamic_site import fetch_dividend_data
 from yahoo_finance import  yahoo_valyata, dict_yahoo_valuta, time_diapazone, subbota_voskresen, get_fanding_moex, fanding
 from telethon.sync import TelegramClient, events
 from info_figi_ti import *
-from secrete import Token, Flag, Chenal_id, WebhookDiscod, URL_rss
+from secrete import Token, Flag, Chenal_id, WebhookDiscod
 import asyncio
 from tinkoff_get_func import ( future_all_info, akcii_moex_tiker, akcii_all_info, asy_price_float_ti,
     time_range, get_last_price, expiration_date_future,asy_get_percent, sprav_price_spread,
@@ -23,7 +23,7 @@ from datetime import datetime
 import datetime
 import pytz
 import diskord
-from rss_parser import check_rss
+# from rss_parser import check_rss
 from diskord.ext import commands
 # Создаем объект временной зоны для Москвы
 moscow_tz = pytz.timezone('Europe/Moscow')
