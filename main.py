@@ -242,14 +242,14 @@ async def arbtrage_future_akcii(kvartal, future_akcii=False, percent=0.5):
                         percen_dohodn = round(dividend_data[tiker].get('dividend_rub', 0) / (price_akc / 100), 2)
                         rez = f"{await valyta_smail(percent_fut_ot_sprav_price)} • ({percent_fut_ot_sprav_price}%) {await link_text(tiker)}\n" \
                               f"{dividend_data[tiker]['dividend_rub']}р.{'👌' if dividend_data[tiker]['odobrenie_div'] else '⁉️'} • {percen_dohodn}% • {dividend_data[tiker]['date_close']}{'👌' if dividend_data[tiker]['odobrenie_reestr'] else '⁉️'}\n" \
-                              f"{await napravlenie_sdelok_2nogi(percent_fut_ot_sprav_price,  f'{tiker} / {name_future}', price_fut, price_akc, int(lots / lot_akcii), 1)}\n"#\nPrice(справ) - {sprav_price_fut}\nPrice(реал) - {price_fut}
+                              f"{await napravlenie_sdelok_2nogi(percent_fut_ot_sprav_price,  f'{tiker} / {name_future}', price_akc, price_fut, int(lots / lot_akcii), 1)}\n"#\nPrice(справ) - {sprav_price_fut}\nPrice(реал) - {price_fut}
                               # f"Див.(прогноз) - {dividend_data[tiker]['dividend_rub']}р.\nЗакр. реес.(ожидание)- {dividend_data[tiker]['date_close']}\nИндекс стаб. выпл. див - {dividend_data[tiker]['dsi']}\n"#\nPrice(справ) - {sprav_price_fut}\nPrice(реал) - {price_fut}
 
                         message.append([rez, abs(percent_fut_ot_sprav_price)])
                 else:
                     if percent_fut_ot_sprav_price >= percent or percent_fut_ot_sprav_price <= -percent:
                         rez = f"{await valyta_smail(percent_fut_ot_sprav_price)} • ({percent_fut_ot_sprav_price}%) {await link_text(tiker)}\n" \
-                              f"{await napravlenie_sdelok_2nogi(percent_fut_ot_sprav_price,  f'{tiker} / {name_future}', price_fut, price_akc, int(lots / lot_akcii), 1)}\n"#\nPrice(справ) - {sprav_price_fut}\nPrice(реал) - {price_fut}
+                              f"{await napravlenie_sdelok_2nogi(percent_fut_ot_sprav_price,  f'{tiker} / {name_future}', price_akc, price_fut, int(lots / lot_akcii), 1)}\n"#\nPrice(справ) - {sprav_price_fut}\nPrice(реал) - {price_fut}
 
                         message.append([rez, abs(percent_fut_ot_sprav_price)])
     mesage_sorted = sorted(message, key=lambda x: x[1], reverse=True)
