@@ -143,7 +143,6 @@ async def parse_dividend():
             date_close = columns[8].text.strip()
             dsi = float(columns[11].text.strip()) if columns[11].text.strip().isdigit() else 0
         #
-    #
         # Фильтрация по дате
             date_obj = datetime.strptime(date_close, '%d.%m.%Y').date() if date_close != 'n/a' else False
             tek_data = datetime.now().date()

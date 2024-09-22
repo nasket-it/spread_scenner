@@ -1,16 +1,17 @@
 import time
+import random
 # import threading
 import traceback
 from clas_text import Text
 import re
 from all_function import webhook_discord, dowload_photo_adn_send, translate_text
-from funkction_future_akcii import dividend_data, arb_fut_akcii, parse_dividend
+from dohod_parse_dividend import dividend_data, arb_fut_akcii, parse_dividend
 import math
 from pars_dinamic_site import fetch_dividend_data
 from yahoo_finance import  yahoo_valyata, dict_yahoo_valuta, time_diapazone, subbota_voskresen, get_fanding_moex, fanding
 from telethon.sync import TelegramClient, events
 from info_figi_ti import *
-from secrete import Token, Flag, Chenal_id, WebhookDiscod
+from secrete import Token, Flag, Chenal_id, WebhookDiscod, URL_rss
 import asyncio
 from tinkoff_get_func import ( future_all_info, akcii_moex_tiker, akcii_all_info, asy_price_float_ti,
     time_range, get_last_price, expiration_date_future,asy_get_percent, sprav_price_spread,
@@ -23,8 +24,10 @@ from datetime import datetime
 import datetime
 import pytz
 import diskord
-# from rss_parser import check_rss
+from rss_parser import check_rss
+from news_site_parse import parse_komersant, parse_rbk
 from diskord.ext import commands
+from send_logsErrors import sendErorsTelegram
 # Создаем объект временной зоны для Москвы
 moscow_tz = pytz.timezone('Europe/Moscow')
 
@@ -212,12 +215,13 @@ async def arbtrage_future_akcii(kvartal, future_akcii=False, percent=0.5):
     # last_message = await bot.request()
     gr_unc = 31.1035
     last_message = await client2.get_messages(chenal_id, limit=100)
+    # print(last_message)
     last_messa_id =  last_message[-6].id
     last_messa2_id = last_message[1].id
     last_messa3_id = last_message[2].id
     last_messa4_id = last_message[3].id
     last_messa5_id = last_message[4].id
-    print(last_message[-1])
+    # print(last_message[-1])
     message = []
     for i in future_all_info:
         # print(future_all_info[i]) if future_all_info[i].basic_asset == 'ABIO' else None
@@ -349,9 +353,9 @@ async def valuta_vtelegram():
     last_messa3_id = last_message[-4].id
     last_messa4_id = last_message[-3].id
     last_messa5_id = last_message[-2].id
-    print('Id message - ', last_messa2_id, last_messa3_id, last_messa_id)
-    try:
-        if yahoo_valyata.get('valuta', False):
+    # print('Id message - ', last_messa2_id, last_messa3_id, last_messa_id)
+    # try:
+    if yahoo_valyata.get('valuta', False):
             usdrub = {'USD000UTSTOM': 'BBG0013HGFT4'}
             cnyrub = {'CNYRUB_TOM': 'BBG0013HRTL0'}
             si = {'si-6.24' : 'FUTSI0624000'}
@@ -362,7 +366,7 @@ async def valuta_vtelegram():
 
             usdcnh_for = await valuta_replace_float('USDCNH', yahoo_valyata, 4)
             cnyrub_megbank = await valuta_replace_float('CNYRUB', yahoo_valyata, 4)
-            print(f"megbank cny/rub - {cnyrub_megbank}")
+            # print(f"megbank cny/rub - {cnyrub_megbank}")
             eurrub_megbank = await valuta_replace_float('EURRUB', yahoo_valyata, 4)
             usdrub_megbank = await valuta_replace_float('USDRUB', yahoo_valyata, 4)
             usdkzt_for = await valuta_replace_float("USDKZT", yahoo_valyata, 4 )
@@ -656,7 +660,6 @@ async def valuta_vtelegram():
                               tatn_tex, sber_text]
                 finali_message_akcii = ''.join(list_akcii)
                 finali_message = finali_message + finali_message_akcii
-
             # if time_10x23_50:
             #     text = text + await arbitrage_parniy_futures(fut_sb["SRM4"], fut_sbp["SPM4"], name=name)
             #     text = text + '\n' + await arbtrage_future_akcii()
@@ -678,24 +681,25 @@ async def valuta_vtelegram():
             # s = await bot.edit_message_text(finali_message1, chat_id=chenal_id, message_id=last_messa3_id, parse_mode='HTML')
             s1 = await bot.edit_message_text(finali_message2, chat_id=chenal_id, message_id=last_messa3_id, parse_mode='HTML', disable_web_page_preview=True)
             s2 = await bot.edit_message_text(finali_message, chat_id=chenal_id, message_id=last_messa2_id, parse_mode='HTML', disable_web_page_preview=True)
-
-    except Exception as e:
-        error_message = traceback.format_exc()
-        print(f'Произошла ошибка функции valuta_vtelegram:\n{error_message}')
-        print(e)
+            current_time2 = datetime.datetime.now(moscow_tz).time()
+            print(f"time func: {current_time2} - {current_time}")
+    # except Exception as e:
+    #     error_message = traceback.format_exc()
+    #     print(f'Произошла ошибка функции valuta_vtelegram:\n{error_message}')
+    #     print(e)
 
 
 url_moex = "https://www.moex.com/ru/contract.aspx?code=GLDRUBF"
 
-async def update_message1_2():
-    await valuta_vtelegram()
-    await asyncio.sleep(5)
-
-
-async def update_message3_4():
-    await arbtrage_future_akcii(12, future_akcii=True)
-    await asyncio.sleep(5)
-    await get_last_prices_dict()
+# async def update_message1_2():
+#     await valuta_vtelegram()
+#     await asyncio.sleep(2.5)
+#
+#
+# async def update_message3_4():
+#     await arbtrage_future_akcii(12, future_akcii=True)
+#     await asyncio.sleep(2.5)
+#     await get_last_prices_dict()
 
 
 
@@ -705,24 +709,33 @@ async def update_message3_4():
 
 async def start_cicl_5s():
     coun = 0
-    try:
-        while True:
-            await update_message1_2()
-            await update_message3_4()
-            # await asyncio.sleep(5)
-            # await valuta_vtelegram()
-            # await asyncio.sleep(5)
-            # await arbtrage_future_akcii(9, future_akcii=True)
-            # await get_last_prices_dict()
-
+    flag1 = True
+    flag2 = False
+    while True:
+        try:
+            print(f"start")
+            if flag1:
+                print('flag1')
+                await valuta_vtelegram()
+                flag1 = False
+                flag2 = True
+            elif flag2:
+                print('flag2')
+                await arbtrage_future_akcii(12, future_akcii=True)
+                flag1 = True
+                flag2 = False
+            await get_last_prices_dict()
+            # await update_message1_2()
+            # await update_message3_4()
             print(dict_interva)
             # await parse_site(url_moex)
-    except Exception as e:
-        error_message = traceback.format_exc()
-        print(f'Произошла ошибка функции valuta_vtelegram:\n{error_message}')
-        print(e)
+        except Exception as e:
+            await sendErorsTelegram(bot, sec_start=5)
+            error_message = traceback.format_exc()
+            print(f'Произошла ошибка функции valuta_vtelegram:\n{error_message}')
+            print(e)
         await asyncio.sleep(5)
-        await start_cicl_5s()
+
 
 async def start_cicl_15m():
     coun = 0
@@ -736,11 +749,13 @@ async def start_cicl_15m():
             await asyncio.sleep(60)
 
     except Exception as e:
+        await sendErorsTelegram(bot, sec_start=2)
         error_message = traceback.format_exc()
         print(f'Произошла ошибка функции start_cicl_15m :\n{error_message}')
         print(e)
         await asyncio.sleep(5)
         await start_cicl_15m()
+
 
 async def start_cicl_60m():
     coun = 0
@@ -763,6 +778,7 @@ async def start_cicl_60m():
                 await asyncio.sleep(3600)
             print(dividend_data)
     except Exception as e:
+        await sendErorsTelegram(bot, sec_start=5)
         error_message = traceback.format_exc()
         print(f'Произошла ошибка функции start_cicl_60m :\n{error_message}')
         print(e)
@@ -776,8 +792,8 @@ async def start_get_last_prices_dict():
     x = 0
     try:
         while True:
-            print(565656565, last_prices.get('BBG0013HGFT4'))
-            print(f"cxtnxbr = {x}")
+            # print(565656565, last_prices.get('BBG0013HGFT4'))
+            # print(f"cxtnxbr = {x}")
             vihodnie = await subbota_voskresen()
             if  x < 5:
                 await asyncio.sleep(5)
@@ -796,27 +812,64 @@ async def start_get_last_prices_dict():
                 await asyncio.sleep(5)
                 print(3333333333333333)
             print(0000000000000)
-
-
     except Exception as e:
-            error_message = traceback.format_exc()
-            print(f'Произошла ошибка функции valuta_vtelegram:\n{error_message}')
-            print(e)
-            await asyncio.sleep(5)
-            await start_get_last_prices_dict()
+        await sendErorsTelegram(bot, sec_start=5)
+        error_message = traceback.format_exc()
+        print(f'Произошла ошибка функции valuta_vtelegram:\n{error_message}')
+        print(e)
+        await asyncio.sleep(5)
+        await start_get_last_prices_dict()
 
-# async def start_parse_rss():
-#     while True:
-#         await check_rss(URL_rss.rss_tass_all_news, 'tass', bot, link_text)
-#         await check_rss(URL_rss.rss_interfaks_all_news, 'interfaks', bot, link_text)
-#         google_alerts = [await check_rss(i, 'google_alerts', bot, link_text) for i in URL_rss.list_rss_googleAlert]
-#         if google_alerts:
-#             for i in google_alerts:
-#                 print(i)
-#         await asyncio.sleep(60)  # Пауза на 5 минут
+async def start_parse_rss():
+    while Flag.parse_rss:
+        try:
+            await check_rss(URL_rss.rss_tass_all_news, 'tass', bot, link_text)
+            await check_rss(URL_rss.rss_interfaks_all_news, 'interfaks', bot, link_text)
+            google_alerts = [await check_rss(i, 'google_alerts', bot, link_text) for i in URL_rss.list_rss_googleAlert]
+            if google_alerts:
+                for i in google_alerts:
+                    print(i)
+        except Exception:
+            await sendErorsTelegram(bot, sec_start=60)
+        await asyncio.sleep(60)
+
+async def start_dic_yaho_valuta():
+ try:
+     while True:
+         vihodnie = await subbota_voskresen()
+         diapazone_23_6 = await time_diapazone('23:30', '06:00')
+         await dict_yahoo_valuta()
+         await asyncio.sleep(60) if vihodnie or diapazone_23_6 else await asyncio.sleep(5)
+ except Exception:
+     await sendErorsTelegram(bot, sec_start=5)
+     await asyncio.sleep(5)
+     await start_dic_yaho_valuta()
 
 
-list_task = [start_cicl_5s(), dict_yahoo_valuta(), start_get_last_prices_dict(), start_cicl_15m(), start_cicl_60m()]#bot_discord.start(Token.discordBot_WarrenWallet)
+
+
+
+
+list_100_last_news = []
+async def start_parse_news_site():
+    last_message = await client2.get_messages(Chenal_id.trading_times_id, limit=100)
+    for i in last_message:
+        news = str(i.message).split('\n\n')
+        if len(news) == 3:
+            list_100_last_news.append(news[1])
+    print(list_100_last_news)
+    # print(last_message)
+    while Flag.parse_news:
+        try:
+            await parse_rbk(list_100_last_news, bot, link_text)
+            await parse_komersant(list_100_last_news, bot, link_text)
+            await asyncio.sleep(random.uniform(2, 60))
+        except Exception:
+            await sendErorsTelegram(bot, sec_start='random')
+        await asyncio.sleep(random.uniform(2, 60))
+
+
+list_task = [start_cicl_5s(), start_dic_yaho_valuta(), start_get_last_prices_dict(), start_cicl_15m(), start_cicl_60m(), start_parse_news_site(), start_parse_rss()]#bot_discord.start(Token.discordBot_WarrenWallet)
 
 async def main():
     # Запуск периодических задач в фоновом режиме
@@ -837,13 +890,13 @@ url_jont_news_moex = 'https://discordapp.com/api/webhooks/1262849198882164766/WA
 webhook_BST2_server_news = 'https://discord.com/api/webhooks/1263747088697528360/oEVrj6anDzx0Qzw_qmcUHCFZENhpzFdEY-O4iyc_O-I4GatGie-vq_EP62b3nVEP61VE'
 @client.on(events.NewMessage(chats=[Chenal_id.istochnik_news1, Chenal_id.istochnik_news2]))#chats=Config.fast_id + Chenal.all_chenal_list_client + Config.news_vip_id    #chats=[news.get('ALL NEWS MOEX | Priority News') + news.get('Королёвский | вестник')]
 async def hendler(event):
-    print(akcii_moex_tiker)
+    # print(akcii_moex_tiker)
     id_chennal = event.message.chat_id
     text = Text(event.message.message)
     blumberg_chek_list = ['🇨🇳', '🇷🇺', '⚔️', '🛢']
     if id_chennal == Chenal_id.istochnik_news1:
         if len(text.strip()) >= 20:
-            print(text)
+            # print(text)
             text = text.replace_all(['$', '@prioritynews_bot', 'Alert'])
             # text = text.replace('$', '').replace('@prioritynews_bot', '').replace('Alert', '')
             text_list = text.split('\n')
@@ -864,7 +917,7 @@ async def hendler(event):
                 await bot.send_message(Chenal_id.trading_times_id, text_telegram, parse_mode='HTML', disable_web_page_preview=True)
     elif Chenal_id.istochnik_news2 == id_chennal and text.check_words_in_text(blumberg_chek_list):
         if len(text.strip()) >= 20:
-            print(text)
+            # print(text)
             text = text.replace_all([ '💳', 'Bloomberg ✅', '-[статья]', '[статья]'])
             text = text.strip()
             text_discord = text
@@ -892,7 +945,7 @@ ya = 321329414
 @client2.on(events.NewMessage(chats=[cointelegraph, crypto_blumberg, ya]))#chats=[]chats=[cointelegraph,]
 async def hendler(event):
     id_chennal = event.message.chat_id
-    print(id_chennal)
+    # print(id_chennal)
     text = Text(event.message.message)
     if id_chennal == cointelegraph or id_chennal == ya:
         loop = asyncio.get_event_loop()
@@ -912,45 +965,30 @@ async def hendler(event):
 
 
 
-
-
-
-
-
+def finali_func():
+    loop1 = asyncio.get_event_loop()
+    loop1.run_until_complete(bot.send_message(Chenal_id.LogsErroors, f"‼️ Скрипт остановился на сервере"))
 
 
 if __name__ == '__main__':
-    client.start()
-    client2.start()
-    # bot_discord.start(Token.discordBot_WarrenWallet)
-    # bot_discord.run(Token.discordBot_WarrenWallet)
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    # client.start()
+    # client2.start()
+    # # bot_discord.start(Token.discordBot_WarrenWallet)
+    # # bot_discord.run(Token.discordBot_WarrenWallet)
+    # loop = asyncio.get_event_loop()
+    # loop.run_until_complete(main())
 
-# if __name__ == '__main__':
-#     # loop = asyncio.get_event_loop()
-#     # loop.run_until_complete(main())
-#     # main()
-#     # Запуск клиента Telethon
-#     client.start()
-#     client2.start()
-#     # Запуск бота aiogram
-#     executor.start_polling(dp)
-#     # loop = asyncio.get_event_loop()
-#     # loop.run_until_complete(main())
+    try:
+        # Запуск ваших клиентовзш
+        client.start()
+        client2.start()
 
-# cny_rub_ru = await get_last_price(cnyrub['CNYRUB_TOM'])
-            # silver = await get_last_price(silver_futures['SVH4'])
-            # percent_silver = round(await valuta_replace_float('silver_fut', yahoo_valyata, 3) / silver * 100 - 100, 2)
-            # gas = await get_last_price(gas_fures['NGH4'])
-            # percent_gas = round(await valuta_replace_float('gas_fut', yahoo_valyata, 3) / gas * 100 - 100, 2)
-            # gold = await get_last_price(gold_futures['GDH4'])
-            # gold_sprav_price_fut = gold * (1 + 0.16 * (await expiration_date_future(gold_futures['GDH4'])/365))
-            # percent_gold = round(gold_sprav_price_fut / gold * 100 - 100, 2)
-            # brent = await get_last_price(brent_futures['BRJ4'])
-            # percent_brent = round(await valuta_replace_float('brent_fut', yahoo_valyata, 4) / brent * 100 - 100, 2)
-            # percent_usd_rub = round(await valuta_replace_float('USDRUB', yahoo_valyata, 4) / usd_rub_ru * 100 - 100, 2)
-            # smail_usd_rub = await valyta_smail(percent_usd_rub)
-            # percent_cny_rub = round(await valuta_replace_float('CNYRUB', yahoo_valyata, 2) / cny_rub_ru * 100 - 100, 2)
-            # smail_cny_rub = await valyta_smail(percent_cny_rub)
-            # sprav_price_cnyrub = round(usd_rub_ru * await valuta_replace_float('CNYUSD', yahoo_valyata, 4), 4)
+        # Запуск основного асинхронного цикла
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(main())
+    except Exception as e:
+        # Обработка ошибок
+        print(f"Произошла ошибка: {e}")
+    finally:
+        # Этот блок выполнится всегда, независимо от успеха или ошибки
+         finali_func()
