@@ -58,22 +58,28 @@ async def parse_komersant(list_last_news: list, bot, func_link):
         # print(news_title_komersant)
 
 # url_rbk = 'https://www.rbc.ru/economics/'
-# url_komersant = 'https://www.kommersant.ru/rubric/3'
+url_komersant = 'https://www.kommersant.ru/rubric/3'
 #
-# html_kom = requests.get(url_komersant, headers=headers).text
+html_kom = requests.get(url_komersant, headers=headers).text
 # html_rbk= requests.get(url_rbk, headers=headers).text
 # # soup = BeautifulSoup(html1, 'html.parser')
 # # print(soup.get_text())
 # # Поиск элемента по атрибуту data-tes
 #
 # rbk = html.fromstring(html_rbk)
-# komersant = html.fromstring(html_kom)
+komersant = html.fromstring(html_kom)
 #
 # # 1. Получение текста внутри тега <p>
-# news_title_komersant = komersant.xpath('//article//@data-article-title')
+news_title_komersant = komersant.xpath('//article[@data-article-title]')#//@data-article-title'
+for i in news_title_komersant:
+    title = i.get('data-article-title', None)
+    description = i.get('data-article-description', None)
+    url_all_post = i.get('data-article-url', None)
+
+    print(f"{title}\n{description}\n{url_all_post}")
 # news_title_rbk = rbk.xpath('//span[@class="normal-wrap"]/text()')
 #
-# print(news_title_rbk + news_title_komersant)
+print(news_title_komersant)
 
 
 

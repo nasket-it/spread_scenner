@@ -99,9 +99,10 @@ async def parse_futures_investing(future):
             soup = BeautifulSoup(html, 'html.parser')
             # Поиск элемента по атрибуту data-test
             if future == 'QQQ':
-                price = soup.find('span', class_='text-base/6 text-[#232526]').text.strip()
-                percent = 0.01
-                print(f"qqq price - {price}")
+                pass
+                # price = soup.find('span', class_='text-base/6 text-[#232526]').text.strip()
+                # percent = 0.01
+                # print(f"qqq price - {price}")
             else:
                 price = soup.find('div', {'data-test': 'instrument-price-last'}).text
                 percent = soup.find('span', {'data-test': 'instrument-price-change-percent'}).text
