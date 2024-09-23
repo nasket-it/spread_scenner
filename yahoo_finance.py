@@ -127,8 +127,11 @@ async def parse_valuta_invtsting(currency1, currency2, url=True):
             # print(html)
             soup = BeautifulSoup(html, 'html.parser')
             # Поиск элемента по атрибуту data-test
-            price = soup.find('div', {'data-test': 'instrument-price-last'}).text
-            percent = soup.find('span', {'data-test': 'instrument-price-change-percent'}).text
+            await asyncio.sleep(0.1)
+            price_element = soup.find('div', {'data-test': 'instrument-price-last'})
+            price = price_element.text if price_element else None
+            percent_element = soup.find('span', {'data-test': 'instrument-price-change-percent'})
+            percent = percent_element.text if percent_element else None
             # print(price, percent)
             if price:
                 # print(price, percent)
