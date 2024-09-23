@@ -379,7 +379,7 @@ async def valuta_vtelegram():
             gold_in = await valuta_replace_float("XAUUSD", yahoo_valyata, 4)
             nasdaq_in = await valuta_replace_float("nasdaq", yahoo_valyata, 4)
             sp500_in = await valuta_replace_float("sp500", yahoo_valyata, 4)
-            qqq_in = round(await valuta_replace_float("QQQ", yahoo_valyata, 2) * 41 , 1)
+            # qqq_in = round(await valuta_replace_float("QQQ", yahoo_valyata, 2) * 41 , 1)
 
             price_gold_gr_usd = round(gold_in / gr_unc, 2)
             # print(qqq_in)
