@@ -148,9 +148,9 @@ async def dict_yahoo_valuta():
     price_futures = {}
     global yahoo_valyata
     global count
-    fut = ["brent_fut", "gas_fut", "gold_fut", "silver_fut", "gold_spot", "nasdaq", "sp500", "QQQ"]
+    fut = ["brent_fut", "gas_fut", "gold_fut", "silver_fut", "gold_spot", "nasdaq", "sp500"]
     symbols = ["USDRUB","XAUUSD", "XAGUSD", "USDTRY", "EURTRY", "USDKZT", "EURKZT", "EURCNH", "EURRUB", "USDCNH", "EURUSD", "CNYRUB",
-               "CNYUSD", "brent_fut", "gas_fut", "gold_fut", "silver_fut", "gold_spot", "nasdaq", "sp500", 'QQQ']
+               "CNYUSD", "brent_fut", "gas_fut", "gold_fut", "silver_fut", "gold_spot", "nasdaq", "sp500"]
     vihodnie = await subbota_voskresen()
     diapazone_23_6 = await time_diapazone('23:30', '06:00')
     # await parse_site()
