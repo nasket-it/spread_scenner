@@ -17,9 +17,10 @@ async def fetch(session, url):
     async with session.get(url,headers=headers) as response:
         return await response.text()
 
-
+flag_1 = 1
 dividend_data = {}
 async def parse_rbk(list_last_news: list, bot, func_link):
+    global flag_1
     url_rbk = 'https://www.rbc.ru/economics/'
     async with aiohttp.ClientSession() as session:
         list_sravnrniya = []
@@ -27,6 +28,13 @@ async def parse_rbk(list_last_news: list, bot, func_link):
         rbk = html.fromstring(html_rbk)
         # 1. Получение текста внутри тега <p>
         news_title_rbk = rbk.xpath('//span[@class="normal-wrap"]/text()')
+        if flag_1:
+            for i in news_title_rbk:
+                if i in list_last_news:
+                    pass
+                else:
+                    list_last_news.append(i)
+            flag_1 = 0
         if news_title_rbk != list_sravnrniya:
             list_sravnrniya = news_title_rbk
             for i in list_sravnrniya:
@@ -37,14 +45,22 @@ async def parse_rbk(list_last_news: list, bot, func_link):
                     await rebrentext_send_discord_telegram(i, bot=bot, func_link_text=func_link)
 
 
-
+flag_2 = 1
 async def parse_komersant(list_last_news: list, bot, func_link):
+    global flag_2
     url_komersant = 'https://www.kommersant.ru/rubric/3'
     async with aiohttp.ClientSession() as session:
         list_sravnrniya = []
         html_kom = await fetch(session, url_komersant)
         komersant = html.fromstring(html_kom)
         news_title_komersant = komersant.xpath('//article//@data-article-title')
+        if flag_2:
+            for i in news_title_komersant:
+                if i in list_last_news:
+                    pass
+                else:
+                    list_last_news.append(i)
+            flag_2 = 0
         if news_title_komersant != list_sravnrniya:
             list_sravnrniya = news_title_komersant
             for i in list_sravnrniya:

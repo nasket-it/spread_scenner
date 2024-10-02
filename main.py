@@ -4,7 +4,7 @@ import random
 import traceback
 from clas_text import Text
 import re
-from all_function import webhook_discord, dowload_photo_adn_send, translate_text
+from all_function import webhook_discord, dowload_photo_adn_send, translate_text, fetch_messages, dict_sobitiy
 from dohod_parse_dividend import dividend_data, arb_fut_akcii, parse_dividend
 import math
 from pars_dinamic_site import fetch_dividend_data
@@ -132,19 +132,24 @@ async def napravlenie_sdelok_3nogi(percent, svazka : str, price1 : float, price2
 
 
 
-async def napravlenie_sdelok_2nogi(percent, svazka : str, price1 : float, price2 : float, lot1, lot2, delitel=0.1):
+async def napravlenie_sdelok_2nogi(percent, svazka : str, price1 : float, price2 : float, lot1, lot2, delitel=0.1, ukazat_napravlenie_sdelok=True):
     list_tiker = svazka.split('/')
     abs_percent = abs(percent)
     percent_namber = math.ceil(abs_percent // delitel)
-    if percent < 0 and percent_namber >= 1 :
-        return f"Лонг {list_tiker[0].strip()} - {lot1} ({await link_text(price1)})\n" \
-               f"Шорт {list_tiker[1].strip()} - {lot2} ({await link_text(price2)})\n\n"
-    elif percent > 0 and percent_namber >= 1 :
-        return f"Шорт {list_tiker[0].strip()} - {lot1} ({await link_text(price1)})\n" \
-               f"Лонг {list_tiker[1].strip()} - {lot2} ({await link_text(price2)})\n\n"
+    if ukazat_napravlenie_sdelok:
+        if percent < 0 and percent_namber >= 1 :
+            return f"Лонг {list_tiker[0].strip()} - {lot1} ({await link_text(price1)})\n" \
+                   f"Шорт {list_tiker[1].strip()} - {lot2} ({await link_text(price2)})\n\n"
+        elif percent > 0 and percent_namber >= 1 :
+            return f"Шорт {list_tiker[0].strip()} - {lot1} ({await link_text(price1)})\n" \
+                   f"Лонг {list_tiker[1].strip()} - {lot2} ({await link_text(price2)})\n\n"
+        else:
+            return f"Цена {list_tiker[0].strip()} - {lot1} ({await link_text(price1)})\n" \
+                   f"Цена {list_tiker[1].strip()} - {lot2} ({await link_text(price2)})\n\n"
     else:
         return f"Цена {list_tiker[0].strip()} - {lot1} ({await link_text(price1)})\n" \
                f"Цена {list_tiker[1].strip()} - {lot2} ({await link_text(price2)})\n\n"
+
 # <i>Курсив</i>
 # <s>Зачеркнутый</s>
 # <u>Подчеркнутый</u>
@@ -241,10 +246,11 @@ async def arbtrage_future_akcii(kvartal, future_akcii=False, percent=0.5):
                 sprav_price_fut = await sprav_price_future(price_akc, figi=i, future_akcii=future_akcii, divid_rub=dividend_data[tiker].get('dividend_rub', 0) if dividend_data.get(tiker, 0) != 0 else 0)
                 percent_fut_ot_sprav_price = await asy_get_percent(spread_real, spread_sprav)
                 name_future = f"{future_all_info[i].basic_asset if future_all_info[i].basic_asset != 'ABIO' else 'ISKJ'}-{kvartal}-{future_all_info[i].expiration_date.date().year % 100}"
+                news = ' 📰' if tiker in dict_sobitiy['news'] else ''
                 if tiker in dividend_data:
                     if percent_fut_ot_sprav_price >= percent or percent_fut_ot_sprav_price <= -percent:
                         percen_dohodn = round(dividend_data[tiker].get('dividend_rub', 0) / (price_akc / 100), 2)
-                        rez = f"{await valyta_smail(percent_fut_ot_sprav_price)} • ({percent_fut_ot_sprav_price}%) {await link_text(tiker)}\n" \
+                        rez = f"{await valyta_smail(percent_fut_ot_sprav_price)} • ({percent_fut_ot_sprav_price}%) {await link_text(tiker)}{news}\n" \
                               f"{dividend_data[tiker]['dividend_rub']}р.{'👌' if dividend_data[tiker]['odobrenie_div'] else '⁉️'} • {percen_dohodn}% • {dividend_data[tiker]['date_close']}{'👌' if dividend_data[tiker]['odobrenie_reestr'] else '⁉️'}\n" \
                               f"{await napravlenie_sdelok_2nogi(percent_fut_ot_sprav_price,  f'{tiker} / {name_future}', price_akc, price_fut, int(lots / lot_akcii), 1)}\n"#\nPrice(справ) - {sprav_price_fut}\nPrice(реал) - {price_fut}
                               # f"Див.(прогноз) - {dividend_data[tiker]['dividend_rub']}р.\nЗакр. реес.(ожидание)- {dividend_data[tiker]['date_close']}\nИндекс стаб. выпл. див - {dividend_data[tiker]['dsi']}\n"#\nPrice(справ) - {sprav_price_fut}\nPrice(реал) - {price_fut}
@@ -252,13 +258,13 @@ async def arbtrage_future_akcii(kvartal, future_akcii=False, percent=0.5):
                         message.append([rez, abs(percent_fut_ot_sprav_price)])
                 else:
                     if percent_fut_ot_sprav_price >= percent or percent_fut_ot_sprav_price <= -percent:
-                        rez = f"{await valyta_smail(percent_fut_ot_sprav_price)} • ({percent_fut_ot_sprav_price}%) {await link_text(tiker)}\n" \
+                        rez = f"{await valyta_smail(percent_fut_ot_sprav_price)} • ({percent_fut_ot_sprav_price}%) {await link_text(tiker)}{news}\n" \
                               f"{await napravlenie_sdelok_2nogi(percent_fut_ot_sprav_price,  f'{tiker} / {name_future}', price_akc, price_fut, int(lots / lot_akcii), 1)}\n"#\nPrice(справ) - {sprav_price_fut}\nPrice(реал) - {price_fut}
 
                         message.append([rez, abs(percent_fut_ot_sprav_price)])
     mesage_sorted = sorted(message, key=lambda x: x[1], reverse=True)
     # return '\n'.join(message_)
-    text_mesage_sorted  = ''.join([i[0] for i in mesage_sorted]) + '\n' if len(mesage_sorted) <= 25 else ''.join([i[0] for i in mesage_sorted[:25]]) + '\n'
+    text_mesage_sorted  = ''.join([i[0] for i in mesage_sorted]) + '\n' if len(mesage_sorted) <= 24 else ''.join([i[0] for i in mesage_sorted[:24]]) + '\n'
     zagolovok = f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new}\n\n⚙️ {await podcher_text('Сканер спредовых расхождений')}\nSPREAD(реал) / SPREAD(справ)\n\n" \
                 f"Ставка ЦБ используется - 19%\nДиапазон отк-я цены:  (- 0.5%) - (+0.5%)\n⁉️ - прогноз \n👌 - рекомендован сов.дир \n\n"
     finale_message = zagolovok + '\n' +  text_mesage_sorted
@@ -369,10 +375,10 @@ async def valuta_vtelegram():
             # print(f"megbank cny/rub - {cnyrub_megbank}")
             eurrub_megbank = await valuta_replace_float('EURRUB', yahoo_valyata, 4)
             usdrub_megbank = await valuta_replace_float('USDRUB', yahoo_valyata, 4)
-            usdkzt_for = await valuta_replace_float("USDKZT", yahoo_valyata, 4 )
-            eurkzt_for = await valuta_replace_float("EURKZT", yahoo_valyata, 4 )
-            usdtry_for = await valuta_replace_float("USDTRY", yahoo_valyata, 4)
-            eurtry_for = await valuta_replace_float("EURTRY", yahoo_valyata, 4)
+            # usdkzt_for = await valuta_replace_float("USDKZT", yahoo_valyata, 4 )
+            # eurkzt_for = await valuta_replace_float("EURKZT", yahoo_valyata, 4 )
+            # usdtry_for = await valuta_replace_float("USDTRY", yahoo_valyata, 4)
+            # eurtry_for = await valuta_replace_float("EURTRY", yahoo_valyata, 4)
             eurcnh_for = await valuta_replace_float("EURCNH", yahoo_valyata, 4)
             eurusd_for = await valuta_replace_float("EURUSD", yahoo_valyata, 4)
             silver_in = await valuta_replace_float("XAGUSD", yahoo_valyata, 4)
@@ -481,6 +487,7 @@ async def valuta_vtelegram():
             percent_eu1_eurrub_megb = round(last_prices.get('FUTEU1224000', 1) / 1000 / eurrub_megbank * 100 - 100 , 2)
             percent_euf_eurrub_megb = round(last_prices.get('FUTEURRUBF00', 1)  / eurrub_megbank * 100 - 100 , 2)
             percent_usf_usdrub_megb = round(last_prices.get(futures['USDRUBF'], 1)  / usdrub_megbank * 100 - 100 , 2)
+            percent_cnf_cn_tom = round(last_prices.get(futures['CNYRUBF']) / last_prices.get('BBG0013HRTL0', 1) * 100 - 100 , 2)
             percent_cnyrub_megb_cn_tom = round(cnyrub_megbank / last_prices.get('BBG0013HRTL0', 1) * 100 - 100 , 2)
             print('ioioioiooioiio', usdrub_megbank, last_prices.get('BBG0013HRTL0'), percent_cnyrub_megb_cn_tom)
 
@@ -570,23 +577,23 @@ async def valuta_vtelegram():
                                      ]
 
             text_future_kotirovri2 = [[f"{await valyta_smail(percent_si2_si1)} •  ({percent_si2_si1}%)\n{await link_text('SI2 / SI1')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_si2_si1, 'SI2 / SI1', price1=last_prices.get('FUTSI0325000', 1), price2=last_prices.get('FUTSI1224000', 1), lot1=1, lot2=1), abs(percent_si2_si1)],
+                                    await napravlenie_sdelok_2nogi(percent_si2_si1, 'SI2 / SI1', price1=round(last_prices.get('FUTSI0325000', 1) / 1000, 3), price2=round(last_prices.get('FUTSI1224000', 1) / 1000, 3), lot1=1, lot2=1, ukazat_napravlenie_sdelok=False), abs(percent_si2_si1)],
                                     [f"{await valyta_smail(percent_eu2_eu1)} •  ({percent_eu2_eu1}%)\n{await link_text('EU2 / EU1')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_eu2_eu1, 'EU2 / EU1', price1=last_prices.get('FUTEU0325000', 1), price2=last_prices.get('FUTEU1224000', 1), lot1=1, lot2=1), abs(percent_eu2_eu1)],
+                                    await napravlenie_sdelok_2nogi(percent_eu2_eu1, 'EU2 / EU1', price1=round(last_prices.get('FUTEU0325000', 1) / 1000, 3), price2=round(last_prices.get('FUTEU1224000', 1) / 1000, 3), lot1=1, lot2=1, ukazat_napravlenie_sdelok=False), abs(percent_eu2_eu1)],
                                     [f"{await valyta_smail(percent_cr2_cr1)} •  ({percent_cr2_cr1}%)\n{await link_text('CR2 / CR1')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_cr2_cr1, 'CR2 / CR1', price1=last_prices.get('FUTCNY032500', 1), price2=last_prices.get('FUTCNY122400', 1), lot1=1, lot2=1), abs(percent_cr2_cr1)],
+                                    await napravlenie_sdelok_2nogi(percent_cr2_cr1, 'CR2 / CR1', price1=last_prices.get('FUTCNY032500', 1), price2=last_prices.get('FUTCNY122400', 1), lot1=1, lot2=1, ukazat_napravlenie_sdelok=False), abs(percent_cr2_cr1)],
                                     [f"{await valyta_smail(percent_si1_usf)} •  ({percent_si1_usf}%)\n{await link_text('Si1 / US.F')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_si1_usf, 'Si1 / US.F', price1=last_prices.get('FUTSI0924000', 1), price2=last_prices.get(futures['USDRUBF'], 1), lot1=1, lot2=1), abs(percent_si1_usf)],
+                                    await napravlenie_sdelok_2nogi(percent_si1_usf, 'Si1 / US.F', price1=round(last_prices.get('FUTSI1224000', 1) / 1000, 3), price2=last_prices.get(futures['USDRUBF'], 1), lot1=1, lot2=1, ukazat_napravlenie_sdelok=False), abs(percent_si1_usf)],
                                     [f"{await valyta_smail(percent_eu1_euf)} •  ({percent_eu1_euf}%)\n{await link_text('EU1 / EU.F')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_eu1_euf, 'EU1 / EU.F', price1=last_prices.get('FUTEU0924000', 1), price2=last_prices.get('FUTEURRUBF00', 1), lot1=1, lot2=1), abs(percent_eu1_euf)],
+                                    await napravlenie_sdelok_2nogi(percent_eu1_euf, 'EU1 / EU.F', price1=round(last_prices.get('FUTEU1224000', 1) / 1000, 3), price2=last_prices.get('FUTEURRUBF00', 1), lot1=1, lot2=1, ukazat_napravlenie_sdelok=False), abs(percent_eu1_euf)],
                                     [f"{await valyta_smail(percent_cr1_crf)} •  ({percent_cr1_crf}%)\n{await link_text('CR1 / CR.F')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_cr1_crf, 'CR1 / CR.F', price1=last_prices.get('FUTCNY092400', 1), price2=last_prices.get(futures['CNYRUBF'], 1), lot1=1, lot2=1), abs(percent_cr1_crf)],
-                                    [f"{await valyta_smail(percent_cr1_cr_tom)} •  ({percent_cr1_cr_tom}%)\n{await link_text('CR1 / CR_TOM')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_cr1_cr_tom, 'CR1 / CR_TOM', price1=last_prices.get('FUTCNY092400', 1), price2=last_prices.get('BBG0013HRTL0', 1), lot1=1, lot2=1), abs(percent_cr1_cr_tom)],
+                                    await napravlenie_sdelok_2nogi(percent_cr1_crf, 'CR1 / CR.F', price1=last_prices.get('FUTCNY122400', 1), price2=last_prices.get(futures['CNYRUBF'], 1), lot1=1, lot2=1, ukazat_napravlenie_sdelok=False), abs(percent_cr1_crf)],
+                                    # [f"{await valyta_smail(percent_cr1_cr_tom)} •  ({percent_cr1_cr_tom}%)\n{await link_text('CR1 / CR_TOM')}\n" +
+                                    # await napravlenie_sdelok_2nogi(percent_cr1_cr_tom, 'CR1 / CR_TOM', price1=last_prices.get('FUTCNY122400', 1), price2=last_prices.get('BBG0013HRTL0', 1), lot1=1, lot2=1, ukazat_napravlenie_sdelok=False), abs(percent_cr1_cr_tom)],
                                     [f"{await valyta_smail(percent_cr2_cr_tom)} •  ({percent_cr2_cr_tom}%)\n{await link_text('CR2 / CR_TOM')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_cr2_cr_tom, 'CR2 / CR_TOM', price1=last_prices.get('FUTCNY032500', 1), price2=last_prices.get('BBG0013HRTL0', 1), lot1=1, lot2=1), abs(percent_cr2_cr_tom)],
+                                    await napravlenie_sdelok_2nogi(percent_cr2_cr_tom, 'CR2 / CR_TOM', price1=last_prices.get('FUTCNY032500', 1), price2=last_prices.get('BBG0013HRTL0', 1), lot1=1, lot2=1, ukazat_napravlenie_sdelok=False), abs(percent_cr2_cr_tom)],
                                     [f"{await valyta_smail(percent_ed2_ed1)} •  ({percent_ed2_ed1}%)\n{await link_text('ED2 / ED1')}\n" +
-                                    await napravlenie_sdelok_2nogi(percent_ed2_ed1, 'ED2 / ED1', price1=last_prices.get('FUTED0325000', 1), price2=last_prices.get('FUTED1224000', 1), lot1=1, lot2=1), abs(percent_ed2_ed1)],
+                                    await napravlenie_sdelok_2nogi(percent_ed2_ed1, 'ED2 / ED1', price1=last_prices.get('FUTED0325000', 1), price2=last_prices.get('FUTED1224000', 1), lot1=1, lot2=1, ukazat_napravlenie_sdelok=False), abs(percent_ed2_ed1)],
 
                                      ]
 
@@ -612,10 +619,14 @@ async def valuta_vtelegram():
             #        [f"{await valyta_smail(percent_eu_tom_us_tom_eurusd)} •  ({percent_eu_tom_us_tom_eurusd}%){await smail_vnimanie(percent_eu_tom_us_tom_eurusd)}\n{await link_text('EU_TOM / US_TOM / EURUSD(for)')}\n" +
             #        await napravlenie_sdelok_3nogi(percent_eu_tom_us_tom_eurusd, 'EU_TOM / US_TOM / EURUSD(for)', price1=eurrub_megbank, price2=last_prices.get('BBG0013HGFT4', 1), price3=eurusd_for) , abs(percent_eu_tom_us_tom_eurusd) ]
             #        ]
+                    #[f"{await valyta_smail(percent_cr1_cr_tom)} •  ({percent_cr1_cr_tom}%)\n{await link_text('CR1 / CR_TOM')}\n" +
+                    #await napravlenie_sdelok_2nogi(percent_cr1_cr_tom, 'CR1 / CR_TOM', price1=last_prices.get('FUTCNY122400', 1), price2=last_prices.get('BBG0013HRTL0', 1), lot1=1, lot2=1, ukazat_napravlenie_sdelok=False)
             text_valuta_kotirovki = [[f"{await valyta_smail(percent_usdrub_megb_spr)} •  ({percent_usdrub_megb_spr}%)\n{await link_text('USDRUB(межб) / USDRUB(спр)')}\nCNY_TOM x USDCNH(for) • {kurs_usdrub_spr}\nКурс {await link_text('USDRUB межбанк')} • {usdrub_megbank}\n\n", abs(percent_usdrub_megb_spr)],
                                      [f"{await valyta_smail(percent_eurrub_megb_spr)} •  ({percent_eurrub_megb_spr}%)\n{await link_text('EURRUB(межб) / EURRUB(спр)')}\nCNY_TOM x EURCNH(for) • {kurs_eurrub_spr}\nКурс {await link_text('EURRUB межбанк')} • {eurrub_megbank}\n\n", abs(percent_eurrub_megb_spr)],
-                                     [f"{await valyta_smail(percent_cnyrub_megb_cn_tom)} •  ({percent_cnyrub_megb_cn_tom}%)\n{await link_text('CNYRUB(межб) / CN_TOM')}\nCN_TOM • {last_prices.get('BBG0013HRTL0', 1)}\nCNYRUB({await link_text('межбанк')}) • {cnyrub_megbank}\n\n", abs(percent_cnyrub_megb_cn_tom)],
-                                     [f"\n{await valyta_smail(percent_si1_usdrub_megb)} •  ({percent_si1_usdrub_megb}%)\n{await link_text('SI1 / USDRUB(межб)')}\nSI1  • {last_prices.get('FUTSI1224000', 1)}\nUSDRUB({await link_text('межбанк')}) • {usdrub_megbank}\n\n", 0],
+                                     [f"{await valyta_smail(percent_cnyrub_megb_cn_tom)} •  ({percent_cnyrub_megb_cn_tom}%)\n{await link_text('CNYRUB(межб) / CNY_TOM')}\nCNY_TOM • {last_prices.get('BBG0013HRTL0', 1)}\nCNYRUB({await link_text('межбанк')}) • {cnyrub_megbank}\n\n", abs(percent_cnyrub_megb_cn_tom)],
+                                     [f"\n{await valyta_smail(percent_cr1_cr_tom)} •  ({percent_cr1_cr_tom}%)\n{await link_text('CR1 / CNY_TOM')}\nCR1  • {last_prices.get('FUTCNY122400', 1)}\nCNY_TOM' • {last_prices.get('BBG0013HRTL0', 1)}\n\n", 0],
+                                     [f"{await valyta_smail(percent_cnf_cn_tom)} •  ({percent_cnf_cn_tom}%)\n{await link_text('CNYRUBF / CNY_TOM')}\nCNYRUBF  • {last_prices.get(futures['CNYRUBF'])}\nCNY_TOM' • {last_prices.get('BBG0013HRTL0', 1)}\n\n", 0],
+                                     [f"{await valyta_smail(percent_si1_usdrub_megb)} •  ({percent_si1_usdrub_megb}%)\n{await link_text('SI1 / USDRUB(межб)')}\nSI1  • {last_prices.get('FUTSI1224000', 1)}\nUSDRUB({await link_text('межбанк')}) • {usdrub_megbank}\n\n", 0],
                                      [f"{await valyta_smail(percent_usf_usdrub_megb)} •  ({percent_usf_usdrub_megb}%)\n{await link_text('USDRUBF / USDRUB(межб)')}\nUSF  • {last_prices.get(futures['USDRUBF'], 1)}\nUSDRUB({await link_text('межбанк')}) • {usdrub_megbank}\n\n", 0],
                                      [f"{await valyta_smail(percent_eu1_eurrub_megb)} •  ({percent_eu1_eurrub_megb}%)\n{await link_text('EU1 / EURRUB(межб)')}\nEU1 • {last_prices.get('FUTEU1224000', 1)}\nEURRUB({await link_text('межбанк')}) • {eurrub_megbank}\n\n", 0],
                                      [f"{await valyta_smail(percent_euf_eurrub_megb)} •  ({percent_euf_eurrub_megb}%)\n{await link_text('EURRUBF / EURRUB(межб)')}\nEU1 • {last_prices.get('FUTEURRUBF00', 1)}\nEURRUB({await link_text('межбанк')}) • {eurrub_megbank}\n\n", 0],
@@ -831,11 +842,12 @@ async def start_parse_rss():
                     print(i)
         except Exception:
             await sendErorsTelegram(bot, sec_start=60)
-        await asyncio.sleep(60)
+            await asyncio.sleep(60)
 
 async def start_dic_yaho_valuta():
  try:
      while True:
+         print(dict_sobitiy)
          vihodnie = await subbota_voskresen()
          diapazone_23_6 = await time_diapazone('23:30', '06:00')
          await dict_yahoo_valuta()
@@ -863,13 +875,13 @@ async def start_parse_news_site():
         try:
             await parse_rbk(list_100_last_news, bot, link_text)
             await parse_komersant(list_100_last_news, bot, link_text)
-            await asyncio.sleep(random.uniform(2, 60))
+            await asyncio.sleep(random.uniform(10, 120))
         except Exception:
             await sendErorsTelegram(bot, sec_start='random')
-        await asyncio.sleep(random.uniform(2, 60))
+            await asyncio.sleep(random.uniform(2, 60))
 
 
-list_task = [start_cicl_5s(), start_dic_yaho_valuta(), start_get_last_prices_dict(), start_cicl_15m(), start_cicl_60m(), start_parse_news_site(), start_parse_rss()]#bot_discord.start(Token.discordBot_WarrenWallet)
+list_task = [start_cicl_5s(), start_dic_yaho_valuta(), start_get_last_prices_dict(), start_cicl_15m(), start_cicl_60m(), start_parse_news_site(), start_parse_rss(), fetch_messages(client=client, id_channel=Chenal_id.istochnik_news1)]#bot_discord.start(Token.discordBot_WarrenWallet)
 
 async def main():
     # Запуск периодических задач в фоновом режиме
@@ -890,6 +902,7 @@ url_jont_news_moex = 'https://discordapp.com/api/webhooks/1262849198882164766/WA
 webhook_BST2_server_news = 'https://discord.com/api/webhooks/1263747088697528360/oEVrj6anDzx0Qzw_qmcUHCFZENhpzFdEY-O4iyc_O-I4GatGie-vq_EP62b3nVEP61VE'
 @client.on(events.NewMessage(chats=[Chenal_id.istochnik_news1, Chenal_id.istochnik_news2]))#chats=Config.fast_id + Chenal.all_chenal_list_client + Config.news_vip_id    #chats=[news.get('ALL NEWS MOEX | Priority News') + news.get('Королёвский | вестник')]
 async def hendler(event):
+    global dict_sobitiy
     # print(akcii_moex_tiker)
     id_chennal = event.message.chat_id
     text = Text(event.message.message)
@@ -902,6 +915,9 @@ async def hendler(event):
             text_list = text.split('\n')
             text = ' '.join([i for i in text.split() if  i.strip()])
             tiker = text_list[0] if len(text_list) > 1 else ''
+            flag1 = tiker.replace(',', '').replace('`', '') in akcii_moex_tiker.keys()
+            if flag1:
+                dict_sobitiy['news'].add(tiker)
             text = Text(text.replace(tiker, ''))
             text = text.replace_all(p)
             text = text.replace_all(akcii_moex_tiker)
@@ -910,10 +926,12 @@ async def hendler(event):
             text_telegram = '🔹🔻🔸\n\n' + tiker +'\n' + text if len(text_list) > 1 else '🔹🔻🔸\n\n' + text
             text_discord = f"{text_discord}\n\n▫️ The Trading Times"
             text_telegram = f"{text_telegram}\n\n🅾️ {await link_text('The Trading Times')}"
-            if Flag.vikluchatel_webhook:
+            text_lower = text.lower()
+            flag = 'привет' in text_lower or 'новый сервис' in text_lower or 'пульс' in text_lower or 'преимущест' in text_lower or 'запуск' in text_lower or 'условия' in text_lower or 'лента новостей' in text_lower
+            if Flag.vikluchatel_webhook and flag == False and flag1:
                 await webhook_discord(WebhookDiscod.webhook2, text_discord)
                 await webhook_discord(WebhookDiscod.webhook1, text)
-            if Flag.knoka_send_post:
+            if Flag.knoka_send_post and flag == False and flag == False and flag1:
                 await bot.send_message(Chenal_id.trading_times_id, text_telegram, parse_mode='HTML', disable_web_page_preview=True)
     elif Chenal_id.istochnik_news2 == id_chennal and text.check_words_in_text(blumberg_chek_list):
         if len(text.strip()) >= 20:
@@ -945,7 +963,8 @@ ya = 321329414
 @client2.on(events.NewMessage(chats=[cointelegraph, crypto_blumberg, ya]))#chats=[]chats=[cointelegraph,]
 async def hendler(event):
     id_chennal = event.message.chat_id
-    # print(id_chennal)
+    time_data = event.message.date
+    print(time_data.day)
     text = Text(event.message.message)
     if id_chennal == cointelegraph or id_chennal == ya:
         loop = asyncio.get_event_loop()
@@ -970,6 +989,10 @@ def finali_func():
     loop1.run_until_complete(bot.send_message(Chenal_id.LogsErroors, f"‼️ Скрипт остановился на сервере"))
 
 
+def finalli_error():
+    loop1 = asyncio.get_event_loop()
+    loop1.run_until_complete(sendErorsTelegram(bot))
+
 if __name__ == '__main__':
     # client.start()
     # client2.start()
@@ -988,6 +1011,7 @@ if __name__ == '__main__':
         loop.run_until_complete(main())
     except Exception as e:
         # Обработка ошибок
+        finalli_error()
         print(f"Произошла ошибка: {e}")
     finally:
         # Этот блок выполнится всегда, независимо от успеха или ошибки

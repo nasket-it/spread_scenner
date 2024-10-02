@@ -3,10 +3,34 @@ import aiohttp
 import asyncio
 import json
 import requests
+import datetime
 from deep_translator import MyMemoryTranslator
+from tinkoff_get_func import akcii_moex_tiker
 from concurrent.futures import ThreadPoolExecutor
 
+dict_sobitiy = {'news' : set(), 'infocigan' : {}}
+async def fetch_messages(client , id_channel):
+    # Текущая дата
+    today = datetime.datetime.now().date()
 
+    # Начало и конец дня 7 числа
+    start_date = datetime.datetime(today.year, today.month, today.day)
+    end_date = start_date + datetime.timedelta(days=1)
+    print(start_date)
+    print(end_date)
+    # Выгрузка сообщений
+    messages = await client.get_messages(id_channel, limit=1000)
+
+    # Печать сообщений
+    for message in messages:
+        if message.date.day == today.day:
+            tiker = message.text.replace(',', '').replace('`', '').split()[0]
+            print(tiker)
+            print(tiker in akcii_moex_tiker.keys())
+            if tiker in akcii_moex_tiker.keys():
+                dict_sobitiy['news'].add(tiker)
+    print(dict_sobitiy)
+    print(akcii_moex_tiker.keys())
 
 
 translator = MyMemoryTranslator(source="en-GB", target="ru-RU")
