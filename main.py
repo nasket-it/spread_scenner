@@ -927,7 +927,9 @@ async def hendler(event):
             text_discord = f"{text_discord}\n\n▫️ The Trading Times"
             text_telegram = f"{text_telegram}\n\n🅾️ {await link_text('The Trading Times')}"
             text_lower = text.lower()
-            flag = 'привет' in text_lower or 'новый сервис' in text_lower or 'пульс' in text_lower or 'преимущест' in text_lower or 'запуск' in text_lower or 'условия' in text_lower or 'лента новостей' in text_lower
+            flag = 'привет' in text_lower or 'новый сервис' in text_lower or 'пульс' in text_lower or 'преимущест' in text_lower or 'запуск' in text_lower\
+                   or 'условия' in text_lower or 'лента новостей' in text_lower or 'проп'  in text_lower or 'напом' in text_lower or 'тариф' in text_lower \
+                   or 'ultim' in text_lower or 'priority' in text_lower or 'stocksi' in text_lower
             if Flag.vikluchatel_webhook and flag == False and flag1:
                 await webhook_discord(WebhookDiscod.webhook2, text_discord)
                 await webhook_discord(WebhookDiscod.webhook1, text)
