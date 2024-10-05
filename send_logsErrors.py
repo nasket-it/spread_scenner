@@ -20,6 +20,7 @@ async def sendErorsTelegram(bot,id_chenal=Chenal_id.LogsErroors, sec_start=5):
                            f"👉Название ошибки:\n{name_errors}\n" \
                            f"🔃Перезаппуск через: {sec_start}"
     if Flag.send_logErrors:
+        await asyncio.sleep(2)
         await bot.send_message(id_chenal, messageErrorTelegram)
     else:
         print(messageErrorTelegram)

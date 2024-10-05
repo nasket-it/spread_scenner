@@ -387,6 +387,11 @@ async def valuta_vtelegram():
             sp500_in = await valuta_replace_float("sp500", yahoo_valyata, 4)
             # qqq_in = round(await valuta_replace_float("QQQ", yahoo_valyata, 2) * 41 , 1)
 
+            percent_megbank_eur_cnh_eurcnh = round(eurrub_megbank / cnyrub_megbank /eurcnh_for, 2)
+            percent_megbank_eur_usd_eurusd = round(eurrub_megbank / usdrub_megbank /eurusd_for, 2)
+            percent_megbank_usd_cnh_usdcnh = round(usdrub_megbank / cnyrub_megbank /usdcnh_for, 2)
+            print(f"Megbank - eur/cnh {percent_megbank_eur_cnh_eurcnh} eur/usd {percent_megbank_eur_usd_eurusd} usd/cnh - {percent_megbank_usd_cnh_usdcnh}")
+
             price_gold_gr_usd = round(gold_in / gr_unc, 2)
             # print(qqq_in)
 
@@ -927,9 +932,10 @@ async def hendler(event):
             text_discord = f"{text_discord}\n\n▫️ The Trading Times"
             text_telegram = f"{text_telegram}\n\n🅾️ {await link_text('The Trading Times')}"
             text_lower = text.lower()
-            flag = 'привет' in text_lower or 'новый сервис' in text_lower or 'пульс' in text_lower or 'преимущест' in text_lower or 'запуск' in text_lower\
-                   or 'условия' in text_lower or 'лента новостей' in text_lower or 'проп'  in text_lower or 'напом' in text_lower or 'тариф' in text_lower \
-                   or 'ultim' in text_lower or 'priority' in text_lower or 'stocksi' in text_lower
+            flag = 'привет' in text_lower or 'новый сервис' in text_lower or 'пульс' in text_lower or 'преимущест' in text_lower or 'запуск' in text_lower \
+                   or 'условия' in text_lower or 'лента новостей' in text_lower or 'проп' in text_lower or 'напом' in text_lower or 'тариф' in text_lower \
+                   or 'ultim' in text_lower or 'prior' in text_lower or 'stocksi' in text_lower or 't.me' in text_lower or 'telegram', 'источник' in text_lower \
+                   or 'ultimate' in text_lower
             if Flag.vikluchatel_webhook and flag == False and flag1:
                 await webhook_discord(WebhookDiscod.webhook2, text_discord)
                 await webhook_discord(WebhookDiscod.webhook1, text)
@@ -1013,6 +1019,7 @@ if __name__ == '__main__':
         loop.run_until_complete(main())
     except Exception as e:
         # Обработка ошибок
+        time.sleep(2)
         finalli_error()
         print(f"Произошла ошибка: {e}")
     finally:
