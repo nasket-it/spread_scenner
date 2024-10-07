@@ -937,7 +937,7 @@ async def hendler(event):
                    or 'условия' in text_lower or 'лента новостей' in text_lower or 'проп' in text_lower or 'напом' in text_lower or 'тариф' in text_lower \
                    or 'ultim' in text_lower or 'prior' in text_lower or 'stocksi' in text_lower or 't.me' in text_lower or 'telegram', 'источник' in text_lower \
                    or 'ultimate' in text_lower
-            if Flag.vikluchatel_webhook and flag == False and flag1:
+            if Flag.vikluchatel_webhook and flag1:
                 await webhook_discord(WebhookDiscod.webhook2, text_discord)
                 await webhook_discord(WebhookDiscod.webhook1, text)
             if Flag.knoka_send_post and flag == False and flag == False and flag1:
