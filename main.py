@@ -899,7 +899,8 @@ p = ['KZOSP', 'TATNP', 'NKHP', 'BANEP', 'MRKP', 'TRNFP', 'SNGSP', 'KAZTP', 'TGKB
      'KRKNP', 'NKNCP', 'RTKMP', 'FIXP', 'MGTSP', 'PMSBP', 'GAZP', 'SBERP', 'LNZLP', 'RASP',
      'LSNGP', 'NMTP', 'CNTLP', 'MTLRP', '📅', '🔮', '📁', '🛩', '#отчётность',  '#мсфо' , '#банки',
      '#консенсус',  '#металлурги' , '⭐', '#календарь', '#никель', '#цбрф', 'PN Alert', '#рсбу', '#дивиденды',
-     '📏', '💼', '— PN', '📘', '#банки' , '#авиа', '❗', '💳', 'Bloomberg ✅', '-[статья]', '[статья]']
+     '📏', '💼', '— PN', '📘', '#банки' , '#авиа', '❗', '💳', 'Bloomberg ✅', '-[статья]', '[статья]', 'stocksi', '@prioritynews_bot',
+     'ultimate', 'prior', 'PN Alert']
 
 
 fast_id  = [-1001750058000,]
