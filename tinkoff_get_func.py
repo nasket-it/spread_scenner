@@ -381,7 +381,9 @@ async def get_last_prices_dict():
         resp = await client.market_data.get_last_prices(
             figi=[i for i in future_all_info] + [akcii_moex_tiker[i] for i in akcii_moex_tiker] + [valyuta_dict[i] for i in valyuta_dict] + ['FUTED1224000',])
         for i in resp.last_prices:
-            last_prices[i.figi] = await asy_price_float_ti(i.price)
+            price_float = await asy_price_float_ti(i.price)
+            if price_float > 0:
+                last_prices[i.figi] = price_float
 
 
 

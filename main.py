@@ -369,7 +369,7 @@ async def valuta_vtelegram():
             gold_futures = {'GDH4' : 'FUTGOLD03240'}
             brent_futures = {'BRJ4' : 'FUTBR0424000'}
             silver_futures = {'SVH4' : 'FUTSILV03240'}
-
+            # print(last_prices)
             usdcnh_for = await valuta_replace_float('USDCNH', yahoo_valyata, 4)
             cnyrub_megbank = await valuta_replace_float('CNYRUB', yahoo_valyata, 4)
             # print(f"megbank cny/rub - {cnyrub_megbank}")
@@ -415,7 +415,6 @@ async def valuta_vtelegram():
             # print('ldldldldldldldldldldldldlldldldld', eur_rub_tom)
             si_price = last_prices.get('FUTSI1224000', 1)
             # si_sprav_price = round(1000 * (usd_rub_ru * (1 + 0.16 * (await expiration_date_future(si['si-6.24'])/365))))
-
 
             percent_si2_cr2_usdcnh = round(last_prices.get('FUTSI0325000', 1) / last_prices.get('FUTCNY032500', 1) / 1000 / usdcnh_for * 100 -100, 3)
 
