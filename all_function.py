@@ -20,15 +20,19 @@ async def fetch_messages(client , id_channel):
     print(end_date)
     # Выгрузка сообщений
     messages = await client.get_messages(id_channel, limit=1000)
+    # print(messages)
 
     # Печать сообщений
     for message in messages:
         if message.date.day == today.day:
-            tiker = message.text.replace(',', '').replace('`', '').split()[0]
-            print(tiker)
-            print(tiker in akcii_moex_tiker.keys())
-            if tiker in akcii_moex_tiker.keys():
-                dict_sobitiy['news'].add(tiker)
+            text = message.text
+            if text:
+                tiker = text.replace(',', '').replace('`', '').split()
+                tiker1 = tiker[0]
+                print('rrrrrrrrrr',tiker1)
+                print(tiker1 in akcii_moex_tiker.keys())
+                if tiker1 in akcii_moex_tiker.keys():
+                    dict_sobitiy['news'].add(tiker1)
     print(dict_sobitiy)
     print(akcii_moex_tiker.keys())
 
