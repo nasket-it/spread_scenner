@@ -266,7 +266,7 @@ async def arbtrage_future_akcii(kvartal, future_akcii=False, percent=0.5):
     # return '\n'.join(message_)
     text_mesage_sorted  = ''.join([i[0] for i in mesage_sorted]) + '\n' if len(mesage_sorted) <= 24 else ''.join([i[0] for i in mesage_sorted[:24]]) + '\n'
     zagolovok = f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new}\n\n⚙️ {await podcher_text('Сканер спредовых расхождений')}\nSPREAD(реал) / SPREAD(справ)\n\n" \
-                f"Ставка ЦБ используется - 19%\nДиапазон отк-я цены:  (- 0.5%) - (+0.5%)\n⁉️ - прогноз \n👌 - рекомендован сов.дир \n\n"
+                f"Ставка ЦБ используется - 21%\nДиапазон отк-я цены:  (- 0.5%) - (+0.5%)\n⁉️ - прогноз \n👌 - рекомендован сов.дир \n\n"
     finale_message = zagolovok + '\n' +  text_mesage_sorted
     print(f"dlina zagolovka {len(zagolovok)} - text {len(mesage_sorted) } ")
     s1 = await bot.edit_message_text(finale_message, chat_id=chenal_id, message_id=last_messa_id, parse_mode='HTML', disable_web_page_preview=True)
