@@ -111,7 +111,8 @@ company_tickers = {
     "ОГК-2": "OGKB",
     "HeadHunter": "HHRU",
     "Сегежа": "SGZH",
-    "Яндекс" : "YDEX"
+    "Яндекс" : "YDEX",
+    "ТКС Холдинг" : "TCSG"
 
 }
 
