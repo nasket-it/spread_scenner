@@ -132,7 +132,7 @@ async def parse_dividend():
         table = soup.find(id="table-dividend")  # Пример, найдите правильный элемент
         # print(table)
         rows = table.find_all('tr')[1:]  # Пропускаем заголовок таблицы
-        print(rows)
+        # print(rows)
         dividend_data.clear()
         for row in rows:
             columns = row.find_all('td')
