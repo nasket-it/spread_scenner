@@ -549,42 +549,23 @@ def get_sandels_day(symbol, day=366):
 
 # print(datetime.now().time())
 # @decorator_speed
-def get_all_sandels(symbol, day=366):
+def price_close_max200day( figi):
     with Client(TOKEN) as client:
-        all_light = []
-        all_low = []
-        list_vwap = []
-        all_volume = 0
-        all_price_volume = 0
-        # date_dey = i.candles[0].time.day
-        count = 0
-        figi = valuta_fut[symbol].get('figi')
-        moscow_tz = timezone('Europe/Moscow')
-        rez = {}
+        # figi = 'FUTGOLD12240'
+        rez = []
         for i in client.get_all_candles(
             figi=figi,
-            from_=now() - timedelta(days=1),
-            interval=CandleInterval.CANDLE_INTERVAL_5_MIN
+            from_=now() - timedelta(days=200),
+            interval=CandleInterval.CANDLE_INTERVAL_DAY
             ):
             low = price_float_ti(i.low)
             hight = price_float_ti(i.high)
             close = price_float_ti(i.close)
             open = price_float_ti(i.open)
-            evereng_price = round((hight + low + close) / 3, 4)
-            rez[f"{i.time.year}.{i.time.month}.{i.time.day}.{i.time.hour}.{i.time.minute}"] = {'low' : low, 'hight' : hight, 'open' : open , 'close' : close}
+            rez.append(close)
         return rez
-            # if date_dey is not i.time.day:
-            #     date_dey = i.time.day
-            #     all_volume = 0
-            #     all_price_volume = 0
-            # all_volume += i.volume
-            # eeee = round(i.volume * evereng_price, 1)
-            # all_price_volume += eeee
-            # vwap = round(all_price_volume / all_volume, 4)
-            # # list_vwap.append(get_percent(vwap, hight),vwap, get_percent(vwap, low)))
-            # all_light.append(get_percent(vwap, hight))
-            # all_low.append(get_percent(vwap, low))
-            # return {'night': max(all_light), 'low': min(all_low)}
+        # print(rez[-90:])
+# price_close_max200day('FUTRTS032500')
 def corilaciya(symbol1, symbol2):
     si_12 = get_all_sandels(symbol1)
     si_3 = get_all_sandels(symbol2)
