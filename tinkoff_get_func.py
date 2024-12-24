@@ -208,10 +208,15 @@ async def sprav_price_future(price_base, lots=None, stavka_cb=0.21, figi=None, d
     date_exp = future_all_info[figi].expiration_date.date() if figi else date_expiration
     lot_fut = await asy_price_float_ti(future_all_info[figi].basic_asset_size) if lots == None else lots
     day_expiration = date_exp - datetime.now().date()
+    # print(day_expiration)
     percent_one_day = stavka * 100  / 365
     dey_exp = (date_exp - datetime.now().date()).days
+    print(dey_exp)
     sprav_percent_stavka = percent_one_day * dey_exp
+    print(sprav_percent_stavka)
     sprav_price_fut = (price_base + ((price_base / 100) * sprav_percent_stavka)) - divid_rub
+    print(sprav_price_fut)
+    print(price_base)
     if po_formyle_popova:
         pass
     elif future_akcii:
