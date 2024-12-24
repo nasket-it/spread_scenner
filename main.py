@@ -273,7 +273,7 @@ async def arbtrage_future_akcii(kvartal, future_akcii=False, percent=0.5):
         mesage_sorted = sorted(message, key=lambda x: x[1], reverse=True)
         # return '\n'.join(message_)
         text_mesage_sorted  = ''.join([i[0] for i in mesage_sorted]) + '\n' if len(mesage_sorted) <= 24 else ''.join([i[0] for i in mesage_sorted[:24]]) + '\n'
-        zagolovok = f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new}\n\n⚙️ {await podcher_text('Сканер поиска несправедливых цен фьючерсов на акций')}\nЦена текущая / Цена справедливая\n\n" \
+        zagolovok = f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new}\n\n⚙️ {await podcher_text('Сканер поиска несправедливых цен фьючерсы на акций, сравнение текущей цены с её справедливым значением.')}\nЦена текущая / Цена справедливая\n\n" \
                     f"Ставка ЦБ используется - 21%\nДиапазон отк-я цены:  (- 0.5%) - (+0.5%)\n⁉️ - прогноз \n👌 - рекомендован сов.дир \n\n"
         finale_message = zagolovok + '\n' +  text_mesage_sorted
         print(f"dlina zagolovka {len(zagolovok)} - text {len(mesage_sorted) } ")
