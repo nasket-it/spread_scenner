@@ -891,8 +891,7 @@ p = ['KZOSP', 'TATNP', 'NKHP', 'BANEP', 'MRKP', 'TRNFP', 'SNGSP', 'KAZTP', 'TGKB
 
 
 fast_id  = [-1001750058000,]
-url_jont_news_moex = 'https://discordapp.com/api/webhooks/1262849198882164766/WACqtXgL9TAgLu-I2kZCiWj_sNy8ZWTGLlOGQkbm6B29a-18m9Ef95oSUr43ajYXtUI4'
-webhook_BST2_server_news = 'https://discord.com/api/webhooks/1263747088697528360/oEVrj6anDzx0Qzw_qmcUHCFZENhpzFdEY-O4iyc_O-I4GatGie-vq_EP62b3nVEP61VE'
+
 @client.on(events.NewMessage(chats=[Chenal_id.istochnik_news1, Chenal_id.istochnik_news2]))#chats=Config.fast_id + Chenal.all_chenal_list_client + Config.news_vip_id    #chats=[news.get('ALL NEWS MOEX | Priority News') + news.get('Королёвский | вестник')]
 async def hendler(event):
     global dict_sobitiy
