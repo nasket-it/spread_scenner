@@ -102,10 +102,9 @@ async def login_to_kase(page):
 async def parse_price_curent_kase(kase_curen_dict: dict):
     if Flag.vikl_parse_kase:
         async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=True)
+            browser = await p.chromium.launch(headless=False)
             context = await browser.new_context()
             page = await context.new_page()
-            # await page.
             # Логинимся один раз
             await login_to_kase(page)
 
@@ -168,4 +167,4 @@ async def parse_price_curent_kase(kase_curen_dict: dict):
 #         await browser.close()
 
 # Запускаем асинхронную функцию
-# asyncio.run(parse_price_curent_kase())
+# asyncio.run(parse_price_curent_kase(kase_curen_dict))

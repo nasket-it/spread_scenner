@@ -92,6 +92,7 @@ async def smail_vnimanie(percent, delitel=0.1, znak='❗️', sma_stop=True):
         return 6 * smail + '+'
 
 async def valuta_replace_float(valut_para, dict, kol_znakov):
+    print(f'Словарь dict - {dict}')
     price = dict['valuta'][valut_para][0]
     proverka_na_tochku = '.' in price.split(',')[-1]
     proverka_na_tochku2 = '.' in price
@@ -275,7 +276,8 @@ async def arbtrage_future_akcii(kvartal, future_akcii=False, percent=0.5):
         s1 = await bot.edit_message_text(finale_message, chat_id=chenal_id, message_id=last_messa_id, parse_mode='HTML', disable_web_page_preview=True)
         if Flag.vikl_parse_kase:
             message_curent_kase = await new_text_kase_current(kase_curen_dict)
-            s2 = await bot.edit_message_text(message_curent_kase, chat_id=chenal_id, message_id=last_messa3_id, parse_mode='HTML', disable_web_page_preview=True)
+            if len(message_curent_kase ) > 1 :
+                s2 = await bot.edit_message_text(message_curent_kase, chat_id=chenal_id, message_id=last_messa3_id, parse_mode='HTML', disable_web_page_preview=True)
         # print(mesage_sorted)
     else:
         message = f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new}\n\n " \
