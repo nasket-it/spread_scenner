@@ -104,15 +104,19 @@ async def parse_futures_investing(future):
                 # percent = 0.01
                 # print(f"qqq price - {price}")
             else:
-                price = soup.find('div', {'data-test': 'instrument-price-last'}).text
-                percent = soup.find('span', {'data-test': 'instrument-price-change-percent'}).text
-            # print(price, percent)
-            if price:
-                # print(price, percent)
-                return price, percent
-            else:
-                print(None, None)
-                return None, None
+                price = soup.find('div', {'data-test': 'instrument-price-last'})
+                percent = soup.find('span', {'data-test': 'instrument-price-change-percent'})
+                if price and price.text and percent and percent.text:
+                    return price.text, percent.text
+                else:
+                    print(None, None)
+                    return None, None
+            # if price:
+            #     # print(price, percent)
+            #     return price, percent
+            # else:
+            #     print(None, None)
+            #     return None, None
 
 
 async def parse_valuta_invtsting(currency1, currency2, url=True):
@@ -128,15 +132,14 @@ async def parse_valuta_invtsting(currency1, currency2, url=True):
             soup = BeautifulSoup(html, 'html.parser')
             # Поиск элемента по атрибуту data-test
             await asyncio.sleep(0.1)
-            price_element = soup.find('div', {'data-test': 'instrument-price-last'})
-            price = price_element.text if price_element else None
-            percent_element = soup.find('span', {'data-test': 'instrument-price-change-percent'})
-            percent = percent_element.text if percent_element else None
-            # print(price, percent)
-            if price:
-                # print(price, percent)
-                return price, percent
+            price = soup.find('div', {'data-test': 'instrument-price-last'})
+            # price = price_element.text if price_element else None
+            percent = soup.find('span', {'data-test': 'instrument-price-change-percent'})
+            # percent = percent_element.text if percent_element else None
+            if price and price.text and percent and percent.text:
+                return price.text, percent.text
             else:
+                print(None, None)
                 return None, None
 
 async def subbota_voskresen():
