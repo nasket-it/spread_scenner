@@ -148,6 +148,19 @@ async def subbota_voskresen():
     return today == 5 or today == 6
 
 
+async def valuta_replace_float(price_str, kol_znakov):
+    print(f'Словарь dict - {dict}')
+    price = price_str
+    proverka_na_tochku = '.' in price.split(',')[-1]
+    proverka_na_tochku2 = '.' in price
+    if proverka_na_tochku2 == False:
+        price = price.replace(',', '.')
+    elif proverka_na_tochku:
+        price = price.replace(',', '')
+    else:
+        price = price.replace('.', '').replace(',', '.')
+    return round(float(price), kol_znakov)
+
 count = 0
 async def dict_yahoo_valuta():
     prices_valuta = {}
@@ -167,36 +180,10 @@ async def dict_yahoo_valuta():
         else:
             rezult = await parse_valuta_invtsting(i[:3], i[3:6])
         if rezult[0] and rezult[1]:
-            prices_valuta[i] = [rezult[0], rezult[1]]
+            yahoo_valyata[i] = [await valuta_replace_float(rezult[0], 4), rezult[1]]
         await asyncio.sleep(0.5)
-    yahoo_valyata['valuta'] = prices_valuta
+    # yahoo_valyata['valuta'] = prices_valuta
     count += 1
     print(yahoo_valyata, count)
-    #---
-    # try:
-    #     while True:
-    #         vihodnie = await subbota_voskresen()
-    #         diapazone_23_6 = await time_diapazone('23:30', '06:00')
-    #         # await parse_site()
-    #         try:
-    #             for i in symbols:
-    #                 if  i in fut:
-    #                     rezult = await parse_futures_investing(i)
-    #                 else:
-    #                     rezult = await parse_valuta_invtsting(i[:3], i[3:6])
-    #                 if rezult[0] and rezult[1] :
-    #                     prices_valuta[i] = [rezult[0], rezult[1]]
-    #                 await asyncio.sleep(0.5)
-    #             yahoo_valyata['valuta'] = prices_valuta
-    #             await asyncio.sleep(60) if vihodnie or diapazone_23_6 else await asyncio.sleep(5)
-    #             # print(f"Выходные llllllllllllllll - {diapazone_23_6} ")
-    #         except Exception as e:
-    #             print("Ошибка:", e)  # Выводим ошибку
-    #             await asyncio.sleep(5)
-    #             await dict_yahoo_valuta()
-    # except KeyboardInterrupt:
-    #     print('Программа остановлена пользователем')
-
-
 
 
