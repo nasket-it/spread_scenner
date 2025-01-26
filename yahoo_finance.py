@@ -149,7 +149,7 @@ async def subbota_voskresen():
 
 
 async def valuta_replace_float(price_str, kol_znakov):
-    print(f'Словарь dict - {dict}')
+    # print(f'Словарь dict - {dict}')
     price = price_str
     proverka_na_tochku = '.' in price.split(',')[-1]
     proverka_na_tochku2 = '.' in price
