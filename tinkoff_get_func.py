@@ -20,7 +20,7 @@ Quotation,
 PositionsRequest
 )
 from tinkoff.invest import Client, SecurityTradingStatus, OrderType, OrderDirection, Quotation,\
-    GetOrderBookRequest, PositionsRequest, InstrumentRequest, InstrumentType, InstrumentIdType, InstrumentStatus, CandleInterval
+    GetOrderBookRequest, PositionsRequest, InstrumentRequest, InstrumentType, InstrumentIdType, InstrumentStatus, CandleInterval, RealExchange
 from tinkoff.invest.services import InstrumentsService
 from tinkoff.invest.utils import quotation_to_decimal
 from info_figi_ti import Info_figi
@@ -32,7 +32,7 @@ from datetime import timedelta
 from tinkoff.invest import AsyncClient, CandleInterval
 from tinkoff.invest.utils import now
 
-TOKEN = Token.tinkov_token_slv
+TOKEN = Token.tinkov_token
 acaunt_id = '2028504625'
 future_all_info ={}
 akcii_all_info = {}
@@ -302,13 +302,17 @@ def get_fures_instrument():
         # print(info.instruments)
         for i in info.instruments:
             future_all_info[i.figi] = i
+        # print(client.instruments)
+
 
         info = client.instruments.shares()
-        # print(info.instruments)
+        # print(info)
         for i in info.instruments:
             if 'moex' in i.exchange.lower():
                 akcii_moex_tiker[i.ticker] = i.figi
                 akcii_all_info[i.figi] = i
+
+
 
 
             # future_all_info[i.figi] = i
@@ -327,7 +331,7 @@ valyuta_dict_info = {}
 def get_valyuta_instrument():
     with Client(TOKEN) as client:
         info =  client.instruments.currencies()
-        # print(info.instruments)
+        # print(info)
         for i in info.instruments:
             print(i.name,  i.figi)
             valyuta_dict_info[i.figi] = i

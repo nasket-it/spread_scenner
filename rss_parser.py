@@ -63,7 +63,7 @@ async def check_rss(rss: str, istochnik: str, bot, func_link_text):#, istochnik:
             date_publ = feed.entries[0].get('published', None)
             summary = feed.entries[0].get('summary', None)
             id = feed.entries[0].get('id', None)
-            print(last_message_news)
+            # print(last_message_news)
             if category in ['Экономика и бизнес', 'Экономика']:
                 if id != last_message_news.get(istochnik, False):
                     last_message_news[istochnik] = id

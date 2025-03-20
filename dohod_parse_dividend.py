@@ -125,6 +125,7 @@ async def fetch(session, url):
 
 dividend_data = {}
 async def parse_dividend():
+    print('func parse divi')
     url = 'https://www.dohod.ru/ik/analytics/dividend'
     async with aiohttp.ClientSession() as session:
         html = await fetch(session, url)
@@ -150,7 +151,7 @@ async def parse_dividend():
             date_obj = datetime.strptime(date_close, '%d.%m.%Y').date() if date_close != 'n/a' else False
             tek_data = datetime.now().date()
             if date_obj and tek_data:
-                if date_obj > tek_data and dividend_rub > 0 and date_obj <= datetime.strptime('20.03.2025','%d.%m.%Y').date():
+                if date_obj > tek_data and dividend_rub > 0 and date_obj <= datetime.strptime('20.06.2025','%d.%m.%Y').date():
                     if company_tickers.get(ticker, False) in dividend_data:
                         dividend_data[company_tickers.get(ticker, None)]['dividend_rub'] += dividend_rub
                     else:

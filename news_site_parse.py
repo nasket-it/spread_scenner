@@ -95,7 +95,7 @@ for i in news_title_komersant:
     print(f"{title}\n{description}\n{url_all_post}")
 # news_title_rbk = rbk.xpath('//span[@class="normal-wrap"]/text()')
 #
-print(news_title_komersant)
+# print(news_title_komersant)
 
 
 

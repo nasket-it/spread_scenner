@@ -103,10 +103,21 @@ async def parse_price_curent_kase(kase_curen_dict: dict):
     if Flag.vikl_parse_kase:
         async with async_playwright() as p:
             browser = await p.chromium.launch(headless=False)
-            context = await browser.new_context()
+            context = await browser.new_context(
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+            )
             page = await context.new_page()
+            # page_tgstat = await context.new_page()
+            # await page_tgstat.goto('https://tgstat.ru/channel/FcLEDIcFdR02NDQy')
             # Логинимся один раз
             await login_to_kase(page)
+            # await page_tgstat.goto('https://tgstat.ru/economics')
+            await asyncio.sleep(5)
+            # button_1 = page_tgstat.locator('text=Показать больше')
+            # if button_1:
+            #     await button_1.click()
+            # else:
+            #     print('кнопка не найдена')
 
             # Парсим таблицу
             while Flag.vikl_parse_kase:
