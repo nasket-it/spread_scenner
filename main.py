@@ -246,9 +246,9 @@ async def arbtrage_future_akcii(kvartal, future_akcii=False, percent=0.5):
                     sprav_price_fut = await sprav_price_future(price_akc, figi=i, future_akcii=future_akcii, divid_rub=dividend_data[tiker].get('dividend_rub', 0) if dividend_data.get(tiker, 0) != 0 else 0)
                     # print(f"{tiker} - sprav prace = {sprav_price_fut} price {price_fut}, ")
                     percent_fut_ot_sprav_price = await asy_get_percent(price_fut, sprav_price_fut)
-                    if 'PLZL' in tiker:
-                        print(f"{tiker, i} - lots {lots}, price_fut {price_fut} price_akcii {price_akc} cprav_fut {sprav_price_fut}"
-                          f"percent {percent_fut_ot_sprav_price}")
+                    # if 'PLZL' in tiker:
+                    #     print(f"{tiker, i} - lots {lots}, price_fut {price_fut} price_akcii {price_akc} cprav_fut {sprav_price_fut}"
+                    #       f"percent {percent_fut_ot_sprav_price}")
                     name_future = f"{future_all_info[i].basic_asset if future_all_info[i].basic_asset != 'ABIO' else 'ISKJ'}-{kvartal}-{future_all_info[i].expiration_date.date().year % 100}"
                     news = ' 📰' if tiker in dict_sobitiy['news'] else ''
                     if tiker in dividend_data:
@@ -627,7 +627,7 @@ async def start_cicl_5s():
                 flag1 = True
                 flag2 = False
             await get_last_prices_dict()
-            await upgrade_options_mesaage_telegramm(bot, client2)
+            # await upgrade_options_mesaage_telegramm(bot, client2)
         except Exception as e:
             await sendErorsTelegram(bot, sec_start=5)
             error_message = traceback.format_exc()
