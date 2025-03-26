@@ -227,12 +227,13 @@ async def upgrade_options_mesaage_telegramm(bot , client):
                     # print(message)
                     message_list.append([message, abs(percent_volReal_volEver)])
     mesage_sorted = sorted(message_list, key=lambda x: x[1], reverse=True)
-    text_mesage_sorted1 = ''.join([i[0] for i in mesage_sorted[:14]])
-    text_mesage_sorted2 = ''.join([i[0] for i in mesage_sorted[14:]])
+    text_mesage_sorted1 = ''.join([i[0] for i in mesage_sorted[:13]])
+    text_mesage_sorted2 = ''.join([i[0] for i in mesage_sorted[13:]])
     zagolovok = f"🧭 Время последнего обновления:\n{time_apgrade.date()}  время: {time_new}\n\n"
     final_text_massage = zagolovok + text_mesage_sorted1
     r = await bot.edit_message_text(final_text_massage, chat_id=chenal_id, message_id=last_messa5_id, parse_mode='HTML',
                                 disable_web_page_preview=True)
+    await asyncio.sleep(0.5)
     final_text_massage2 = zagolovok + text_mesage_sorted2
     r = await bot.edit_message_text(final_text_massage2, chat_id=chenal_id, message_id=last_messa4_id,
                                         parse_mode='HTML',
