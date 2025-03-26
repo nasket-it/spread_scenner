@@ -2,6 +2,7 @@ import requests
 import aiohttp
 from bs4 import BeautifulSoup
 from datetime import datetime
+from file_zamena_kvartal import Date_expir_akcii
 
 
 
@@ -153,7 +154,7 @@ async def parse_dividend():
             date_obj = datetime.strptime(date_close, '%d.%m.%Y').date() if date_close != 'n/a' else False
             tek_data = datetime.now().date()
             if date_obj and tek_data:
-                if date_obj > tek_data and dividend_rub > 0 and date_obj <= datetime.strptime('20.06.2025','%d.%m.%Y').date():
+                if date_obj > tek_data and dividend_rub > 0 and date_obj <= datetime.strptime(Date_expir_akcii.expir_date_akcii,'%d.%m.%Y').date():
                     if company_tickers.get(ticker, False) in dividend_data:
                         dividend_data[company_tickers.get(ticker, None)]['dividend_rub'] += dividend_rub
                     else:

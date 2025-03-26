@@ -1,7 +1,8 @@
 import time
 import random
+from file_zamena_kvartal import Figi_future , Kvartal
 import test
-
+from parse_options import create_dict_options, create_dict_HVolatiliti_options, upgrade_options_mesaage_telegramm
 import traceback
 from clas_text import Text
 import re
@@ -30,6 +31,7 @@ from rss_parser import check_rss
 from news_site_parse import parse_komersant, parse_rbk
 from diskord.ext import commands
 from send_logsErrors import sendErorsTelegram
+
 # Создаем объект временной зоны для Москвы
 moscow_tz = pytz.timezone('Europe/Moscow')
 
@@ -219,7 +221,7 @@ async def arbtrage_future_akcii(kvartal, future_akcii=False, percent=0.5):
     # print(last_message[-1])
     if Flag.vikluchatel_future_akcii:
         message = []
-        print("dividend", dividend_data)
+        # print("dividend", dividend_data)
         # print(future_all_info)future_all_info[i].basic_asset
         for i in future_all_info:
             # print(akcii_moex_tiker)print(akcii_moex_tiker)
@@ -363,19 +365,19 @@ async def valuta_vtelegram():
     # try:
     if len(yahoo_valyata) == 20:
         print(yahoo_valyata)
-        si1_price = last_prices.get('FUTSI0625000', 1)
-        si2_price = last_prices.get('FUTSI0925000', 1)
-        cr1_price = last_prices.get('FUTCNY062500', 1)
-        cr2_price = last_prices.get('FUTCNY092500', 1)
-        eu1_price = last_prices.get('FUTEU0625000', 1)
-        eu2_price = last_prices.get('FUTEU0925000', 1)
-        ucny1_price = last_prices.get('FUTUCNY06250', 1)
-        ed1_price = last_prices.get('FUTED0625000', 1)
-        ed2_price = last_prices.get('FUTED0925000', 1)
-        gold1_price = last_prices.get('FUTGOLD06250', 1)
-        silver1_price = last_prices.get('FUTSILV06250', 1)
-        nasdaq1_price = last_prices.get('FUTNASD06250', 1)
-        sp5001_price = last_prices.get('FUTSPYF06250', 1)
+        si1_price = last_prices.get(Figi_future.si1_figi, 1)
+        si2_price = last_prices.get(Figi_future.si2_figi, 1)
+        cr1_price = last_prices.get(Figi_future.cr1_figi, 1)
+        cr2_price = last_prices.get(Figi_future.cr2_figi, 1)
+        eu1_price = last_prices.get(Figi_future.eu1_figi, 1)
+        eu2_price = last_prices.get(Figi_future.eu2_figi, 1)
+        ucny1_price = last_prices.get(Figi_future.ucny1_figi, 1)
+        ed1_price = last_prices.get(Figi_future.ed1_figi, 1)
+        ed2_price = last_prices.get(Figi_future.ed2_figi, 1)
+        gold1_price = last_prices.get(Figi_future.gold1_figi, 1)
+        silver1_price = last_prices.get(Figi_future.silver1_figi, 1)
+        nasdaq1_price = last_prices.get(Figi_future.nasdaq1_figi, 1)
+        sp5001_price = last_prices.get(Figi_future.sp5001_figi, 1)
         usdcnh_for = yahoo_valyata['USDCNH'][0]
         cnyrub_megbank = yahoo_valyata['CNYRUB'][0]
         eurrub_megbank = yahoo_valyata['EURRUB'][0]
@@ -390,56 +392,29 @@ async def valuta_vtelegram():
         percent_megbank_eur_usd_eurusd = round(eurrub_megbank / usdrub_megbank /eurusd_for, 2)
         percent_megbank_usd_cnh_usdcnh = round(usdrub_megbank / cnyrub_megbank /usdcnh_for, 2)
         print(f"Megbank - eur/cnh {percent_megbank_eur_cnh_eurcnh} eur/usd {percent_megbank_eur_usd_eurusd} usd/cnh - {percent_megbank_usd_cnh_usdcnh}")
-
         price_gold_gr_usd = round(gold_in / gr_unc, 2)
         # print(qqq_in)
-
         kurs_usdrub_spr = round(last_prices.get('BBG0013HRTL0', 1) * usdcnh_for, 4)
         kurs_eurrub_spr = round(last_prices.get('BBG0013HRTL0', 1) * eurcnh_for, 4)
-
         kurs_cb_usdrub = 87.0354
         kurs_cb_eurrub = 93.2994
         kurs_cb_cnyrub = 11.7964
-
-
         kurs_usdrub_spr = round(last_prices.get('BBG0013HRTL0', 1) * usdcnh_for, 4)
         kurs_eurrub_spr = round(last_prices.get('BBG0013HRTL0', 1) * eurcnh_for, 4)
-
-
         # si_sprav_price = round(1000 * (usd_rub_ru * (1 + 0.16 * (await expiration_date_future(si['si-6.24'])/365))))
-
         percent_si2_cr2_usdcnh = round(si2_price / cr2_price / 1000 / usdcnh_for * 100 -100, 3)
-
         percent_si_cr_ucny = round(si1_price / cr1_price / 1000 / ucny1_price * 100 -100, 3)#usdcnh_for
-
         percent_si_cr_usdcnh = round(si1_price / cr1_price / 1000 / usdcnh_for * 100 -100, 3)#usdcnh_for
-
-
         percent_eu2_cr2_eurcnh = round(eu2_price / cr2_price / 1000 / eurcnh_for * 100 -100, 3)
-
         percent_eu_cr_eurcnh = round(eu1_price / cr1_price / 1000 /eurcnh_for * 100 -100, 3) # await valuta_replace_float('EURCNH', yahoo_valyata, 4)
-
-
         percent_eu2_si2_eurusd = round(eu2_price / si2_price / eurusd_for * 100 -100, 3)
-
         percent_eu_si_eurusd = round(eu1_price / si1_price / eurusd_for * 100 -100, 3)
-
-
         percent_eu2_si2_ed2 = round(eu2_price / si2_price / ed2_price * 100 -100, 3)
-
         percent_eu_si_ed = round(eu1_price / si1_price / ed1_price * 100 -100, 3)
-
-
         percent_usf_cnf_ucny = round(last_prices.get(futures['USDRUBF'], 1) / last_prices.get(futures['CNYRUBF'], 1) / ucny1_price * 100 -100, 3)
-
         percent_usf_cnf_usdcnh = round(last_prices.get(futures['USDRUBF'], 1) / last_prices.get(futures['CNYRUBF'], 1) / usdcnh_for * 100 -100, 3)
-
-
         percent_euf_cnf_eurcnh = round(last_prices.get('FUTEURRUBF00', 1) / last_prices.get(futures['CNYRUBF'], 1) / eurcnh_for * 100 -100, 3)
-
-
         percent_euf_usf_eurusd = round(last_prices.get('FUTEURRUBF00', 1) / last_prices.get(futures['USDRUBF'], 1) / eurusd_for * 100 -100, 3)
-
         percent_ed_eurusd = round(ed1_price / eurusd_for * 100 - 100, 3)
         percent_ucny_usdcnh = round(ucny1_price / usdcnh_for * 100 - 100, 3)
         percent_ed2_eurusd = round(ed2_price / eurusd_for * 100 - 100, 3)
@@ -452,7 +427,6 @@ async def valuta_vtelegram():
         percent_cr1_crf = round(cr1_price / last_prices.get(futures['CNYRUBF'], 1)  * 100 - 100, 3)
         percent_cr1_cr_tom = round(cr1_price / last_prices.get('BBG0013HRTL0', 1) * 100 - 100, 3)
         percent_cr2_cr_tom = round(cr2_price / last_prices.get('BBG0013HRTL0', 1) * 100 - 100, 3)
-
         percent_usdrub_megb_spr = round(usdrub_megbank / kurs_usdrub_spr * 100 - 100 , 2)
         percent_eurrub_megb_spr = round(eurrub_megbank / kurs_eurrub_spr * 100 - 100 , 2)
         percent_si1_usdrub_megb = round(si1_price / 1000 / usdrub_megbank * 100 - 100 , 2)
@@ -462,53 +436,37 @@ async def valuta_vtelegram():
         percent_cnf_cn_tom = round(last_prices.get(futures['CNYRUBF']) / last_prices.get('BBG0013HRTL0', 1) * 100 - 100 , 2)
         percent_cnyrub_megb_cn_tom = round(cnyrub_megbank / last_prices.get('BBG0013HRTL0', 1) * 100 - 100 , 2)
         print('ioioioiooioiio', usdrub_megbank, last_prices.get('BBG0013HRTL0'), percent_cnyrub_megb_cn_tom)
-
         kurs_cb_usdrub = 89.0499
         kurs_cb_eurrub = 95.3906
-
-
-
         percent_glf_gd1_si = round((last_prices.get('FUTGLDRUBF00', 1 ) * 31.1035) / gold1_price / (si1_price / 1000) * 100 - 100 , 3)
-
-
         percent_sv1_silver = round(silver1_price / silver_in * 100  -100, 3)
         percent_gd1_gold = round(gold1_price / gold_in * 100  -100, 3)
         percent_na1_nasdaq = round(nasdaq1_price / nasdaq_in * 100  -100, 3)
         percent_sf1_sp500 = round((sp5001_price * 10) / sp500_in * 100  -100, 3)
-
-
-
         sprav_price_cr1 = await sprav_price_future(last_prices.get('BBG0013HRTL0', 1), figi='FUTCNY062500', max_percente_first_day=2.7)
         percent_sprav_price_cr1 = round(cr1_price / sprav_price_cr1 * 100 -100, 3)
-
-        sprav_price_silver = await sprav_price_future(silver_in, figi='FUTSILV03250', max_percente_first_day=3.25)
-        percent_sprav_price_silver = await asy_get_percent(sprav_price_silver, last_prices.get('FUTSILV03250', None) )
-
-        sprav_price_gold = await sprav_price_future(gold_in, figi='FUTGOLD03250', max_percente_first_day=2.7)
-        percent_sprav_price_gold = await asy_get_percent(sprav_price_gold, last_prices.get('FUTGOLD03250',None))
-        # percent_sprav_price_gold =round(percent_sprav_price_gold -  1.3 if percent_sprav_price_gold >= 0 else percent_sprav_price_gold - -1.3, 3)
-
-        sprav_price_nasdaq = await sprav_price_future(nasdaq_in, figi='FUTNASD03250', max_percente_first_day=1.7)
-        percent_sprav_price_nasdaq = await asy_get_percent(sprav_price_nasdaq, last_prices.get('FUTNASD03250',None))
-
-        sprav_price_sp500 = await sprav_price_future(sp500_in, figi='FUTSPYF03250', max_percente_first_day=1.9)
-        percent_sprav_price_sp500 = await asy_get_percent(sprav_price_sp500, last_prices.get('FUTSPYF03250',None) * 10 )
-
-
-
+        # sprav_price_silver = await sprav_price_future(silver_in, figi='FUTSILV03250', max_percente_first_day=3.25)
+        # percent_sprav_price_silver = await asy_get_percent(sprav_price_silver, last_prices.get('FUTSILV03250', None) )
+        # sprav_price_gold = await sprav_price_future(gold_in, figi='FUTGOLD03250', max_percente_first_day=2.7)
+        # percent_sprav_price_gold = await asy_get_percent(sprav_price_gold, last_prices.get('FUTGOLD03250',None))
+        # # percent_sprav_price_gold =round(percent_sprav_price_gold -  1.3 if percent_sprav_price_gold >= 0 else percent_sprav_price_gold - -1.3, 3)
+        #
+        # sprav_price_nasdaq = await sprav_price_future(nasdaq_in, figi='FUTNASD03250', max_percente_first_day=1.7)
+        # percent_sprav_price_nasdaq = await asy_get_percent(sprav_price_nasdaq, last_prices.get('FUTNASD03250',None))
+        #
+        # sprav_price_sp500 = await sprav_price_future(sp500_in, figi='FUTSPYF03250', max_percente_first_day=1.9)
+        # percent_sprav_price_sp500 = await asy_get_percent(sprav_price_sp500, last_prices.get('FUTSPYF03250',None) * 10 )
         text_fandung_zagolovok = f"💰 {await podcher_text(await zirniy_text('Фандинг(тест❗ )'))}\nЗадержка 15м \nОбновление каждые 60с \nЧасы работы с 10:15 до 18:50, в нерабочие часы последнее значение или None\n"
         text_fanding = [f"USDRUBF - {await link_text(fanding.get('USDRUBF', None))}\n",
                         f"EURRUBF - {await link_text(fanding.get('EURRUBF', None))}\n",
                         f"CNYRUBF - {await link_text(fanding.get('CNYRUBF', None))}\n",
                         f"GLDRUBF - {await link_text(fanding.get('GLDRUBF', None))}\n",
                         f"IMOEXF - {await link_text(fanding.get('IMOEXF', None))}\n\n"]
-
         link_name = '<a href="https://t.me/spread_sca">Eu1 / Cr1 / EURCNH(for)</a>'
         delitel1 = 0.1
         time_apgrade = datetime.datetime.now(moscow_tz)
         time_new = time_apgrade.strftime("%H:%M:%S")
         text_future_zagolovok = f"⚙️ {await podcher_text(await zirniy_text('Фьючерсы на валюту'))} 👇👇👇\n\n"
-
         text_future_kotirovri = [[f"{await valyta_smail(percent_si_cr_ucny)} •  ({percent_si_cr_ucny}%){await smail_vnimanie(percent_si_cr_ucny)}\n{await link_text('Si1 / CR1 / UCNY')}\n" +
                                 await napravlenie_sdelok_3nogi(percent_si_cr_ucny, 'Si1 / CR1 / UCNY', price1=si1_price, price2=cr1_price, price3=ucny1_price) , abs(percent_si_cr_ucny)],
                                 [f"{await valyta_smail(percent_si_cr_usdcnh)} •  ({percent_si_cr_usdcnh}%){await smail_vnimanie(percent_si_cr_usdcnh)}\n{await link_text('Si1 / CR1 / USDCNH(for)')}\n" +
@@ -543,7 +501,6 @@ async def valuta_vtelegram():
                                 await napravlenie_sdelok_2nogi(percent_ucny_usdcnh, 'UCNY / USDCNH(for)', price1=ucny1_price, price2=usdcnh_for, lot1=1, lot2=lotnost_forex['EURUSD']), abs(percent_ucny_usdcnh)],
 
                                  ]
-
         text_future_kotirovri2 = [[f"{await valyta_smail(percent_si2_si1)} •  ({percent_si2_si1}%)\n{await link_text('SI2 / SI1')}\n" +
                                 await napravlenie_sdelok_2nogi(percent_si2_si1, 'SI2 / SI1', price1=round(si2_price / 1000, 3), price2=round(si1_price / 1000, 3), lot1=1, lot2=1, ukazat_napravlenie_sdelok=False), abs(percent_si2_si1)],
                                 [f"{await valyta_smail(percent_eu2_eu1)} •  ({percent_eu2_eu1}%)\n{await link_text('EU2 / EU1')}\n" +
@@ -564,7 +521,6 @@ async def valuta_vtelegram():
                                 await napravlenie_sdelok_2nogi(percent_ed2_ed1, 'ED2 / ED1', price1=ed2_price, price2=ed1_price, lot1=1, lot2=1, ukazat_napravlenie_sdelok=False), abs(percent_ed2_ed1)],
 
                                  ]
-
         text_fur_spot = [f"{await valyta_smail(percent_sprav_price_cr1)} •  ({percent_sprav_price_cr1}%){await smail_vnimanie(percent_sprav_price_cr1)}\n" ,
                          f"{await link_text('CR1 (спр) / CR1 (real)')}\n" ,
                          f"CR1 (спр) -> цена справ-вая = {sprav_price_cr1}\n\n\n"]
@@ -663,10 +619,11 @@ async def start_cicl_5s():
                 flag2 = True
             elif flag2:
                 print('flag2')
-                await arbtrage_future_akcii(6, future_akcii=True)
+                await arbtrage_future_akcii(Kvartal.real_kvartal, future_akcii=True)
                 flag1 = True
                 flag2 = False
             await get_last_prices_dict()
+            # await upgrade_options_mesaage_telegramm(bot, client2)
         except Exception as e:
             await sendErorsTelegram(bot, sec_start=5)
             error_message = traceback.format_exc()
@@ -686,7 +643,7 @@ async def start_cicl_15m():
             await asyncio.sleep(60)
 
     except Exception as e:
-        await sendErorsTelegram(bot, sec_start=2)
+        await sendErorsTelegram(bot, sec_start=5)
         error_message = traceback.format_exc()
         print(f'Произошла ошибка функции start_cicl_15m :\n{error_message}')
         print(e)
@@ -800,7 +757,16 @@ async def start_parse_news_site():
             await asyncio.sleep(random.uniform(2, 60))
 
 
-list_task = [  start_cicl_5s(), start_dic_yaho_valuta(), start_get_last_prices_dict(), start_cicl_15m(), start_cicl_60m(), start_parse_news_site(), start_parse_rss(), fetch_messages(client=client, id_channel=Chenal_id.istochnik_news1)]#bot_discord.start(Token.discordBot_WarrenWallet) , запуск парсинга с биржи касе parse_price_curent_kase(kase_curen_dict)
+async def start_parse_options():
+    while True:
+        await create_dict_options()
+
+async def start_create_histiri_volatiliti():
+    while True:
+        await create_dict_HVolatiliti_options()
+        await asyncio.sleep(5)
+
+list_task = [ start_create_histiri_volatiliti(), start_parse_options() , start_cicl_5s(), start_dic_yaho_valuta(), start_get_last_prices_dict(), start_cicl_15m(), start_cicl_60m(), start_parse_news_site(), start_parse_rss(), fetch_messages(client=client, id_channel=Chenal_id.istochnik_news1)]#bot_discord.start(Token.discordBot_WarrenWallet) , запуск парсинга с биржи касе parse_price_curent_kase(kase_curen_dict)
 
 async def main():
     # Запуск периодических задач в фоновом режиме

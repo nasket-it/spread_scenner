@@ -20,7 +20,7 @@ Quotation,
 PositionsRequest
 )
 from tinkoff.invest import Client, SecurityTradingStatus, OrderType, OrderDirection, Quotation,\
-    GetOrderBookRequest, PositionsRequest, InstrumentRequest, InstrumentType, InstrumentIdType, InstrumentStatus, CandleInterval, RealExchange
+    GetOrderBookRequest, PositionsRequest, InstrumentRequest, InstrumentType, InstrumentIdType, InstrumentStatus, CandleInterval, RealExchange, AsyncClient, async_services
 from tinkoff.invest.services import InstrumentsService
 from tinkoff.invest.utils import quotation_to_decimal
 from info_figi_ti import Info_figi
@@ -558,32 +558,29 @@ def get_sandels_day(symbol, day=366):
 
 # print(datetime.now().time())
 # @decorator_speed
-def price_close_max200day( figi):
+def price_close_max200day( figi, days=300):
     with Client(TOKEN) as client:
-        # figi = 'FUTGOLD12240'
-        rez = []
-        for i in client.get_all_candles(
+        respons = client.get_all_candles(
             figi=figi,
-            from_=now() - timedelta(days=200),
+            from_=now() - timedelta(days=days),
             interval=CandleInterval.CANDLE_INTERVAL_DAY
-            ):
-            low = price_float_ti(i.low)
-            hight = price_float_ti(i.high)
-            close = price_float_ti(i.close)
-            open = price_float_ti(i.open)
-            rez.append(close)
-        return rez
-        # print(rez[-90:])
-# price_close_max200day('FUTRTS032500')
-def corilaciya(symbol1, symbol2):
-    si_12 = get_all_sandels(symbol1)
-    si_3 = get_all_sandels(symbol2)
-    return [si_3[i]['close'] - si_12[i]['close'] for i in si_3]
-# rez = corilaciya('SiZ3', 'SiH4')
-# print(max(rez), min(rez))
-# print(sum(rez)/len(rez))
-# print(len(rez))
-# print()
+            )
+        list_price_close = [price_float_ti(i.close) for i in respons]
+        return list_price_close
+price_close_max200day('FUTRTS062500')
+
+async def price_close_max300day( figi, days=300):
+    async with AsyncClient(TOKEN) as client:
+        respons = await client.market_data.get_candles(
+            figi=figi,
+            from_=now() - timedelta(days=days),
+            to=now(),
+            interval=CandleInterval.CANDLE_INTERVAL_DAY
+        )
+        list_price_close = [price_float_ti(i.close) for i in respons.candles]
+        return list_price_close
+
+
 
 # get_sandels_day('FLOT')
 def get_lenta(symbol):
