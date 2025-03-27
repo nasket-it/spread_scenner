@@ -236,8 +236,8 @@ async def arbtrage_future_akcii(kvartal, future_akcii=False, percent=0.5):
                 # print(tiker , price_akc, last_prices.get(figi_akcii, None))
                 if last_prices.get(i, None) != None and last_prices.get(i, None) > 0 and price_akc != None and price_akc > 0:
                     lots = math.floor(future_all_info[i].basic_asset_size.units)
-                    if 'PLZL' in tiker:
-                        lots = lots / 10
+                    # if 'PLZL' in tiker:
+                    #     lots = lots / 10
                     price_fut = last_prices.get(i, None)
                     spread_real = price_akc / (price_fut / lots) * 100
                     # print(spread_real)
@@ -770,7 +770,7 @@ async def start_create_histiri_volatiliti():
         await create_dict_HVolatiliti_options()
         await asyncio.sleep(5)
 
-list_task = [ start_create_histiri_volatiliti(), start_parse_options() , start_cicl_5s(), start_dic_yaho_valuta(), start_get_last_prices_dict(), start_cicl_15m(), start_cicl_60m(), start_parse_news_site(), start_parse_rss(), fetch_messages(client=client, id_channel=Chenal_id.istochnik_news1)]#bot_discord.start(Token.discordBot_WarrenWallet) , запуск парсинга с биржи касе parse_price_curent_kase(kase_curen_dict)
+list_task = [   start_cicl_5s(), start_dic_yaho_valuta(), start_get_last_prices_dict(), start_cicl_15m(), start_cicl_60m(), start_parse_news_site(), start_parse_rss(), fetch_messages(client=client, id_channel=Chenal_id.istochnik_news1)]#bot_discord.start(Token.discordBot_WarrenWallet) , запуск парсинга с биржи касе parse_price_curent_kase(kase_curen_dict) ? start_create_histiri_volatiliti(), start_parse_options()
 
 async def main():
     # Запуск периодических задач в фоновом режиме
